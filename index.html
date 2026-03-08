@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Samarth Ultra Vault</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #00c6ff;
+  --accent: #ff6b6b;
+  --gold: #ffd700;
+  --bg1: #060b18;
+  --bg2: #0d1b2a;
+  --glass: rgba(0,198,255,0.07);
+  --glass-border: rgba(0,198,255,0.2);
+  --success: #00ff88;
+  --danger: #ff4444;
+  --text: #e0f0ff;
+}
+.light-theme {
+  --bg1: #e8f4f8;
+  --bg2: #d0e8f0;
+  --glass: rgba(0,100,180,0.07);
+  --glass-border: rgba(0,100,180,0.25);
+  --text: #0a1a2e;
+  --primary: #0077aa;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Rajdhani', sans-serif;
+  background: var(--bg1);
+  color: var(--text);
+  height: 100vh;
+  overflow: hidden;
+  transition: background 0.5s, color 0.5s;
+}
+
+/* NOISE OVERLAY */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+
+/* GRID BG */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,198,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,198,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* SPLASH */
+#splash {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  gap: 20px;
+}
+.splash-logo {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(36px, 8vw, 72px);
+  font-weight: 900;
+  letter-spacing: 16px;
+  color: var(--primary);
+  animation: pulseGlow 1.5s infinite alternate;
+}
+.splash-sub {
+  font-size: 14px;
+  letter-spacing: 6px;
+  color: rgba(0,198,255,0.5);
+  text-transform: uppercase;
+}
+.splash-bar {
+  width: 200px;
+  height: 3px;
+  background: rgba(0,198,255,0.15);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+.splash-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), #7fff00);
+  border-radius: 99px;
+  animation: fillBar 2.3s ease forwards;
+}
+@keyframes fillBar { from{width:0} to{width:100%} }
+@keyframes pulseGlow {
+  from { text-shadow: 0 0 10px var(--primary), 0 0 30px rgba(0,198,255,0.3); }
+  to   { text-shadow: 0 0 30px var(--primary), 0 0 80px rgba(0,198,255,0.5), 0 0 120px rgba(0,198,255,0.2); }
+}
+
+/* PAGES */
+.page {
+  position: fixed;
+  inset: 0;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  padding: 16px;
+}
+.page.active { display: flex; }
+.page-full {
+  position: fixed;
+  inset: 0;
+  display: none;
+  z-index: 10;
+  padding: 16px;
+  flex-direction: column;
+}
+.page-full.active { display: flex; }
+
+/* CARD */
+.card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  padding: 28px 24px;
+  border-radius: 24px;
+  box-shadow: 0 8px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.07);
+  animation: slideUp 0.4s ease;
+}
+@keyframes slideUp {
+  from { opacity:0; transform: translateY(20px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+/* HEADINGS */
+h2 {
+  font-family: 'Orbitron', monospace;
+  font-size: 18px;
+  letter-spacing: 4px;
+  margin-bottom: 20px;
+  color: var(--primary);
+  text-transform: uppercase;
+}
+
+/* DIVIDER */
+.divider {
+  height: 1px;
+  background: var(--glass-border);
+  margin: 16px 0;
+}
+
+/* INPUTS */
+input[type=text], input[type=password], input[type=file] {
+  width: 100%;
+  padding: 12px 16px;
+  margin: 6px 0;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  color: var(--text);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0,198,255,0.1);
+}
+
+/* BUTTONS */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 12px 16px;
+  margin: 5px 0;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Orbitron', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.3s, opacity 0.3s;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+}
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0);
+  transition: background 0.2s;
+}
+.btn:hover::after { background: rgba(255,255,255,0.08); }
+.btn:active { transform: scale(0.96); }
+
+.btn-primary { background: linear-gradient(135deg, var(--primary), #0077b6); color: #fff; box-shadow: 0 4px 20px rgba(0,198,255,0.25); }
+.btn-danger  { background: linear-gradient(135deg, var(--danger), #aa0000); color: #fff; box-shadow: 0 4px 20px rgba(255,68,68,0.2); }
+.btn-success { background: linear-gradient(135deg, var(--success), #009955); color: #000; box-shadow: 0 4px 20px rgba(0,255,136,0.2); }
+.btn-ghost   { background: var(--glass); border: 1px solid var(--glass-border); color: var(--text); }
+.btn-gold    { background: linear-gradient(135deg, var(--gold), #ff8c00); color: #000; box-shadow: 0 4px 20px rgba(255,215,0,0.25); }
+
+.btn-sm { width: auto; padding: 7px 14px; font-size: 10px; margin: 3px; }
+
+/* CALCULATOR */
+#calcPage { align-items: center; }
+.calc-card {
+  width: 100%;
+  max-width: 340px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(24px);
+  padding: 20px;
+  border-radius: 28px;
+  box-shadow: 0 8px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.07);
+}
+.calc-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.calc-topbar span {
+  font-family: 'Orbitron', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--primary);
+}
+.calc-topbar-actions { display: flex; gap: 6px; }
+.icon-btn {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s, transform 0.15s;
+}
+.icon-btn:hover { background: rgba(0,198,255,0.15); transform: scale(1.05); }
+
+/* DISPLAY */
+.calc-display {
+  background: rgba(0,0,0,0.5);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  padding: 12px 16px;
+  text-align: right;
+  margin-bottom: 14px;
+}
+.calc-expr {
+  font-size: 13px;
+  color: rgba(0,198,255,0.5);
+  min-height: 18px;
+  font-family: 'Rajdhani';
+  letter-spacing: 1px;
+}
+.calc-main {
+  font-family: 'Orbitron', monospace;
+  font-size: 28px;
+  color: var(--primary);
+  min-height: 40px;
+  word-break: break-all;
+  transition: color 0.3s;
+}
+.calc-mem {
+  font-size: 11px;
+  color: var(--gold);
+  min-height: 14px;
+}
+
+/* GRID */
+.calc-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.calc-btn {
+  aspect-ratio: 1;
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  background: rgba(0,0,0,0.3);
+  color: var(--text);
+  font-family: 'Orbitron', monospace;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s, box-shadow 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.calc-btn:hover { background: rgba(0,198,255,0.12); }
+.calc-btn:active { transform: scale(0.91); box-shadow: 0 0 10px rgba(0,198,255,0.3); }
+.calc-btn.op    { background: rgba(0,198,255,0.12); color: var(--primary); border-color: rgba(0,198,255,0.3); }
+.calc-btn.eq    { background: linear-gradient(135deg, var(--primary), #0077b6); color: #fff; border: none; box-shadow: 0 4px 20px rgba(0,198,255,0.3); }
+.calc-btn.clr   { background: rgba(255,68,68,0.12); color: var(--danger); border-color: rgba(255,68,68,0.3); }
+.calc-btn.sp    { background: rgba(255,215,0,0.1); color: var(--gold); border-color: rgba(255,215,0,0.3); }
+.calc-btn.wide  { grid-column: span 2; aspect-ratio: auto; padding: 12px; }
+
+/* VAULT PAGE */
+.vault-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.vault-header h2 { margin: 0; flex: 1; }
+
+.vault-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.stat-box {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  padding: 12px;
+  text-align: center;
+}
+.stat-num {
+  font-family: 'Orbitron', monospace;
+  font-size: 24px;
+  color: var(--primary);
+}
+.stat-label { font-size: 11px; letter-spacing: 2px; opacity: 0.6; text-transform: uppercase; }
+
+.vault-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 8px;
+  overflow-y: auto;
+  flex: 1;
+  padding-right: 4px;
+}
+.photo-grid::-webkit-scrollbar { width: 4px; }
+.photo-grid::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 99px; }
+
+.photo-thumb {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  aspect-ratio: 1;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--glass-border);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.photo-thumb:hover { transform: scale(1.04); box-shadow: 0 4px 20px rgba(0,198,255,0.3); }
+.photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.photo-thumb .del-btn {
+  position: absolute;
+  top: 4px; right: 4px;
+  background: rgba(255,0,0,0.8);
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  width: 22px; height: 22px;
+  font-size: 12px;
+  cursor: pointer;
+  display: none;
+  align-items: center; justify-content: center;
+}
+.photo-thumb:hover .del-btn { display: flex; }
+
+/* FULLSCREEN VIEWER */
+#viewer {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.96);
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+#viewer.active { display: flex; }
+#viewer img {
+  max-width: 92vw;
+  max-height: 80vh;
+  border-radius: 16px;
+  box-shadow: 0 0 60px rgba(0,0,0,0.8);
+  transition: opacity 0.25s;
+}
+.viewer-controls {
+  position: absolute;
+  bottom: 24px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.viewer-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 50%;
+  width: 46px; height: 46px;
+  font-size: 20px;
+  cursor: pointer;
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.viewer-nav:hover { background: rgba(0,198,255,0.3); }
+.viewer-nav.left { left: 16px; }
+.viewer-nav.right { right: 16px; }
+.viewer-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  background: rgba(255,0,0,0.7);
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  width: 40px; height: 40px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.viewer-close:hover { background: rgba(255,0,0,1); }
+.viewer-counter {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 99px;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-family: 'Orbitron', monospace;
+  letter-spacing: 2px;
+}
+
+/* HISTORY PAGE */
+.history-list {
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 4px;
+}
+.history-list::-webkit-scrollbar { width: 4px; }
+.history-list::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 99px; }
+.history-item {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  animation: slideUp 0.3s ease;
+}
+.history-item .expr { opacity: 0.6; }
+.history-item .result { font-family: 'Orbitron'; color: var(--primary); font-size: 16px; }
+
+/* NOTES VAULT */
+.note-item {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 8px;
+  position: relative;
+}
+.note-title { font-family: 'Orbitron'; font-size: 13px; color: var(--primary); margin-bottom: 4px; }
+.note-body { font-size: 13px; opacity: 0.8; white-space: pre-wrap; word-break: break-word; }
+.note-del {
+  position: absolute;
+  top: 8px; right: 8px;
+  background: rgba(255,68,68,0.15);
+  border: none;
+  border-radius: 8px;
+  color: var(--danger);
+  padding: 2px 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(0);
+  background: rgba(10,10,20,0.95);
+  border: 1px solid var(--glass-border);
+  color: var(--text);
+  padding: 12px 24px;
+  border-radius: 99px;
+  font-size: 14px;
+  letter-spacing: 1px;
+  z-index: 99999;
+  backdrop-filter: blur(12px);
+  transition: opacity 0.4s, transform 0.4s;
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; }
+
+/* TABS */
+.tab-bar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 12px;
+  padding: 4px;
+}
+.tab {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text);
+  font-family: 'Orbitron';
+  font-size: 10px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  opacity: 0.5;
+}
+.tab.active { background: var(--primary); color: #fff; opacity: 1; }
+
+/* SWITCH */
+.switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--glass-border);
+}
+.switch-label { font-size: 14px; letter-spacing: 1px; }
+.switch {
+  position: relative;
+  width: 44px; height: 24px;
+}
+.switch input { display: none; }
+.switch-slider {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.1);
+  border-radius: 99px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.switch-slider::after {
+  content: '';
+  position: absolute;
+  left: 3px; top: 3px;
+  width: 18px; height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.3s;
+}
+.switch input:checked + .switch-slider { background: var(--primary); }
+.switch input:checked + .switch-slider::after { transform: translateX(20px); }
+
+/* PIN dots */
+.pin-display {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 20px 0;
+}
+.pin-dot {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--glass-border);
+  transition: background 0.2s, border-color 0.2s;
+}
+.pin-dot.filled { background: var(--primary); border-color: var(--primary); }
+
+.pin-pad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.pin-key {
+  aspect-ratio: 1;
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  background: var(--glass);
+  color: var(--text);
+  font-family: 'Orbitron';
+  font-size: 18px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+.pin-key:hover { background: rgba(0,198,255,0.15); }
+.pin-key:active { transform: scale(0.9); }
+.pin-key.del { font-size: 14px; color: var(--danger); }
+
+/* LOCK ANIM */
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20%,60% { transform: translateX(-10px); }
+  40%,80% { transform: translateX(10px); }
+}
+.shake { animation: shake 0.4s ease; }
+
+/* PROGRESS / STRENGTH */
+.strength-bar { height: 4px; border-radius: 99px; background: rgba(255,255,255,0.1); margin-top: 4px; overflow: hidden; }
+.strength-fill { height: 100%; border-radius: 99px; transition: width 0.3s, background 0.3s; }
+
+/* NOTES AREA */
+textarea {
+  width: 100%;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  color: var(--text);
+  font-family: 'Rajdhani';
+  font-size: 14px;
+  padding: 10px;
+  resize: none;
+  outline: none;
+}
+textarea:focus { border-color: var(--primary); }
+
+.badge {
+  background: var(--danger);
+  color: #fff;
+  border-radius: 99px;
+  padding: 1px 7px;
+  font-size: 11px;
+  font-family: 'Orbitron';
+}
+
+/* SETTINGS */
+.settings-section { margin-bottom: 16px; }
+.settings-title { font-family: 'Orbitron'; font-size: 11px; letter-spacing: 3px; color: rgba(0,198,255,0.5); margin-bottom: 10px; text-transform: uppercase; }
+
+/* ANIMATED SCAN LINE */
+.scan-line {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  opacity: 0.4;
+  animation: scan 4s linear infinite;
+  z-index: 1;
+  pointer-events: none;
+}
+@keyframes scan {
+  from { top: 0; }
+  to   { top: 100vh; }
+}
+
+/* SCROLLBAR GLOBAL */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 99px; }
+
+/* SEARCH */
+.search-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.search-bar input { margin: 0; flex: 1; }
+</style>
+</head>
+<body>
+
+<div class="scan-line"></div>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-logo">SAMARTH</div>
+  <div class="splash-sub">Ultra Vault · Secure · Private</div>
+  <div class="splash-bar"><div class="splash-bar-fill"></div></div>
+</div>
+
+<!-- AUTH -->
+<div class="page" id="authPage">
+  <div class="card">
+    <div class="tab-bar">
+      <button class="tab active" id="tabLogin" onclick="switchAuthTab('login')">LOGIN</button>
+      <button class="tab" id="tabRegister" onclick="switchAuthTab('register')">REGISTER</button>
+    </div>
+
+    <div id="loginForm">
+      <h2>👤 Login</h2>
+      <input type="text" id="logUser" placeholder="Username" autocomplete="off">
+      <div style="position:relative">
+        <input type="password" id="logPass" placeholder="Password" style="padding-right:44px">
+        <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;opacity:0.5" onclick="togglePw('logPass',this)">👁</span>
+      </div>
+      <button class="btn btn-primary" onclick="login()">🔑 SIGN IN</button>
+      <button class="btn btn-ghost" onclick="guestLogin()">👤 Guest Mode</button>
+    </div>
+
+    <div id="registerForm" style="display:none">
+      <h2>✨ Register</h2>
+      <input type="text" id="regUser" placeholder="Choose username" autocomplete="off">
+      <div style="position:relative">
+        <input type="password" id="regPass" placeholder="Password" oninput="checkStrength(this)" style="padding-right:44px">
+        <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;opacity:0.5" onclick="togglePw('regPass',this)">👁</span>
+      </div>
+      <div class="strength-bar"><div class="strength-fill" id="strengthFill" style="width:0;background:#ff4444"></div></div>
+      <button class="btn btn-success" onclick="register()">🚀 CREATE ACCOUNT</button>
+    </div>
+  </div>
+</div>
+
+<!-- PIN SCREEN -->
+<div class="page" id="pinPage">
+  <div class="card">
+    <div style="text-align:center">
+      <div style="font-size:40px;margin-bottom:8px">🔐</div>
+      <h2 style="text-align:center">VAULT PIN</h2>
+      <div id="pinSubtitle" style="font-size:12px;opacity:0.5;letter-spacing:2px;margin-bottom:6px">ENTER 4-DIGIT PIN</div>
+      <div class="pin-display" id="pinDots">
+        <div class="pin-dot"></div>
+        <div class="pin-dot"></div>
+        <div class="pin-dot"></div>
+        <div class="pin-dot"></div>
+      </div>
+    </div>
+    <div class="pin-pad" id="pinPad">
+      <button class="pin-key" onclick="pinPress(1)">1</button>
+      <button class="pin-key" onclick="pinPress(2)">2</button>
+      <button class="pin-key" onclick="pinPress(3)">3</button>
+      <button class="pin-key" onclick="pinPress(4)">4</button>
+      <button class="pin-key" onclick="pinPress(5)">5</button>
+      <button class="pin-key" onclick="pinPress(6)">6</button>
+      <button class="pin-key" onclick="pinPress(7)">7</button>
+      <button class="pin-key" onclick="pinPress(8)">8</button>
+      <button class="pin-key" onclick="pinPress(9)">9</button>
+      <button class="pin-key" onclick="backToCalc()">↩</button>
+      <button class="pin-key" onclick="pinPress(0)">0</button>
+      <button class="pin-key del" onclick="pinDelete()">⌫</button>
+    </div>
+    <div id="lockCountdown" style="text-align:center;color:var(--danger);font-size:12px;margin-top:8px;min-height:16px"></div>
+  </div>
+</div>
+
+<!-- CALCULATOR -->
+<div class="page" id="calcPage">
+  <div class="calc-card">
+    <div class="calc-topbar">
+      <span>CALC-X</span>
+      <div class="calc-topbar-actions">
+        <button class="icon-btn" onclick="showHistory()" title="History">📋</button>
+        <button class="icon-btn" onclick="toggleTheme()" title="Theme">🎨</button>
+        <button class="icon-btn" onclick="showSettings()" title="Settings">⚙️</button>
+        <button class="icon-btn" onclick="doLogout()" title="Logout">🚪</button>
+      </div>
+    </div>
+    <div class="calc-display">
+      <div class="calc-expr" id="calcExpr"></div>
+      <div class="calc-main" id="calcMain">0</div>
+      <div class="calc-mem" id="calcMem"></div>
+    </div>
+    <div class="calc-grid">
+      <button class="calc-btn clr" onclick="cPress('C')">C</button>
+      <button class="calc-btn sp" onclick="cPress('%')">%</button>
+      <button class="calc-btn sp" onclick="cPress('√')">√</button>
+      <button class="calc-btn op" onclick="cPress('/')">÷</button>
+
+      <button class="calc-btn" onclick="cPress('7')">7</button>
+      <button class="calc-btn" onclick="cPress('8')">8</button>
+      <button class="calc-btn" onclick="cPress('9')">9</button>
+      <button class="calc-btn op" onclick="cPress('*')">×</button>
+
+      <button class="calc-btn" onclick="cPress('4')">4</button>
+      <button class="calc-btn" onclick="cPress('5')">5</button>
+      <button class="calc-btn" onclick="cPress('6')">6</button>
+      <button class="calc-btn op" onclick="cPress('-')">−</button>
+
+      <button class="calc-btn" onclick="cPress('1')">1</button>
+      <button class="calc-btn" onclick="cPress('2')">2</button>
+      <button class="calc-btn" onclick="cPress('3')">3</button>
+      <button class="calc-btn op" onclick="cPress('+')">+</button>
+
+      <button class="calc-btn sp" onclick="cPress('±')">±</button>
+      <button class="calc-btn" onclick="cPress('0')">0</button>
+      <button class="calc-btn" onclick="cPress('.')">.</button>
+      <button class="calc-btn eq" onclick="cPress('=')">=</button>
+    </div>
+    <div style="display:flex;gap:6px;margin-top:10px">
+      <button class="calc-btn sp btn-sm" style="flex:1;aspect-ratio:auto;padding:8px 0" onclick="cPress('M+')">M+</button>
+      <button class="calc-btn sp btn-sm" style="flex:1;aspect-ratio:auto;padding:8px 0" onclick="cPress('MR')">MR</button>
+      <button class="calc-btn sp btn-sm" style="flex:1;aspect-ratio:auto;padding:8px 0" onclick="cPress('MC')">MC</button>
+      <button class="calc-btn sp btn-sm" style="flex:1;aspect-ratio:auto;padding:8px 0" onclick="cPress('x²')">x²</button>
+    </div>
+  </div>
+</div>
+
+<!-- VAULT PAGE -->
+<div class="page-full" id="vaultPage">
+  <div style="max-width:600px;width:100%;margin:auto;height:100%;display:flex;flex-direction:column">
+    <div class="vault-header">
+      <button class="icon-btn" onclick="backToCalc()">←</button>
+      <h2 style="margin:0">🔐 VAULT</h2>
+      <div class="tab-bar" style="margin:0;flex:1;max-width:240px">
+        <button class="tab active" id="vTabPhoto" onclick="switchVaultTab('photos')">📷 PHOTOS</button>
+        <button class="tab" id="vTabNote" onclick="switchVaultTab('notes')">📝 NOTES</button>
+      </div>
+    </div>
+
+    <!-- PHOTO VAULT -->
+    <div id="photoVault" style="display:flex;flex-direction:column;flex:1;min-height:0">
+      <div class="vault-stats" id="vaultStats">
+        <div class="stat-box">
+          <div class="stat-num" id="statCount">0</div>
+          <div class="stat-label">Photos</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="statSize">0 KB</div>
+          <div class="stat-label">Storage</div>
+        </div>
+      </div>
+
+      <div class="search-bar">
+        <label class="btn btn-primary" style="width:auto;margin:0;cursor:pointer">
+          📁 ADD
+          <input type="file" multiple accept="image/*" style="display:none" onchange="uploadPhotos(event)">
+        </label>
+        <button class="btn btn-danger" style="width:auto;margin:0" onclick="clearAllPhotos()">🗑 CLEAR</button>
+        <button class="btn btn-gold" style="width:auto;margin:0" onclick="sortPhotos()">⟳ SORT</button>
+      </div>
+
+      <div class="photo-grid" id="gallery"></div>
+    </div>
+
+    <!-- NOTE VAULT -->
+    <div id="noteVault" style="display:none;flex-direction:column;flex:1;min-height:0">
+      <div style="margin-bottom:10px">
+        <input id="noteTitle" placeholder="Note title..." style="margin-bottom:6px">
+        <textarea id="noteBody" rows="3" placeholder="Write your secret note..."></textarea>
+        <button class="btn btn-primary" onclick="saveNote()" style="margin-top:6px">💾 SAVE NOTE</button>
+      </div>
+      <div style="overflow-y:auto;flex:1" id="notesList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY PAGE -->
+<div class="page-full" id="historyPage">
+  <div style="max-width:500px;width:100%;margin:auto;height:100%;display:flex;flex-direction:column">
+    <div class="vault-header">
+      <button class="icon-btn" onclick="backToCalc()">←</button>
+      <h2 style="margin:0">📋 HISTORY</h2>
+      <button class="btn btn-danger btn-sm" style="width:auto" onclick="clearHistory()">🗑 CLEAR</button>
+    </div>
+    <div class="history-list" id="historyList"></div>
+  </div>
+</div>
+
+<!-- SETTINGS PAGE -->
+<div class="page-full" id="settingsPage">
+  <div style="max-width:500px;width:100%;margin:auto;height:100%;overflow-y:auto">
+    <div class="vault-header">
+      <button class="icon-btn" onclick="backToCalc()">←</button>
+      <h2 style="margin:0">⚙️ SETTINGS</h2>
+    </div>
+    <div class="card">
+      <div class="settings-section">
+        <div class="settings-title">Security</div>
+        <div class="switch-row">
+          <span class="switch-label">Sound Effects</span>
+          <label class="switch"><input type="checkbox" id="soundToggle" checked onchange="saveSetting('sound',this.checked)"><div class="switch-slider"></div></label>
+        </div>
+        <div class="switch-row">
+          <span class="switch-label">Auto Logout (2 min)</span>
+          <label class="switch"><input type="checkbox" id="autoLogoutToggle" checked onchange="saveSetting('autoLogout',this.checked)"><div class="switch-slider"></div></label>
+        </div>
+        <div class="switch-row">
+          <span class="switch-label">Vibration</span>
+          <label class="switch"><input type="checkbox" id="vibrateToggle" checked onchange="saveSetting('vibrate',this.checked)"><div class="switch-slider"></div></label>
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-title">Vault PIN</div>
+        <input type="password" id="newPin" placeholder="New 4-digit PIN" maxlength="4" oninput="this.value=this.value.replace(/\D/g,'')">
+        <input type="password" id="confirmPin" placeholder="Confirm PIN" maxlength="4" oninput="this.value=this.value.replace(/\D/g,'')">
+        <button class="btn btn-primary" onclick="changePin()">🔄 CHANGE PIN</button>
+      </div>
+      <div class="settings-section">
+        <div class="settings-title">Account</div>
+        <div style="background:var(--glass);border:1px solid var(--glass-border);border-radius:12px;padding:14px;margin-bottom:10px">
+          <div style="font-size:13px;opacity:0.6">Logged in as</div>
+          <div style="font-family:'Orbitron';font-size:18px;color:var(--primary)" id="settingsUsername"></div>
+        </div>
+        <button class="btn btn-danger" onclick="doLogout()">🚪 LOGOUT</button>
+        <button class="btn btn-ghost" onclick="deleteAccount()">⚠️ DELETE ACCOUNT</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FULLSCREEN VIEWER -->
+<div id="viewer">
+  <button class="viewer-close" onclick="closeViewer()">✕</button>
+  <button class="viewer-nav left" onclick="navPhoto(-1)">‹</button>
+  <img id="fullImg" src="" alt="">
+  <button class="viewer-nav right" onclick="navPhoto(1)">›</button>
+  <div class="viewer-controls">
+    <div class="viewer-counter" id="viewerCounter"></div>
+    <button class="icon-btn" onclick="downloadPhoto()">⬇</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+//  STATE
+// ============================================================
+let currentUser = null;
+let calcBuffer = '';
+let calcExpr = '';
+let calcNewNum = true;
+let memory = 0;
+let wrongPin = 0;
+let pinLocked = false;
+let pinLockTimer = null;
+let pinInput = '';
+let viewerIndex = 0;
+let lastActivity = Date.now();
+let calcHistory = [];
+let secretBuf = '';
+let currentVaultTab = 'photos';
+let allPhotos = [];
+let sortAsc = true;
+
+const SETTINGS_KEY = 'svault_settings';
+let settings = { sound: true, autoLogout: true, vibrate: true };
+
+// ============================================================
+//  AUDIO (Web Audio API — no files needed)
+// ============================================================
+const ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playBeep(freq = 880, dur = 0.08, type = 'sine', vol = 0.15) {
+  if (!settings.sound) return;
+  try {
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+    o.start(); o.stop(ctx.currentTime + dur);
+  } catch(e){}
+}
+
+function playSuccess() { playBeep(660,0.07,'sine'); setTimeout(()=>playBeep(880,0.12,'sine'),80); }
+function playError()   { playBeep(200,0.2,'sawtooth',0.1); }
+function playKey()     { playBeep(1200,0.04,'sine',0.07); }
+function playClick()   { playBeep(600,0.05,'square',0.05); }
+function playVault()   {
+  [440,550,660,880].forEach((f,i)=>setTimeout(()=>playBeep(f,0.15,'sine',0.1),i*80));
+}
+
+function vibrate(ms=30) {
+  if(settings.vibrate && navigator.vibrate) navigator.vibrate(ms);
+}
+
+// ============================================================
+//  UTILS
+// ============================================================
+function showToast(msg, isError=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.borderColor = isError ? 'rgba(255,68,68,0.4)' : 'var(--glass-border)';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2400);
+}
+
+function showPage(id) {
+  document.querySelectorAll('.page,.page-full').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function resumeAudio() { if(ctx.state==='suspended') ctx.resume(); }
+
+// ============================================================
+//  SPLASH
+// ============================================================
+setTimeout(()=>{
+  document.getElementById('splash').style.opacity='0';
+  document.getElementById('splash').style.transition='opacity 0.5s';
+  setTimeout(()=>{
+    document.getElementById('splash').style.display='none';
+    loadSettings();
+    showPage('authPage');
+  },500);
+},2500);
+
+// ============================================================
+//  SETTINGS
+// ============================================================
+function loadSettings() {
+  const s = JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}');
+  settings = { sound:true, autoLogout:true, vibrate:true, ...s };
+  document.getElementById('soundToggle').checked = settings.sound;
+  document.getElementById('autoLogoutToggle').checked = settings.autoLogout;
+  document.getElementById('vibrateToggle').checked = settings.vibrate;
+}
+function saveSetting(key,val) { settings[key]=val; localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings)); }
+
+// ============================================================
+//  AUTH
+// ============================================================
+function switchAuthTab(tab) {
+  document.getElementById('loginForm').style.display = tab==='login'?'block':'none';
+  document.getElementById('registerForm').style.display = tab==='register'?'block':'none';
+  document.getElementById('tabLogin').classList.toggle('active', tab==='login');
+  document.getElementById('tabRegister').classList.toggle('active', tab==='register');
+  playClick();
+}
+
+function togglePw(id, btn) {
+  const el = document.getElementById(id);
+  if(el.type==='password'){el.type='text';btn.style.opacity='1';}
+  else{el.type='password';btn.style.opacity='0.5';}
+}
+
+function checkStrength(inp) {
+  const v = inp.value;
+  let s = 0;
+  if(v.length>=6) s++;
+  if(/[A-Z]/.test(v)) s++;
+  if(/[0-9]/.test(v)) s++;
+  if(/[^A-Za-z0-9]/.test(v)) s++;
+  const colors = ['#ff4444','#ff8800','#ffcc00','#00ff88'];
+  const widths  = ['25%','50%','75%','100%'];
+  const fill = document.getElementById('strengthFill');
+  fill.style.width = s>0 ? widths[s-1] : '0';
+  fill.style.background = s>0 ? colors[s-1] : '#ff4444';
+}
+
+function register() {
+  resumeAudio();
+  const u = document.getElementById('regUser').value.trim();
+  const p = document.getElementById('regPass').value;
+  if(!u||!p) return showToast('Fill all fields',true);
+  if(p.length<4) return showToast('Password too short',true);
+  const users = JSON.parse(localStorage.getItem('svault_users')||'{}');
+  if(users[u]) return showToast('Username taken',true);
+  users[u] = btoa(p);
+  localStorage.setItem('svault_users',JSON.stringify(users));
+  playSuccess(); showToast('Account created! Login now.');
+  switchAuthTab('login');
+}
+
+function login() {
+  resumeAudio();
+  const u = document.getElementById('logUser').value.trim();
+  const p = document.getElementById('logPass').value;
+  const users = JSON.parse(localStorage.getItem('svault_users')||'{}');
+  if(users[u]===btoa(p)){ successLogin(u); }
+  else { playError(); vibrate(80); showToast('Wrong credentials',true); }
+}
+
+function guestLogin() {
+  resumeAudio();
+  successLogin('guest');
+}
+
+function successLogin(u) {
+  currentUser = u;
+  calcHistory = JSON.parse(localStorage.getItem('svault_history_'+u)||'[]');
+  playSuccess(); vibrate(30);
+  showToast('Welcome back, '+u+'!');
+  showPage('calcPage');
+  updateHistoryBadge();
+}
+
+function doLogout() {
+  currentUser=null; calcHistory=[]; calcBuffer=''; calcExpr=''; calcNewNum=true;
+  document.getElementById('calcMain').textContent='0';
+  document.getElementById('calcExpr').textContent='';
+  playClick();
+  showPage('authPage');
+}
+
+function deleteAccount() {
+  if(!confirm('Delete account? ALL data will be lost!')) return;
+  const users = JSON.parse(localStorage.getItem('svault_users')||'{}');
+  delete users[currentUser];
+  localStorage.setItem('svault_users',JSON.stringify(users));
+  ['photos','notes','history','pin'].forEach(k=>localStorage.removeItem('svault_'+k+'_'+currentUser));
+  doLogout();
+  showToast('Account deleted');
+}
+
+// ============================================================
+//  CALCULATOR
+// ============================================================
+function cPress(v) {
+  resumeAudio();
+  playKey(); vibrate(15);
+  lastActivity = Date.now();
+
+  if(v==='C') { calcBuffer=''; calcExpr=''; calcNewNum=true; updateDisp('0'); return; }
+  if(v==='M+') { memory+=parseFloat(calcBuffer||0); showToast('M = '+memory); return; }
+  if(v==='MR') { calcBuffer=String(memory); calcNewNum=false; updateDisp(calcBuffer); return; }
+  if(v==='MC') { memory=0; document.getElementById('calcMem').textContent=''; return; }
+  if(v==='x²') {
+    const n=parseFloat(calcBuffer||0);
+    calcExpr=calcBuffer+'²';
+    calcBuffer=String(n*n);
+    calcNewNum=true;
+    updateDisp(calcBuffer);
+    return;
+  }
+  if(v==='√') {
+    const n=parseFloat(calcBuffer||0);
+    calcExpr='√'+calcBuffer;
+    calcBuffer=String(Math.sqrt(n));
+    calcNewNum=true;
+    updateDisp(calcBuffer);
+    return;
+  }
+  if(v==='%') {
+    calcBuffer=String(parseFloat(calcBuffer||0)/100);
+    updateDisp(calcBuffer);
+    return;
+  }
+  if(v==='±') {
+    calcBuffer=String(-parseFloat(calcBuffer||0));
+    updateDisp(calcBuffer);
+    return;
+  }
+  if(v==='=') {
+    if(!calcExpr) return;
+    try {
+      const expr = calcExpr + calcBuffer;
+      // eslint-disable-next-line no-new-func
+      const res = Function('"use strict";return('+expr.replace(/×/g,'*').replace(/÷/g,'/')+')')();
+      const clean = parseFloat(res.toFixed(10));
+      const entry = { expr: expr+' =', result: clean, time: new Date().toLocaleTimeString() };
+      calcHistory.unshift(entry);
+      if(calcHistory.length>50) calcHistory.pop();
+      localStorage.setItem('svault_history_'+currentUser, JSON.stringify(calcHistory));
+      updateHistoryBadge();
+      calcExpr=''; calcBuffer=String(clean); calcNewNum=true;
+      updateDisp(String(clean));
+      document.getElementById('calcExpr').textContent = expr + ' =';
+      playSuccess();
+    } catch(e) { showToast('Error',true); playError(); calcBuffer=''; calcExpr=''; updateDisp('Err'); calcNewNum=true; }
+    return;
+  }
+
+  const ops = ['+','-','*','/'];
+  if(ops.includes(v)) {
+    if(calcBuffer) { calcExpr += calcBuffer; calcBuffer=''; }
+    calcExpr += v==='*'?'×':v==='/'?'÷':v;
+    calcNewNum=true;
+    document.getElementById('calcExpr').textContent = calcExpr;
+    return;
+  }
+
+  if(calcNewNum) { calcBuffer=''; calcNewNum=false; }
+  if(v==='.' && calcBuffer.includes('.')) return;
+  calcBuffer+=v;
+  updateDisp(calcBuffer);
+  document.getElementById('calcExpr').textContent = calcExpr;
+
+  // Secret trigger
+  secretBuf=(secretBuf+v).slice(-3);
+  if(secretBuf==='777') {
+    playVault(); vibrate(50);
+    pinInput='';
+    updatePinDots();
+    wrongPin=0; pinLocked=false;
+    document.getElementById('lockCountdown').textContent='';
+    document.getElementById('pinSubtitle').textContent='ENTER 4-DIGIT PIN';
+    showPage('pinPage');
+  }
+  if(memory!==0) document.getElementById('calcMem').textContent='M: '+memory;
+}
+
+function updateDisp(v) {
+  const el = document.getElementById('calcMain');
+  el.textContent = v.length>12 ? parseFloat(v).toExponential(4) : v;
+  el.style.fontSize = v.length>10 ? '20px' : '28px';
+}
+
+function updateHistoryBadge() {
+  // no badge in this layout
+}
+
+// ============================================================
+//  HISTORY
+// ============================================================
+function showHistory() {
+  playClick();
+  showPage('historyPage');
+  renderHistory();
+}
+
+function renderHistory() {
+  const el = document.getElementById('historyList');
+  if(!calcHistory.length){ el.innerHTML='<div style="text-align:center;opacity:0.4;padding:40px;font-size:14px;letter-spacing:2px">NO HISTORY YET</div>'; return; }
+  el.innerHTML = calcHistory.map((h,i)=>`
+    <div class="history-item">
+      <span class="expr">${h.expr}</span>
+      <span class="result">${h.result}</span>
+    </div>`).join('');
+}
+
+function clearHistory() {
+  calcHistory=[];
+  localStorage.removeItem('svault_history_'+currentUser);
+  renderHistory();
+  showToast('History cleared');
+}
+
+// ============================================================
+//  SETTINGS PAGE
+// ============================================================
+function showSettings() {
+  playClick();
+  document.getElementById('settingsUsername').textContent = currentUser;
+  loadSettings();
+  showPage('settingsPage');
+}
+
+function changePin() {
+  const p1 = document.getElementById('newPin').value;
+  const p2 = document.getElementById('confirmPin').value;
+  if(p1.length!==4||p2.length!==4) return showToast('PIN must be 4 digits',true);
+  if(p1!==p2) return showToast('PINs do not match',true);
+  localStorage.setItem('svault_pin_'+currentUser, p1);
+  playSuccess(); showToast('PIN changed!');
+  document.getElementById('newPin').value='';
+  document.getElementById('confirmPin').value='';
+}
+
+// ============================================================
+//  PIN
+// ============================================================
+function pinPress(n) {
+  if(pinLocked) return;
+  playKey(); vibrate(15);
+  if(pinInput.length>=4) return;
+  pinInput+=String(n);
+  updatePinDots();
+  if(pinInput.length===4) setTimeout(checkPin,120);
+}
+
+function pinDelete() {
+  if(!pinInput.length) return;
+  playKey();
+  pinInput=pinInput.slice(0,-1);
+  updatePinDots();
+}
+
+function updatePinDots() {
+  document.querySelectorAll('.pin-dot').forEach((d,i)=>{
+    d.classList.toggle('filled', i<pinInput.length);
+  });
+}
+
+function checkPin() {
+  const saved = localStorage.getItem('svault_pin_'+currentUser)||'1234';
+  if(pinInput===saved) {
+    playVault(); vibrate(60);
+    showPage('vaultPage');
+    loadVault();
+    switchVaultTab('photos');
+  } else {
+    playError(); vibrate(100);
+    wrongPin++;
+    document.getElementById('pinPad').style.animation='shake 0.4s ease';
+    setTimeout(()=>document.getElementById('pinPad').style.animation='',450);
+    pinInput='';
+    updatePinDots();
+    if(wrongPin>=3) startLockout();
+    else showToast('Wrong PIN — '+( 3-wrongPin)+' tries left',true);
+  }
+}
+
+function startLockout() {
+  pinLocked=true;
+  let secs=30;
+  const interval=setInterval(()=>{
+    document.getElementById('lockCountdown').textContent='🔒 Locked — wait '+secs+'s';
+    secs--;
+    if(secs<0){
+      clearInterval(interval);
+      pinLocked=false; wrongPin=0;
+      document.getElementById('lockCountdown').textContent='';
+    }
+  },1000);
+}
+
+// ============================================================
+//  VAULT — PHOTOS
+// ============================================================
+function switchVaultTab(tab) {
+  currentVaultTab=tab;
+  document.getElementById('vTabPhoto').classList.toggle('active',tab==='photos');
+  document.getElementById('vTabNote').classList.toggle('active',tab==='notes');
+  document.getElementById('photoVault').style.display=tab==='photos'?'flex':'none';
+  document.getElementById('noteVault').style.display=tab==='notes'?'flex':'none';
+  playClick();
+  if(tab==='notes') renderNotes();
+}
+
+function loadVault() {
+  allPhotos = JSON.parse(localStorage.getItem('svault_photos_'+currentUser)||'[]');
+  renderGallery();
+}
+
+function renderGallery() {
+  const g = document.getElementById('gallery');
+  document.getElementById('statCount').textContent = allPhotos.length;
+  const bytes = allPhotos.reduce((a,p)=>a+(p.length*0.75),0);
+  document.getElementById('statSize').textContent = bytes>1024*1024 ? (bytes/1024/1024).toFixed(1)+' MB' : Math.round(bytes/1024)+' KB';
+
+  if(!allPhotos.length){
+    g.innerHTML='<div style="text-align:center;opacity:0.4;padding:40px;font-size:13px;letter-spacing:2px;grid-column:1/-1">VAULT IS EMPTY</div>';
+    return;
+  }
+  g.innerHTML = allPhotos.map((p,i)=>`
+    <div class="photo-thumb" onclick="openViewer(${i})">
+      <img src="${p}" loading="lazy" alt="Photo ${i+1}">
+      <button class="del-btn" onclick="event.stopPropagation();deletePhoto(${i})">✕</button>
+    </div>`).join('');
+}
+
+function uploadPhotos(e) {
+  resumeAudio();
+  const files = Array.from(e.target.files);
+  let done = 0;
+  files.forEach(f=>{
+    const r = new FileReader();
+    r.onload=ev=>{
+      allPhotos.push(ev.target.result);
+      done++;
+      if(done===files.length){
+        savePhotos();
+        renderGallery();
+        playSuccess();
+        showToast(files.length+' photo(s) added!');
+      }
+    };
+    r.readAsDataURL(f);
+  });
+}
+
+function savePhotos() {
+  localStorage.setItem('svault_photos_'+currentUser, JSON.stringify(allPhotos));
+}
+
+function deletePhoto(i) {
+  allPhotos.splice(i,1);
+  savePhotos(); renderGallery(); playClick();
+  showToast('Photo deleted');
+}
+
+function clearAllPhotos() {
+  if(!confirm('Clear all photos?')) return;
+  allPhotos=[];
+  savePhotos(); renderGallery();
+  playError(); showToast('Vault cleared');
+}
+
+function sortPhotos() {
+  sortAsc=!sortAsc;
+  allPhotos.reverse();
+  savePhotos(); renderGallery(); playClick();
+  showToast('Photos sorted');
+}
+
+// ============================================================
+//  VIEWER
+// ============================================================
+function openViewer(i) {
+  viewerIndex=i;
+  updateViewer();
+  document.getElementById('viewer').classList.add('active');
+  playClick();
+}
+
+function updateViewer() {
+  document.getElementById('fullImg').src = allPhotos[viewerIndex];
+  document.getElementById('viewerCounter').textContent = (viewerIndex+1)+' / '+allPhotos.length;
+}
+
+function navPhoto(dir) {
+  viewerIndex = (viewerIndex+dir+allPhotos.length)%allPhotos.length;
+  document.getElementById('fullImg').style.opacity='0';
+  setTimeout(()=>{updateViewer();document.getElementById('fullImg').style.opacity='1';},150);
+  playKey();
+}
+
+function closeViewer() { document.getElementById('viewer').classList.remove('active'); playClick(); }
+
+function downloadPhoto() {
+  const a=document.createElement('a');
+  a.href=allPhotos[viewerIndex];
+  a.download='vault_photo_'+(viewerIndex+1)+'.jpg';
+  a.click();
+  playSuccess(); showToast('Downloading...');
+}
+
+// Swipe
+let startX=0;
+document.getElementById('viewer').addEventListener('touchstart',e=>startX=e.touches[0].clientX);
+document.getElementById('viewer').addEventListener('touchend',e=>{
+  const d=e.changedTouches[0].clientX-startX;
+  if(Math.abs(d)>50) navPhoto(d<0?1:-1);
+});
+
+// Keyboard
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('viewer').classList.contains('active')){
+    if(e.key==='ArrowRight') navPhoto(1);
+    if(e.key==='ArrowLeft')  navPhoto(-1);
+    if(e.key==='Escape')     closeViewer();
+  }
+});
+
+// ============================================================
+//  NOTES
+// ============================================================
+function saveNote() {
+  const title = document.getElementById('noteTitle').value.trim();
+  const body  = document.getElementById('noteBody').value.trim();
+  if(!title&&!body) return showToast('Write something first',true);
+  const notes = JSON.parse(localStorage.getItem('svault_notes_'+currentUser)||'[]');
+  notes.unshift({ title:title||'Untitled', body, time:new Date().toLocaleString() });
+  localStorage.setItem('svault_notes_'+currentUser,JSON.stringify(notes));
+  document.getElementById('noteTitle').value='';
+  document.getElementById('noteBody').value='';
+  renderNotes(); playSuccess(); showToast('Note saved');
+}
+
+function renderNotes() {
+  const notes = JSON.parse(localStorage.getItem('svault_notes_'+currentUser)||'[]');
+  const el=document.getElementById('notesList');
+  if(!notes.length){ el.innerHTML='<div style="text-align:center;opacity:0.4;padding:20px;font-size:13px;letter-spacing:2px">NO NOTES YET</div>'; return; }
+  el.innerHTML=notes.map((n,i)=>`
+    <div class="note-item">
+      <button class="note-del" onclick="deleteNote(${i})">✕</button>
+      <div class="note-title">${escHtml(n.title)}</div>
+      <div class="note-body">${escHtml(n.body)}</div>
+      <div style="font-size:11px;opacity:0.4;margin-top:6px">${n.time}</div>
+    </div>`).join('');
+}
+
+function deleteNote(i) {
+  const notes=JSON.parse(localStorage.getItem('svault_notes_'+currentUser)||'[]');
+  notes.splice(i,1);
+  localStorage.setItem('svault_notes_'+currentUser,JSON.stringify(notes));
+  renderNotes(); playClick(); showToast('Note deleted');
+}
+
+function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ============================================================
+//  THEME
+// ============================================================
+function toggleTheme() {
+  document.body.classList.toggle('light-theme');
+  playClick();
+}
+
+// ============================================================
+//  BACK
+// ============================================================
+function backToCalc() {
+  playClick();
+  showPage('calcPage');
+}
+
+// ============================================================
+//  AUTO LOGOUT
+// ============================================================
+document.addEventListener('click',()=>{ lastActivity=Date.now(); resumeAudio(); });
+setInterval(()=>{
+  if(!settings.autoLogout||!currentUser) return;
+  if(Date.now()-lastActivity>120000){
+    showToast('Auto-logged out'); doLogout();
+  }
+},5000);
+</script>
+</body>
+</html>
