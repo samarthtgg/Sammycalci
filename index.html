@@ -1418,13 +1418,26 @@ function navPhoto(dir) {
 }
 
 function closeViewer() { document.getElementById('viewer').classList.remove('active'); playClick(); }
-
 function downloadPhoto() {
-  const a=document.createElement('a');
-  a.href=allPhotos[viewerIndex];
-  a.download='vault_photo_'+(viewerIndex+1)+'.jpg';
-  a.click();
-  playSuccess(); showToast('Downloading...');
+  const img = allPhotos[viewerIndex];
+
+  if (!img) {
+    alert("No image found");
+    return;
+  }
+
+  fetch(img)
+    .then(res => res.blob())
+    .then(blob => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "Vault_" + Date.now() + ".jpg";
+      a.click();
+      URL.revokeObjectURL(url);
+
+      showToast("Downloaded 📸");
+    });
 }
 
 // Swipe
