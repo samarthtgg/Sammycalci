@@ -682,6 +682,9 @@ textarea:focus { border-color: var(--primary); }
 }
 .search-bar input { margin: 0; flex: 1; }
 </style>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
 </head>
 <body>
 
@@ -1505,10 +1508,12 @@ setInterval(()=>{
   }
 },5000);
 </script>
+
 <script>
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/Sammycalci/service-worker.js");
 }
 </script>
+
 </body>
 </html>
