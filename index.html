@@ -1501,32 +1501,29 @@ async function saveNote() {
   loadNotes();
 }
 
-  async function loadNotes() {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return;
-
-  const { data, error } = await supabase
+  async function loadNotesFast() {
+  const { data } = await supabase
     .from("notes")
     .select("*")
-    .eq("user_id", user.id)
-    .order("id", { ascending: false });
+    .limit(20);
 
+  AppCache.notes = data || [];
+
+  nextFrame(renderNotesFast);
+}
+
+function renderNotesFast() {
   const el = document.getElementById("notesList");
 
-  if (!data || data.length === 0) {
-    el.innerHTML = `<div style="text-align:center;opacity:0.5;">No notes yet</div>`;
-    return;
-  }
-
-  el.innerHTML = data.map((n) => `
+  el.innerHTML = AppCache.notes.map((n,i)=>`
     <div class="note-item">
-      <button class="note-del" onclick="deleteNote('${n.id}')">×</button>
-      <div class="note-title">${n.title || ""}</div>
-      <div class="note-body">${n.body || ""}</div>
-      <div style="font-size:11px;opacity:0.5;">${n.time}</div>
+      <button class="note-del" onclick="deleteNote(${i})">✕</button>
+      <div class="note-title">${escHtml(n.title)}</div>
+      <div class="note-body">${escHtml(n.body)}</div>
+      <div style="font-size:11px;opacity:0.4">${n.time}</div>
     </div>
-  `).join("");
-  }
+  `).join('');
+}
 
   async function deleteNote(id) {
   const { error } = await supabase
