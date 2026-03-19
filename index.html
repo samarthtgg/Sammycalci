@@ -1446,39 +1446,73 @@ document.addEventListener('keydown',e=>{
 
 // ============================================================
 //  NOTES
-// ============================================================
-function saveNote() {
-  const title = document.getElementById('noteTitle').value.trim();
-  const body  = document.getElementById('noteBody').value.trim();
-  if(!title&&!body) return showToast('Write something first',true);
-  const notes = JSON.parse(localStorage.getItem('svault_notes_'+currentUser)||'[]');
-  notes.unshift({ title:title||'Untitled', body, time:new Date().toLocaleString() });
-  localStorage.setItem('svault_notes_'+currentUser,JSON.stringify(notes));
-  document.getElementById('noteTitle').value='';
-  document.getElementById('noteBody').value='';
-  renderNotes(); playSuccess(); showToast('Note saved');
+// ===========================================================
+async function saveNote() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return alert("Login required");
+
+  const title = document.getElementById("noteTitle").value.trim();
+  const body = document.getElementById("noteBody").value.trim();
+
+  if (!title && !body) return;
+
+  await supabase.from("notes").insert([
+    {
+      user_id: user.id,
+      title: title,
+      body: body,
+      time: new Date().toLocaleString()
+    }
+  ]);
+
+  document.getElementById("noteTitle").value = "";
+  document.getElementById("noteBody").value = "";
+
+  loadNotes();
 }
 
-function renderNotes() {
-  const notes = JSON.parse(localStorage.getItem('svault_notes_'+currentUser)||'[]');
-  const el=document.getElementById('notesList');
-  if(!notes.length){ el.innerHTML='<div style="text-align:center;opacity:0.4;padding:20px;font-size:13px;letter-spacing:2px">NO NOTES YET</div>'; return; }
-  el.innerHTML=notes.map((n,i)=>`
+  async function loadNotes() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+
+  const { data, error } = await supabase
+    .from("notes")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("id", { ascending: false });
+
+  const el = document.getElementById("notesList");
+
+  if (!data || data.length === 0) {
+    el.innerHTML = `<div style="text-align:center;opacity:0.5;">No notes yet</div>`;
+    return;
+  }
+
+  el.innerHTML = data.map((n) => `
     <div class="note-item">
-      <button class="note-del" onclick="deleteNote(${i})">✕</button>
-      <div class="note-title">${escHtml(n.title)}</div>
-      <div class="note-body">${escHtml(n.body)}</div>
-      <div style="font-size:11px;opacity:0.4;margin-top:6px">${n.time}</div>
-    </div>`).join('');
-}
+      <button class="note-del" onclick="deleteNote('${n.id}')">×</button>
+      <div class="note-title">${n.title || ""}</div>
+      <div class="note-body">${n.body || ""}</div>
+      <div style="font-size:11px;opacity:0.5;">${n.time}</div>
+    </div>
+  `).join("");
+  }
 
-function deleteNote(i) {
-  const notes=JSON.parse(localStorage.getItem('svault_notes_'+currentUser)||'[]');
-  notes.splice(i,1);
-  localStorage.setItem('svault_notes_'+currentUser,JSON.stringify(notes));
-  renderNotes(); playClick(); showToast('Note deleted');
-}
+  async function deleteNote(id) {
+  const { error } = await supabase
+    .from("notes")
+    .delete()
+    .eq("id", id);
 
+  if (error) {
+    alert("Delete failed");
+    return;
+  }
+
+  loadNotes();
+  playClick();
+  showToast("Note deleted");
+}
 function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 // ============================================================
@@ -1514,6 +1548,21 @@ if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/Sammycalci/service-worker.js");
 }
 </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
+<script>
+const supabase = window.supabase.createClient(
+  "https://zndynzrnfcqewjmcxjiw.supabase.co",
+  "sb_publishable_nOCC2uyTqParpqd-IfaTzA_ov5yzFeP"
+);
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+const supabase = window.supabase.createClient(
+  "https://zndynzrnfcqewjmcxjiw.supabase.co",
+  "YOUR_PUBLIC_KEY"
+);
+</script>
 </body>
 </html>
