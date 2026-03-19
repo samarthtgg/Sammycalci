@@ -1073,15 +1073,32 @@ function register() {
   switchAuthTab('login');
 }
 
-function login() {
-  resumeAudio();
-  const u = document.getElementById('logUser').value.trim();
-  const p = document.getElementById('logPass').value;
-  const users = JSON.parse(localStorage.getItem('svault_users')||'{}');
-  if(users[u]===btoa(p)){ successLogin(u); }
-  else { playError(); vibrate(80); showToast('Wrong credentials',true); }
-}
+async function login() {
+  const email = document.getElementById("logUser").value + "@app.com";
+  const password = document.getElementById("logPass").value;
 
+  showToast("Logging in... ⏳");
+
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    showToast("Login failed ❌", true);
+    return;
+  }
+
+  currentUser = data.user.id;
+
+  // 🚀 Show UI instantly (don’t wait)
+  showPage('calcPage');
+
+  // Load data in background
+  setTimeout(() => {
+    loadNotes();
+  }, 100);
+}
 function guestLogin() {
   resumeAudio();
   successLogin('guest');
