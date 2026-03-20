@@ -1173,25 +1173,25 @@ async function login() {
   const email = document.getElementById("logUser").value + "@app.com";
   const password = document.getElementById("logPass").value;
 
-  showToast("Logging in... ⏳");
-
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password
-  });
-
-  if (error) {
-    showToast("Login failed ❌", true);
-    return;
-  }
-
-  currentUser = data.user.id;
-
-  // 🚀 Show UI instantly (don’t wait)
+  // 🔥 Instant UI (no delay)
   showPage('calcPage');
+  showToast("Welcome...");
 
-  // Load data in background
-  setTimeout(() => {
+  // Run login in background
+  setTimeout(async () => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) {
+      showToast("Login failed ❌", true);
+      doLogout();
+      return;
+    }
+
+    currentUser = data.user.id;
+
     loadNotes();
   }, 100);
 }
@@ -1410,31 +1410,31 @@ function checkPin() {
   const saved = localStorage.getItem('svault_pin_'+currentUser)||'1234';
 
   if(pinInput===saved) {
-    playVault(); 
+    playVault();   
     vibrate(60);
     showPage('vaultPage');
     loadVault();
     switchVaultTab('photos');
-  } 
-else {
-  captureIntruder();
-
-  playError(); 
-  vibrate(100);
-
-  wrongPin++;
-
-  document.getElementById('pinPad').style.animation='shake 0.4s ease';
-  setTimeout(()=>document.getElementById('pinPad').style.animation='',450);
-
-  pinInput='';
-  updatePinDots();
-
-  if(wrongPin>=3) {
-    startLockout();
-    showPage('intruderPage'); // ✅ HERE
   } else {
-    showToast('Wrong PIN — '+(3-wrongPin)+' tries left',true);
+    captureIntruder();
+
+    playError();   
+    vibrate(100);
+
+    wrongPin++;
+
+    document.getElementById('pinPad').style.animation='shake 0.4s ease';
+    setTimeout(()=>document.getElementById('pinPad').style.animation='',450);
+
+    pinInput='';
+    updatePinDots();
+
+    if(wrongPin>=3) {
+      startLockout();
+      showPage('intruderPage');
+    } else {
+      showToast('Wrong PIN — '+(3-wrongPin)+' tries left',true);
+    }
   }
 }
 function startLockout() {
