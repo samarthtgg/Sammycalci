@@ -972,6 +972,12 @@ async function initCamera() {
     console.log("Camera permission denied ❌");
   }
 }
+  function stopCamera() {
+if (cameraStream) {
+cameraStream.getTracks().forEach(track => track.stop());
+cameraStream = null;
+}
+  }
 
 function captureIntruder() {
   const video = document.getElementById("camera");
@@ -1220,12 +1226,20 @@ function successLogin(u) {
 }
 
 function doLogout() {
-  currentUser=null; calcHistory=[]; calcBuffer=''; calcExpr=''; calcNewNum=true;
+  stopCamera(); // 🔥 ADD THIS
+
+  currentUser=null;
+  calcHistory=[];
+  calcBuffer='';
+  calcExpr='';
+  calcNewNum=true;
+
   document.getElementById('calcMain').textContent='0';
   document.getElementById('calcExpr').textContent='';
+
   playClick();
   showPage('authPage');
-}
+  }
 
 function deleteAccount() {
   if(!confirm('Delete account? ALL data will be lost!')) return;
