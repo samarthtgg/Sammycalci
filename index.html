@@ -1061,8 +1061,15 @@ function showToast(msg, isError=false) {
 }
 
 function showPage(id) {
-  document.querySelectorAll('.page,.page-full').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.page,.page-full')
+    .forEach(p => p.classList.remove('active'));
+
   document.getElementById(id).classList.add('active');
+
+  // 🔥 IMPORTANT
+  if (id === "intruderPage") {
+    renderIntruders();
+  }
 }
 
 function resumeAudio() { if(ctx.state==='suspended') ctx.resume(); }
