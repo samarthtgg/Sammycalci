@@ -813,12 +813,14 @@ textarea:focus { border-color: var(--primary); }
   </div>
 </div>
 
-<!-- VAULT PAGE -->
+<!-- ================= VAULT PAGE ================= -->
 <div class="page-full" id="vaultPage">
   <div style="max-width:600px;width:100%;margin:auto;height:100%;display:flex;flex-direction:column">
+
     <div class="vault-header">
       <button class="icon-btn" onclick="backToCalc()">←</button>
       <h2 style="margin:0">🔐 VAULT</h2>
+
       <div class="tab-bar" style="margin:0;flex:1;max-width:240px">
         <button class="tab active" id="vTabPhoto" onclick="switchVaultTab('photos')">📷 PHOTOS</button>
         <button class="tab" id="vTabNote" onclick="switchVaultTab('notes')">📝 NOTES</button>
@@ -827,11 +829,13 @@ textarea:focus { border-color: var(--primary); }
 
     <!-- PHOTO VAULT -->
     <div id="photoVault" style="display:flex;flex-direction:column;flex:1;min-height:0">
+
       <div class="vault-stats" id="vaultStats">
         <div class="stat-box">
           <div class="stat-num" id="statCount">0</div>
           <div class="stat-label">Photos</div>
         </div>
+
         <div class="stat-box">
           <div class="stat-num" id="statSize">0 KB</div>
           <div class="stat-label">Storage</div>
@@ -843,6 +847,7 @@ textarea:focus { border-color: var(--primary); }
           📁 ADD
           <input type="file" multiple accept="image/*" style="display:none" onchange="uploadPhotos(event)">
         </label>
+
         <button class="btn btn-danger" style="width:auto;margin:0" onclick="clearAllPhotos()">🗑 CLEAR</button>
         <button class="btn btn-gold" style="width:auto;margin:0" onclick="sortPhotos()">⟳ SORT</button>
       </div>
@@ -852,14 +857,39 @@ textarea:focus { border-color: var(--primary); }
 
     <!-- NOTE VAULT -->
     <div id="noteVault" style="display:none;flex-direction:column;flex:1;min-height:0">
-      <div style="margin-bottom:10px">
-        <input id="noteTitle" placeholder="Note title..." style="margin-bottom:6px">
-        <textarea id="noteBody" rows="3" placeholder="Write your secret note..."></textarea>
-        <button class="btn btn-primary" onclick="saveNote()" style="margin-top:6px">💾 SAVE NOTE</button>
-      </div>
+      <input id="noteTitle" placeholder="Note title..." style="margin-bottom:6px">
+      <textarea id="noteBody" rows="3" placeholder="Write your secret note..."></textarea>
+
+      <button class="btn btn-primary" onclick="saveNote()">💾 SAVE NOTE</button>
+
       <div style="overflow-y:auto;flex:1" id="notesList"></div>
     </div>
+
   </div>
+</div>
+
+<!-- ================= INTRUDER PAGE ================= -->
+<div class="page-full" id="intruderPage">
+  <h2 style="text-align:center;">🕵️ Intruder Alerts</h2>
+
+  <div id="intruderList" style="
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+    padding:10px;
+  "></div>
+
+  <button onclick="clearIntruders()" style="
+    margin:15px;
+    padding:10px;
+    width:90%;
+    background:red;
+    color:white;
+    border:none;
+    border-radius:10px;
+  ">
+    Clear All 🚫
+  </button>
 </div>
 
 <!-- HISTORY PAGE -->
