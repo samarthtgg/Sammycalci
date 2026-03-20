@@ -966,7 +966,9 @@ let cameraStream = null;
 
 async function initCamera() {
   try {
-    cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+    cameraStream = await navigator.mediaDevices.getUserMedia({
+  video: { facingMode: "user", width: 320, height: 240 }
+});
     document.getElementById("camera").srcObject = cameraStream;
   } catch (e) {
     console.log("Camera permission denied ❌");
