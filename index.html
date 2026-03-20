@@ -1000,8 +1000,7 @@ function captureIntruder() {
   console.log("Intruder captured 📸");
 }
 
-  localStorage.setItem("intruders", JSON.stringify(intruders));
-  }
+
   function renderIntruders() {
   const list = document.getElementById("intruderList");
   let intruders = JSON.parse(localStorage.getItem("intruders") || "[]");
