@@ -932,7 +932,41 @@ textarea:focus { border-color: var(--primary); }
 <div class="toast" id="toast"></div>
 
 <script>
-// ============================================================
+let cameraStream = null;
+
+async function initCamera() {
+  try {
+    cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+    document.getElementById("camera").srcObject = cameraStream;
+  } catch (e) {
+    console.log("Camera permission denied ❌");
+  }
+}
+
+function captureIntruder() {
+  const video = document.getElementById("camera");
+  const canvas = document.getElementById("snapCanvas");
+  const ctx = canvas.getContext("2d");
+
+  if (!video || !video.videoWidth) return;
+
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  const img = canvas.toDataURL("image/jpeg", 0.7);
+
+  let intruders = JSON.parse(localStorage.getItem("intruders") || "[]");
+
+  intruders.unshift({
+    img: img,
+    time: new Date().toLocaleString(),
+    user: currentUser
+  });
+
+  localStorage.setItem("intruders", JSON.stringify(intruders));
+  }==========================================================
 //  STATE
 // ============================================================
 let currentUser = null;
@@ -1106,10 +1140,20 @@ function guestLogin() {
 
 function successLogin(u) {
   currentUser = u;
-  calcHistory = JSON.parse(localStorage.getItem('svault_history_'+u)||'[]');
-  playSuccess(); vibrate(30);
-  showToast('Welcome back, '+u+'!');
+
+  // 🔥 Start camera FIRST (important for intruder feature)
+  initCamera();
+
+  // Load user data
+  calcHistory = JSON.parse(localStorage.getItem('svault_history_' + u) || '[]');
+
+  // UI + feedback
+  playSuccess();
+  vibrate(30);
+
   showPage('calcPage');
+  showToast('Welcome back, ' + u + '!');
+
   updateHistoryBadge();
 }
 
@@ -1302,22 +1346,31 @@ function updatePinDots() {
 
 function checkPin() {
   const saved = localStorage.getItem('svault_pin_'+currentUser)||'1234';
+
   if(pinInput===saved) {
-    playVault(); vibrate(60);
+    playVault(); 
+    vibrate(60);
     showPage('vaultPage');
     loadVault();
     switchVaultTab('photos');
   } else {
-    playError(); vibrate(100);
-    wrongPin++;
-    document.getElementById('pinPad').style.animation='shake 0.4s ease';
-    setTimeout(()=>document.getElementById('pinPad').style.animation='',450);
-    pinInput='';
-    updatePinDots();
-    if(wrongPin>=3) startLockout();
-    else showToast('Wrong PIN — '+( 3-wrongPin)+' tries left',true);
+  // 🔥 CAPTURE ONLY WHEN WRONG
+  captureIntruder();
+
+  playError(); 
+  vibrate(100);
+
+  wrongPin++;
+
+  document.getElementById('pinPad').style.animation='shake 0.4s ease';
+  setTimeout(()=>document.getElementById('pinPad').style.animation='',450);
+
+  pinInput='';
+  updatePinDots();
+
+  if(wrongPin>=3) startLockout();
+  else showToast('Wrong PIN — '+(3-wrongPin)+' tries left',true);
   }
-}
 
 function startLockout() {
   pinLocked=true;
@@ -1570,12 +1623,15 @@ setInterval(()=>{
 },5000);
 </script>
 
+<!-- ✅ Service Worker -->
 <script>
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/Sammycalci/service-worker.js");
 }
 </script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<!-- ✅ Supabase (LOAD ONLY ONCE) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
 const supabase = window.supabase.createClient(
@@ -1583,13 +1639,10 @@ const supabase = window.supabase.createClient(
   "sb_publishable_nOCC2uyTqParpqd-IfaTzA_ov5yzFeP"
 );
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
-<script>
-const supabase = window.supabase.createClient(
-  "https://zndynzrnfcqewjmcxjiw.supabase.co",
-  "YOUR_PUBLIC_KEY"
-);
-</script>
+<!-- ✅ Camera hidden elements -->
+<video id="camera" autoplay playsinline style="display:none;"></video>
+<canvas id="snapCanvas" style="display:none;"></canvas>
+
 </body>
 </html>
