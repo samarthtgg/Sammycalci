@@ -978,12 +978,12 @@ function captureIntruder() {
   const canvas = document.getElementById("snapCanvas");
   const ctx = canvas.getContext("2d");
 
-  if (!video || !video.videoWidth) return;
+  if (!video || video.videoWidth === 0) return;
 
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
 
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  ctx.drawImage(video, 0, 0);
 
   const img = canvas.toDataURL("image/jpeg", 0.7);
 
@@ -996,7 +996,33 @@ function captureIntruder() {
   });
 
   localStorage.setItem("intruders", JSON.stringify(intruders));
-  }==========================================================
+
+  console.log("Intruder captured 📸");
+}
+
+  localStorage.setItem("intruders", JSON.stringify(intruders));
+  }
+  function renderIntruders() {
+  const list = document.getElementById("intruderList");
+  let intruders = JSON.parse(localStorage.getItem("intruders") || "[]");
+
+  if (!intruders.length) {
+    list.innerHTML = "<p style='text-align:center'>No intruders yet 🚫</p>";
+    return;
+  }
+
+  list.innerHTML = intruders.map(i => `
+    <div style="background:#111;border-radius:10px;padding:5px">
+      <img src="${i.img}" style="width:100%;border-radius:8px">
+      <div style="font-size:10px;text-align:center">${i.time}</div>
+    </div>
+  `).join('');
+  }
+  function clearIntruders() {
+  localStorage.removeItem("intruders");
+  renderIntruders();
+  showToast("Intruders cleared 🚫");
+  }
 //  STATE
 // ============================================================
 let currentUser = null;
@@ -1390,8 +1416,8 @@ function checkPin() {
     showPage('vaultPage');
     loadVault();
     switchVaultTab('photos');
-  } else {
-  // 🔥 CAPTURE ONLY WHEN WRONG
+  } 
+else {
   captureIntruder();
 
   playError(); 
@@ -1405,10 +1431,13 @@ function checkPin() {
   pinInput='';
   updatePinDots();
 
-  if(wrongPin>=3) startLockout();
-  else showToast('Wrong PIN — '+(3-wrongPin)+' tries left',true);
+  if(wrongPin>=3) {
+    startLockout();
+    showPage('intruderPage'); // ✅ HERE
+  } else {
+    showToast('Wrong PIN — '+(3-wrongPin)+' tries left',true);
   }
-
+}
 function startLockout() {
   pinLocked=true;
   let secs=30;
