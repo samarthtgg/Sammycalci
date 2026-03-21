@@ -1187,75 +1187,51 @@ function playSuccess() {
   setTimeout(() => playBeep(1000, 0.12, 'sine', 0.2), 160);
 }
 
-// 🔥 VIRAL "FAAA" SOUND (fixed + stronger)
-function playFaaa() {
-  if (!settings.sound) return;
 
-  try {
-    safeResume();
 
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
-
-    o.connect(g);
-    g.connect(ctx.destination);
-
-    o.type = "sawtooth";
-
-    o.frequency.setValueAtTime(1000, ctx.currentTime);
-    o.frequency.exponentialRampToValueAtTime(180, ctx.currentTime + 0.4);
-
-    g.gain.setValueAtTime(0.001, ctx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.3, ctx.currentTime + 0.02);
-    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
-
-    o.start();
-    o.stop(ctx.currentTime + 0.4);
-
-  } catch (e) {
-    console.log("Faaa error", e);
-  }
-}
-
-// 🔥 ERROR SOUND (NOW WITH FAAA + PERFECT TIMING)
 function playError() {
   if (!settings.sound) return;
 
   try {
     safeResume();
 
-    // 🔥 FIRST: Viral hit
-    playFaaa();
+    const now = ctx.currentTime;
 
-    const now = ctx.currentTime + 0.15;
+    // 🔥 MAIN FAAA (strong + clear)
+    const o0 = ctx.createOscillator();
+    const g0 = ctx.createGain();
 
-    // 🔥 LAYER 1 — Bass drop
-    const o1 = ctx.createOscillator();
-    const g1 = ctx.createGain();
+    o0.type = "sawtooth";
+    o0.frequency.setValueAtTime(1200, now);
+    o0.frequency.exponentialRampToValueAtTime(150, now + 0.5);
 
-    o1.type = "sawtooth";
-    o1.frequency.setValueAtTime(200, now);
-    o1.frequency.exponentialRampToValueAtTime(70, now + 0.25);
+    g0.gain.setValueAtTime(0.001, now);
+    g0.gain.exponentialRampToValueAtTime(0.5, now + 0.02); // 🔥 strong attack
+    g0.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
 
-    g1.gain.setValueAtTime(0.001, now);
-    g1.gain.exponentialRampToValueAtTime(0.3, now + 0.02);
-    g1.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+    o0.connect(g0);
+    g0.connect(ctx.destination);
 
-    o1.connect(g1);
-    g1.connect(ctx.destination);
+    o0.start(now);
+    o0.stop(now + 0.5);
 
-    o1.start(now);
-    o1.stop(now + 0.25);
-
-    // 🔥 GLITCH
+    // 🔥 DELAYED IMPACT (no overlap issue)
     setTimeout(() => {
-      playBeep(140, 0.12, 'square', 0.15);
-    }, 120);
+      const o1 = ctx.createOscillator();
+      const g1 = ctx.createGain();
 
-    // 🔥 FINAL DROP
-    setTimeout(() => {
-      playBeep(50, 0.3, 'sawtooth', 0.2);
-    }, 260);
+      o1.type = "square";
+      o1.frequency.setValueAtTime(120, ctx.currentTime);
+
+      g1.gain.setValueAtTime(0.3, ctx.currentTime);
+      g1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+
+      o1.connect(g1);
+      g1.connect(ctx.destination);
+
+      o1.start();
+      o1.stop(ctx.currentTime + 0.2);
+    }, 200);
 
   } catch (e) {
     console.log("Error sound failed", e);
