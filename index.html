@@ -1659,7 +1659,11 @@ if (pinInput === saved) {
 
   // ❌ WRONG PIN
 playError();
-  setTimeout(() => playFaa(), 600);
+  wrongPin++;
+
+  await new Promise(r => setTimeout(r, 700));
+  playFaa();
+  await new Promise(r => setTimeout(r, 800));
 
   // 🔥 CRITICAL FIX — let sound finish first
   await new Promise(r => setTimeout(r, 450));
