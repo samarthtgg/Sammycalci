@@ -1261,11 +1261,10 @@ function playVault() {
   });
 }
 // 🔥 FAA viral sound — plays on correct vault PIN
-
 function playFaa() {
-  const audio = new Audio('faaa.mp3');
+  const audio = new Audio('/Sammycalci/faaa.mp3');
   audio.volume = 1.0;
-  audio.play();
+  audio.play().catch(e => console.log('FAA sound error:', e));
 }
 // ============================================================
 //  UTILS
