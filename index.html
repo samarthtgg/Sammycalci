@@ -965,7 +965,7 @@ textarea:focus { border-color: var(--primary); }
 let cameraStream = null;
 
 async function initCamera() {
-async function initCamera() {
+
   try {
     cameraStream = await navigator.mediaDevices.getUserMedia({
       video: { facingMode: "user" }
@@ -1121,7 +1121,12 @@ function showPage(id) {
 }
 
 function resumeAudio() { if(ctx.state==='suspended') ctx.resume(); }
-
+function stopCamera() {
+  if (cameraStream) {
+    cameraStream.getTracks().forEach(track => track.stop());
+    cameraStream = null;
+  }
+}
 // ============================================================
 //  SPLASH
 // ============================================================
