@@ -963,7 +963,9 @@ textarea:focus { border-color: var(--primary); }
 <div class="toast" id="toast"></div>
 
 <script>
-  
+  const AppCache = {
+  notes: []
+};
 function uploadPhotos(event) {
   const files = event.target.files;
 
@@ -1708,7 +1710,7 @@ async function saveNote() {
 
   AppCache.notes = data || [];
 
-  nextFrame(renderNotesFast);
+requestAnimationFrame(renderNotesFast);
 }
 
 function renderNotesFast() {
