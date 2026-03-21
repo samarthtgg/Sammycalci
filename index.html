@@ -1261,36 +1261,25 @@ function playVault() {
   });
 }
 // 🔥 FAA viral sound — plays on correct vault PIN
+
 function playFaa() {
-  if (!settings.sound) return;
-  resumeAudio();
-  const now = ctx.currentTime;
-  
-  // FAA drop sound
-  const o = ctx.createOscillator();
-  const g = ctx.createGain();
-  const dist = ctx.createWaveShaper();
-  
-  // Distortion curve
-  const curve = new Float32Array(256);
-  for(let i=0;i<256;i++){
-    const x = (i*2/256)-1;
-    curve[i] = (Math.PI+300)*x/(Math.PI+300*Math.abs(x));
+  try {
+    if (ctx.state === 'suspended') ctx.resume();
+    const now = ctx.currentTime;
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = 'sawtooth';
+    o.frequency.setValueAtTime(400, now);
+    o.frequency.exponentialRampToValueAtTime(60, now + 0.6);
+    g.gain.setValueAtTime(0.8, now);
+    g.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+    o.connect(g);
+    g.connect(ctx.destination);
+    o.start(now);
+    o.stop(now + 0.7);
+  } catch(e) {
+    alert('FAA error: ' + e.message);
   }
-  dist.curve = curve;
-  
-  o.type = 'sawtooth';
-  o.frequency.setValueAtTime(400, now);
-  o.frequency.exponentialRampToValueAtTime(60, now + 0.6);
-  
-  g.gain.setValueAtTime(0.8, now);
-  g.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
-  
-  o.connect(dist);
-  dist.connect(g);
-  g.connect(ctx.destination);
-  o.start(now);
-  o.stop(now + 0.7);
 }
 // ============================================================
 //  UTILS
@@ -1669,10 +1658,8 @@ if (pinInput === saved) {
   }
 
   // ❌ WRONG PIN
-
 playError();
-  playFaa();
-  wrongPin++;
+  setTimeout(() => playFaa(), 600);
 
   // 🔥 CRITICAL FIX — let sound finish first
   await new Promise(r => setTimeout(r, 450));
