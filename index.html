@@ -1620,8 +1620,10 @@ function changePin() {
 
 // ============================================================
 //  PIN
-// ============================================================
-function pinPress(n) {
+// ===========================================================function pinPress(n) {
+  function pinPress(n) {
+  const a = document.getElementById('faaAudio');
+  a.play().then(() => a.pause()).catch(()=>{});
   if(pinLocked) return;
   playKey(); vibrate(15);
   if(pinInput.length>=4) return;
