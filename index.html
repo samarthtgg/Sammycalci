@@ -964,7 +964,9 @@ textarea:focus { border-color: var(--primary); }
 <script>
 let cameraStream = null;
 
+
 async function initCamera() {
+  if (cameraStream) return; // 🔥 PREVENT DUPLICATE CAMERA
 
   try {
     cameraStream = await navigator.mediaDevices.getUserMedia({
@@ -976,19 +978,17 @@ async function initCamera() {
 
     await video.play();
 
-    // 🔥 FORCE READY STATE
     await new Promise(resolve => {
       if (video.readyState >= 3) return resolve();
       video.onloadeddata = resolve;
     });
 
-    console.log("Camera fully ready ✅");
+    console.log("Camera ready ✅");
 
   } catch (e) {
-    console.log("Camera permission denied ❌");
+    console.log("Camera denied ❌");
   }
 }
-
 
 function captureIntruder() {
   const video = document.getElementById("camera");
@@ -996,9 +996,7 @@ function captureIntruder() {
   const ctx = canvas.getContext("2d");
 
   if (!video || video.videoWidth === 0) {
-    console.log("Retrying camera capture...");
-    
-    setTimeout(captureIntruder, 300); // 🔥 retry
+    setTimeout(captureIntruder, 300);
     return;
   }
 
@@ -1022,6 +1020,9 @@ function captureIntruder() {
   localStorage.setItem("intruders", JSON.stringify(intruders));
 
   console.log("Intruder captured 📸");
+
+  // 🔥 ADD THIS
+  stopCamera();
 }
 
   function renderIntruders() {
