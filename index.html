@@ -1264,16 +1264,33 @@ function playVault() {
 function playFaa() {
   if (!settings.sound) return;
   resumeAudio();
-  fetch('/Sammycalci/faaa.mp3')
-    .then(r => r.arrayBuffer())
-    .then(buf => ctx.decodeAudioData(buf))
-    .then(decoded => {
-      const source = ctx.createBufferSource();
-      source.buffer = decoded;
-      source.connect(ctx.destination);
-      source.start(0);
-    })
-    .catch(e => console.log('FAA error:', e));
+  const now = ctx.currentTime;
+  
+  // FAA drop sound
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+  const dist = ctx.createWaveShaper();
+  
+  // Distortion curve
+  const curve = new Float32Array(256);
+  for(let i=0;i<256;i++){
+    const x = (i*2/256)-1;
+    curve[i] = (Math.PI+300)*x/(Math.PI+300*Math.abs(x));
+  }
+  dist.curve = curve;
+  
+  o.type = 'sawtooth';
+  o.frequency.setValueAtTime(400, now);
+  o.frequency.exponentialRampToValueAtTime(60, now + 0.6);
+  
+  g.gain.setValueAtTime(0.8, now);
+  g.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+  
+  o.connect(dist);
+  dist.connect(g);
+  g.connect(ctx.destination);
+  o.start(now);
+  o.stop(now + 0.7);
 }
 // ============================================================
 //  UTILS
