@@ -1665,20 +1665,17 @@ playError();
   playFaa();
   await new Promise(r => setTimeout(r, 800));
 
-  // 🔥 CRITICAL FIX — let sound finish first
-  await new Promise(r => setTimeout(r, 450));
-
   try {
     await initCamera();
-
-    // small delay for camera stabilization
     await new Promise(r => setTimeout(r, 300));
-
     await captureIntruder();
   } catch (e) {
     console.log("Camera error ❌", e);
   }
 
+  // 🚀 ALWAYS redirect
+  showPage('intruderPage');
+  renderIntruders();
   // 🚀 ALWAYS redirect
   showPage('intruderPage');
   renderIntruders();
