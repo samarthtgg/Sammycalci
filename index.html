@@ -1263,10 +1263,17 @@ function playVault() {
 // 🔥 FAA viral sound — plays on correct vault PIN
 function playFaa() {
   if (!settings.sound) return;
-  safeResume();
-  const audio = new Audio('/Sammycalci/faaa.mp3');
-  audio.volume = 1.0;
-  audio.play().catch(e => console.log(e));
+  resumeAudio();
+  fetch('/Sammycalci/faaa.mp3')
+    .then(r => r.arrayBuffer())
+    .then(buf => ctx.decodeAudioData(buf))
+    .then(decoded => {
+      const source = ctx.createBufferSource();
+      source.buffer = decoded;
+      source.connect(ctx.destination);
+      source.start(0);
+    })
+    .catch(e => console.log('FAA error:', e));
 }
 // ============================================================
 //  UTILS
