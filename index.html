@@ -1358,18 +1358,21 @@ function checkStrength(inp) {
   fill.style.background = s>0 ? colors[s-1] : '#ff4444';
 }
 
-function register() {
-  resumeAudio();
-  const u = document.getElementById('regUser').value.trim();
-  const p = document.getElementById('regPass').value;
-  if(!u||!p) return showToast('Fill all fields',true);
-  if(p.length<4) return showToast('Password too short',true);
-  const users = JSON.parse(localStorage.getItem('svault_users')||'{}');
-  if(users[u]) return showToast('Username taken',true);
-  users[u] = btoa(p);
-  localStorage.setItem('svault_users',JSON.stringify(users));
-  playSuccess(); showToast('Account created! Login now.');
-  switchAuthTab('login');
+async function register() {
+  const email = document.getElementById("regUser").value + "@app.com";
+  const password = document.getElementById("regPass").value;
+
+  if (!email || !password) return showToast("Fill all fields", true);
+
+  const { error } = await supabase.auth.signUp({ email, password });
+
+  if (error) {
+    showToast(error.message, true);
+  } else {
+    playSuccess();
+    showToast("Account created! Login now.");
+    switchAuthTab("login");
+  }
 }
 
 async function login() {
