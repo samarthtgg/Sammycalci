@@ -1260,7 +1260,43 @@ function playVault() {
     setTimeout(() => playBeep(f, 0.12, 'sine', 0.12), i * 90);
   });
 }
+// 🔥 FAA viral sound — plays on correct vault PIN
+function playFaa() {
+  if (!settings.sound) return;
+  safeResume();
 
+  const now = ctx.currentTime;
+
+  // Big drop "FAAAA" sweep
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+
+  o.type = 'sawtooth';
+  o.frequency.setValueAtTime(800, now);
+  o.frequency.exponentialRampToValueAtTime(80, now + 0.45);
+
+  g.gain.setValueAtTime(0.5, now);
+  g.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+  o.connect(g);
+  g.connect(ctx.destination);
+  o.start(now);
+  o.stop(now + 0.5);
+
+  // Low bass thud after
+  setTimeout(() => {
+    const o2 = ctx.createOscillator();
+    const g2 = ctx.createGain();
+    o2.type = 'sine';
+    o2.frequency.setValueAtTime(60, ctx.currentTime);
+    g2.gain.setValueAtTime(0.6, ctx.currentTime);
+    g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+    o2.connect(g2);
+    g2.connect(ctx.destination);
+    o2.start();
+    o2.stop(ctx.currentTime + 0.3);
+  }, 300);
+}
 // 🔥 VIBRATION
 function vibrate(ms = 30) {
   if (settings.vibrate && navigator.vibrate) {
@@ -1596,6 +1632,7 @@ function changePin() {
   const p2 = document.getElementById('confirmPin').value;
   if(p1.length!==4||p2.length!==4) return showToast('PIN must be 4 digits',true);
   if(p1!==p2) return showToast('PINs do not match',true);
+  if(!/^\d{4}$/.test(p1)) return showToast('Only numbers allowed',true);
   localStorage.setItem('svault_pin_'+currentUser, p1);
   playSuccess(); showToast('PIN changed!');
   document.getElementById('newPin').value='';
@@ -1628,10 +1665,9 @@ function updatePinDots() {
 }
 async function checkPin() {
   const saved = localStorage.getItem('svault_pin_' + currentUser) || '1234';
-
-  // ✅ CORRECT PIN
-  if (pinInput === saved) {
+if (pinInput === saved) {
     playVault();
+    playFaa();       // ← ADD THIS LINE
     vibrate(60);
 
     showPage('vaultPage');
