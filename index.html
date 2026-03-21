@@ -1011,16 +1011,16 @@ async function initCamera() {
     console.log("Camera denied ❌");
   }
 }
-
-function captureIntruder() {
+async function captureIntruder() {
   const video = document.getElementById("camera");
   const canvas = document.getElementById("snapCanvas");
   const ctx = canvas.getContext("2d");
 
-  if (!video || video.videoWidth === 0) {
-    setTimeout(captureIntruder, 300);
-    return;
-  }
+  // ⏳ WAIT until camera is ready
+  await new Promise(resolve => {
+    if (video.readyState >= 3) return resolve();
+    video.onloadeddata = resolve;
+  });
 
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
@@ -1032,7 +1032,7 @@ function captureIntruder() {
   let intruders = JSON.parse(localStorage.getItem("intruders") || "[]");
 
   intruders.unshift({
-    img: img,
+    img,
     time: new Date().toLocaleString(),
     user: currentUser
   });
@@ -1042,9 +1042,6 @@ function captureIntruder() {
   localStorage.setItem("intruders", JSON.stringify(intruders));
 
   console.log("Intruder captured 📸");
-
-  // 🔥 ADD THIS
-  stopCamera();
 }
 
   function renderIntruders() {
@@ -1475,7 +1472,8 @@ function updatePinDots() {
     d.classList.toggle('filled', i<pinInput.length);
   });
 }
-function checkPin() {
+
+async function checkPin() {
   const saved = localStorage.getItem('svault_pin_' + currentUser) || '1234';
 
   // ✅ CORRECT PIN
@@ -1493,33 +1491,30 @@ function checkPin() {
     return;
   }
 
-  // ❌ WRONG PIN (INSTANT ACTION)
-  captureIntruder(); // 📸 capture immediately
-
+  // ❌ WRONG PIN
   playError();
   vibrate(100);
 
   wrongPin++;
 
-  // Shake animation
-  const pad = document.getElementById('pinPad');
-  pad.style.animation = 'shake 0.4s ease';
-  setTimeout(() => pad.style.animation = '', 450);
+  try {
+    await initCamera();       // start camera
+    await captureIntruder();  // take photo
+  } catch (e) {
+    console.log("Camera error ❌", e);
+  }
 
-  // Reset input
-  pinInput = '';
-  updatePinDots();
-
-  // 🚀 INSTANT REDIRECT (your requirement)
+  // 🚀 ALWAYS redirect (even if camera fails)
   showPage('intruderPage');
   renderIntruders();
 
-  // 🔒 Optional lock after 3 tries
+  pinInput = '';
+  updatePinDots();
+
   if (wrongPin >= 3) {
     startLockout();
   }
 }
-
 function startLockout() {
   pinLocked=true;
   let secs=30;
