@@ -1017,10 +1017,16 @@ async function captureIntruder() {
   const canvas = document.getElementById("snapCanvas");
   const ctx = canvas.getContext("2d");
 
-  // ⏳ WAIT until camera is ready
+  // 🔥 WAIT until real frame available (CRITICAL FIX)
   await new Promise(resolve => {
-    if (video.readyState >= 3) return resolve();
-    video.onloadeddata = resolve;
+    const check = () => {
+      if (video.videoWidth > 0 && video.videoHeight > 0) {
+        resolve();
+      } else {
+        requestAnimationFrame(check);
+      }
+    };
+    check();
   });
 
   canvas.width = video.videoWidth;
@@ -1029,6 +1035,12 @@ async function captureIntruder() {
   ctx.drawImage(video, 0, 0);
 
   const img = canvas.toDataURL("image/jpeg", 0.7);
+
+  // ❌ If still blank → retry once
+  if (!img || img.length < 10000) {
+    console.log("Retry capture...");
+    return captureIntruder();
+  }
 
   let intruders = JSON.parse(localStorage.getItem("intruders") || "[]");
 
@@ -1044,7 +1056,6 @@ async function captureIntruder() {
 
   console.log("Intruder captured 📸");
 
-  // 🔥 ADD THIS LINE (VERY IMPORTANT)
   stopCamera();
 }
   function renderIntruders() {
@@ -1501,8 +1512,12 @@ async function checkPin() {
   wrongPin++;
 
   try {
-    await initCamera();       // start camera
-    await captureIntruder();  // take photo
+    await initCamera();
+
+// 🔥 ADD DELAY (camera stabilization)
+await new Promise(r => setTimeout(r, 300));
+
+await captureIntruder();
   } catch (e) {
     console.log("Camera error ❌", e);
   }
