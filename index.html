@@ -1150,8 +1150,47 @@ function playSuccess() {
 function playError() {
   if (!settings.sound) return;
 
-  playBeep(220, 0.18, 'sawtooth', 0.18);
-  setTimeout(() => playBeep(160, 0.25, 'sawtooth', 0.15), 120);
+  try {
+    resumeAudio();
+
+    const now = ctx.currentTime;
+
+    // 🔥 LAYER 1 — Punchy Bass Hit (clean attack)
+    const o1 = ctx.createOscillator();
+    const g1 = ctx.createGain();
+
+    o1.type = "sawtooth";
+    o1.frequency.setValueAtTime(200, now);
+    o1.frequency.exponentialRampToValueAtTime(80, now + 0.25);
+
+    g1.gain.setValueAtTime(0.001, now);
+    g1.gain.exponentialRampToValueAtTime(0.28, now + 0.02); // attack
+    g1.gain.exponentialRampToValueAtTime(0.001, now + 0.25); // decay
+
+    o1.connect(g1);
+    g1.connect(ctx.destination);
+
+    o1.start(now);
+    o1.stop(now + 0.25);
+
+    // 🔥 LAYER 2 — Glitch (viral sharp tone)
+    setTimeout(() => {
+      playBeep(140, 0.12, 'square', 0.14);
+    }, 90);
+
+    // 🔥 LAYER 3 — Deep Drop (danger feel)
+    setTimeout(() => {
+      playBeep(60, 0.25, 'sawtooth', 0.18);
+    }, 200);
+
+    // 🔥 BONUS — subtle tail vibration sound
+    setTimeout(() => {
+      playBeep(40, 0.15, 'sine', 0.08);
+    }, 350);
+
+  } catch (e) {
+    console.log("Error sound failed", e);
+  }
 }
 
 function playKey() {
