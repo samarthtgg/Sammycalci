@@ -963,32 +963,7 @@ textarea:focus { border-color: var(--primary); }
 <div class="toast" id="toast"></div>
 
 <script>
-  function compressImage(file, callback) {
-  const reader = new FileReader();
-
-  reader.onload = function (e) {
-    const img = new Image();
-
-    img.onload = function () {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-
-      const maxWidth = 800;
-      const scale = maxWidth / img.width;
-
-      canvas.width = maxWidth;
-      canvas.height = img.height * scale;
-
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-      callback(canvas.toDataURL("image/jpeg", 0.6));
-    };
-
-    img.src = e.target.result;
-  };
-
-  reader.readAsDataURL(file);
-}
+  
 function uploadPhotos(event) {
   const files = event.target.files;
 
@@ -998,7 +973,7 @@ function uploadPhotos(event) {
     compressImage(file, (img) => {
       allPhotos.unshift(img);
 
-      if (allPhotos.length > 100) allPhotos.pop();
+      if (allPhotos.length > 20) allPhotos.pop();
 
       savePhotos();
       renderGallery();
