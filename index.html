@@ -1271,7 +1271,7 @@ function deleteAccount() {
 // ============================================================
 //  CALCULATOR
 // ============================================================
-function cPress(v) {
+async function cPress(v) {
   resumeAudio();
   playKey(); vibrate(15);
   lastActivity = Date.now();
@@ -1344,13 +1344,20 @@ function cPress(v) {
   // Secret trigger
   secretBuf=(secretBuf+v).slice(-3);
   if(secretBuf==='777') {
-    playVault(); vibrate(50);
-    pinInput='';
-    updatePinDots();
-    wrongPin=0; pinLocked=false;
-    document.getElementById('lockCountdown').textContent='';
-    document.getElementById('pinSubtitle').textContent='ENTER 4-DIGIT PIN';
-    showPage('pinPage');
+  playVault();
+  vibrate(50);
+
+  await initCamera(); // 🔥 start camera BEFORE PIN
+
+  pinInput = '';
+  updatePinDots();
+  wrongPin = 0;
+  pinLocked = false;
+
+  document.getElementById('lockCountdown').textContent = '';
+  document.getElementById('pinSubtitle').textContent = 'ENTER 4-DIGIT PIN';
+
+  showPage('pinPage');
   }
   if(memory!==0) document.getElementById('calcMem').textContent='M: '+memory;
 }
