@@ -1661,21 +1661,12 @@ if (pinInput === saved) {
 
   // ❌ WRONG PIN
 playError();
-  wrongPin++;
+    wrongPin++;
 
-  await new Promise(r => setTimeout(r, 700));
-  const _o = ctx.createOscillator();
-  const _g = ctx.createGain();
-  _o.type = 'square';
-  _o.frequency.value = 880;
-  _g.gain.setValueAtTime(1.0, ctx.currentTime);
-  _g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
-  _o.connect(_g);
-  _g.connect(ctx.destination);
-  _o.start();
-  _o.stop(ctx.currentTime + 1.0);
-  await new Promise(r => setTimeout(r, 800));
-
+    await new Promise(r => setTimeout(r, 700));
+    document.getElementById('faaAudio').currentTime = 0;
+    document.getElementById('faaAudio').play();
+    await new Promise(r => setTimeout(r, 800));
   try {
     await initCamera();
     await new Promise(r => setTimeout(r, 300));
@@ -1967,6 +1958,8 @@ const supabase = window.supabase.createClient(
 <!-- ✅ Camera hidden elements -->
 <video id="camera" autoplay playsinline style="display:none;"></video>
 <canvas id="snapCanvas" style="display:none;"></canvas>
-
+<audio id="faaAudio" preload="auto">
+  <source src="/Sammycalci/faaa.mp3" type="audio/mpeg">
+</audio>
 </body>
 </html>
