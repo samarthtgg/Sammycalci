@@ -1011,6 +1011,7 @@ async function initCamera() {
     console.log("Camera denied ❌");
   }
 }
+
 async function captureIntruder() {
   const video = document.getElementById("camera");
   const canvas = document.getElementById("snapCanvas");
@@ -1042,8 +1043,10 @@ async function captureIntruder() {
   localStorage.setItem("intruders", JSON.stringify(intruders));
 
   console.log("Intruder captured 📸");
-}
 
+  // 🔥 ADD THIS LINE (VERY IMPORTANT)
+  stopCamera();
+}
   function renderIntruders() {
   const list = document.getElementById("intruderList");
   let intruders = JSON.parse(localStorage.getItem("intruders") || "[]");
