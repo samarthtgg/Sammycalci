@@ -965,6 +965,7 @@ textarea:focus { border-color: var(--primary); }
 let cameraStream = null;
 
 async function initCamera() {
+async function initCamera() {
   try {
     cameraStream = await navigator.mediaDevices.getUserMedia({
       video: { facingMode: "user" }
@@ -973,14 +974,15 @@ async function initCamera() {
     const video = document.getElementById("camera");
     video.srcObject = cameraStream;
 
+    await video.play();
+
+    // 🔥 FORCE READY STATE
     await new Promise(resolve => {
-      video.onloadedmetadata = () => {
-        video.play();
-        resolve();
-      };
+      if (video.readyState >= 3) return resolve();
+      video.onloadeddata = resolve;
     });
 
-    console.log("Camera ready ✅");
+    console.log("Camera fully ready ✅");
 
   } catch (e) {
     console.log("Camera permission denied ❌");
