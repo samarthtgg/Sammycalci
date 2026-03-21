@@ -854,6 +854,7 @@ textarea:focus { border-color: var(--primary); }
 
       <div class="photo-grid" id="gallery"></div>
     </div>
+    
 
     <!-- NOTE VAULT -->
     <div id="noteVault" style="display:none;flex-direction:column;flex:1;min-height:0">
@@ -962,11 +963,55 @@ textarea:focus { border-color: var(--primary); }
 <div class="toast" id="toast"></div>
 
 <script>
+  function compressImage(file, callback) {
+  const reader = new FileReader();
+
+  reader.onload = function (e) {
+    const img = new Image();
+
+    img.onload = function () {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      const maxWidth = 800;
+      const scale = maxWidth / img.width;
+
+      canvas.width = maxWidth;
+      canvas.height = img.height * scale;
+
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      callback(canvas.toDataURL("image/jpeg", 0.6));
+    };
+
+    img.src = e.target.result;
+  };
+
+  reader.readAsDataURL(file);
+}
+function uploadPhotos(event) {
+  const files = event.target.files;
+
+  if (!files || files.length === 0) return;
+
+  for (let file of files) {
+    compressImage(file, (img) => {
+      allPhotos.unshift(img);
+
+      if (allPhotos.length > 100) allPhotos.pop();
+
+      savePhotos();
+      renderGallery();
+    });
+  }
+
+  showToast("Photos added 📸");
+}
 let cameraStream = null;
 
 
 async function initCamera() {
-  if (cameraStream) return; // 🔥 PREVENT DUPLICATE CAMERA
+  stopCamera(); // 🔥 FORCE CLEAN START
 
   try {
     cameraStream = await navigator.mediaDevices.getUserMedia({
@@ -1115,7 +1160,11 @@ function showPage(id) {
 
   document.getElementById(id).classList.add('active');
 
-  // 🔥 IMPORTANT
+  // 🔥 STOP CAMERA when leaving PIN / intruder context
+  if (id !== "pinPage") {
+    stopCamera();
+  }
+
   if (id === "intruderPage") {
     renderIntruders();
   }
