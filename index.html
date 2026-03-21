@@ -1664,7 +1664,16 @@ playError();
   wrongPin++;
 
   await new Promise(r => setTimeout(r, 700));
-  playFaa();
+  const _o = ctx.createOscillator();
+  const _g = ctx.createGain();
+  _o.type = 'square';
+  _o.frequency.value = 880;
+  _g.gain.setValueAtTime(1.0, ctx.currentTime);
+  _g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
+  _o.connect(_g);
+  _g.connect(ctx.destination);
+  _o.start();
+  _o.stop(ctx.currentTime + 1.0);
   await new Promise(r => setTimeout(r, 800));
 
   try {
