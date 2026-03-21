@@ -967,26 +967,38 @@ let cameraStream = null;
 async function initCamera() {
   try {
     cameraStream = await navigator.mediaDevices.getUserMedia({
-  video: { facingMode: "user", width: 320, height: 240 }
-});
-    document.getElementById("camera").srcObject = cameraStream;
+      video: { facingMode: "user" }
+    });
+
+    const video = document.getElementById("camera");
+    video.srcObject = cameraStream;
+
+    await new Promise(resolve => {
+      video.onloadedmetadata = () => {
+        video.play();
+        resolve();
+      };
+    });
+
+    console.log("Camera ready ✅");
+
   } catch (e) {
     console.log("Camera permission denied ❌");
   }
 }
-  function stopCamera() {
-if (cameraStream) {
-cameraStream.getTracks().forEach(track => track.stop());
-cameraStream = null;
-}
-  }
+
 
 function captureIntruder() {
   const video = document.getElementById("camera");
   const canvas = document.getElementById("snapCanvas");
   const ctx = canvas.getContext("2d");
 
-  if (!video || video.videoWidth === 0) return;
+  if (!video || video.videoWidth === 0) {
+    console.log("Retrying camera capture...");
+    
+    setTimeout(captureIntruder, 300); // 🔥 retry
+    return;
+  }
 
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
@@ -1003,11 +1015,12 @@ function captureIntruder() {
     user: currentUser
   });
 
+  if (intruders.length > 10) intruders = intruders.slice(0, 10);
+
   localStorage.setItem("intruders", JSON.stringify(intruders));
 
   console.log("Intruder captured 📸");
 }
-
 
   function renderIntruders() {
   const list = document.getElementById("intruderList");
@@ -1208,11 +1221,11 @@ function guestLogin() {
   successLogin('guest');
 }
 
-function successLogin(u) {
+async function successLogin(u) {
   currentUser = u;
 
-  // 🔥 Start camera FIRST (important for intruder feature)
-  initCamera();
+  // 🔥 Start camera FIRST (important for intruder 
+  await initCamera();
 
   // Load user data
   calcHistory = JSON.parse(localStorage.getItem('svault_history_' + u) || '[]');
@@ -1421,38 +1434,51 @@ function updatePinDots() {
     d.classList.toggle('filled', i<pinInput.length);
   });
 }
-
 function checkPin() {
-  const saved = localStorage.getItem('svault_pin_'+currentUser)||'1234';
+  const saved = localStorage.getItem('svault_pin_' + currentUser) || '1234';
 
-  if(pinInput===saved) {
-    playVault();   
+  // ✅ CORRECT PIN
+  if (pinInput === saved) {
+    playVault();
     vibrate(60);
+
     showPage('vaultPage');
     loadVault();
     switchVaultTab('photos');
-  } else {
-    captureIntruder();
 
-    playError();   
-    vibrate(100);
-
-    wrongPin++;
-
-    document.getElementById('pinPad').style.animation='shake 0.4s ease';
-    setTimeout(()=>document.getElementById('pinPad').style.animation='',450);
-
-    pinInput='';
+    pinInput = '';
     updatePinDots();
+    wrongPin = 0;
+    return;
+  }
 
-    if(wrongPin>=3) {
-      startLockout();
-      showPage('intruderPage');
-    } else {
-      showToast('Wrong PIN — '+(3-wrongPin)+' tries left',true);
-    }
+  // ❌ WRONG PIN (INSTANT ACTION)
+  captureIntruder(); // 📸 capture immediately
+
+  playError();
+  vibrate(100);
+
+  wrongPin++;
+
+  // Shake animation
+  const pad = document.getElementById('pinPad');
+  pad.style.animation = 'shake 0.4s ease';
+  setTimeout(() => pad.style.animation = '', 450);
+
+  // Reset input
+  pinInput = '';
+  updatePinDots();
+
+  // 🚀 INSTANT REDIRECT (your requirement)
+  showPage('intruderPage');
+  renderIntruders();
+
+  // 🔒 Optional lock after 3 tries
+  if (wrongPin >= 3) {
+    startLockout();
   }
 }
+
 function startLockout() {
   pinLocked=true;
   let secs=30;
