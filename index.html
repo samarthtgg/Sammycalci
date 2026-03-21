@@ -1106,26 +1106,89 @@ let settings = { sound: true, autoLogout: true, vibrate: true };
 // ============================================================
 const ctx = new (window.AudioContext || window.webkitAudioContext)();
 
-function playBeep(freq = 880, dur = 0.08, type = 'sine', vol = 0.15) {
-  if (!settings.sound) return;
-  try {
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
-    o.connect(g); g.connect(ctx.destination);
-    o.type = type; o.frequency.value = freq;
-    g.gain.setValueAtTime(vol, ctx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
-    o.start(); o.stop(ctx.currentTime + dur);
-  } catch(e){}
+// 🔥 Auto resume (important for mobile)
+function resumeAudio() {
+  if (ctx.state === "suspended") {
+    ctx.resume();
+  }
 }
 
-function playSuccess() { playBeep(660,0.07,'sine'); setTimeout(()=>playBeep(880,0.12,'sine'),80); }
-function playError()   { playBeep(200,0.2,'sawtooth',0.1); }
-function playKey()     { playBeep(1200,0.04,'sine',0.07); }
-function playClick()   { playBeep(600,0.05,'square',0.05); }
+function playBeep(freq = 880, dur = 0.08, type = 'sine', vol = 0.2) {
+  if (!settings.sound) return;
+
+  try {
+    resumeAudio(); // 🔥 ensures sound works on mobile
+
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+
+    o.type = type;
+    o.frequency.setValueAtTime(freq, ctx.currentTime);
+
+    // 🔥 smoother + punchier sound
+    g.gain.setValueAtTime(vol, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur);
+
+    o.connect(g);
+    g.connect(ctx.destination);
+
+    o.start(ctx.currentTime);
+    o.stop(ctx.currentTime + dur);
+
+  } catch (e) {
+    console.log("Audio error", e);
+  }
+}
+
+function playSuccess() {
+  if (!settings.sound) return;
+
+  playBeep(660, 0.08, 'sine', 0.15);
+  setTimeout(() => playBeep(880, 0.12, 'sine', 0.18), 80);
+}
+
+function playError() {
+  if (!settings.sound) return;
+
+  playBeep(220, 0.18, 'sawtooth', 0.18);
+  setTimeout(() => playBeep(160, 0.25, 'sawtooth', 0.15), 120);
+}
+
+function playKey() {
+  if (!settings.sound) return;
+
+  playBeep(1000, 0.04, 'sine', 0.07);
+}
+
+function playClick() {
+  if (!settings.sound) return;
+
+  playBeep(500, 0.05, 'square', 0.06);
+}
 function playVault()   {
   [440,550,660,880].forEach((f,i)=>setTimeout(()=>playBeep(f,0.15,'sine',0.1),i*80));
 }
+  function playFaaa() {
+  if (!settings.sound) return;
+
+  const o = ctx.createOscillator();   // ⚠️ USE SAME ctx (important)
+  const g = ctx.createGain();
+
+  o.connect(g);
+  g.connect(ctx.destination);
+
+  o.type = "sawtooth";
+
+  // 🔥 "FAAA" aggressive drop
+  o.frequency.setValueAtTime(900, ctx.currentTime);
+  o.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.4);
+
+  g.gain.setValueAtTime(0.2, ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+
+  o.start();
+  o.stop(ctx.currentTime + 0.4);
+  }
 
 function vibrate(ms=30) {
   if(settings.vibrate && navigator.vibrate) navigator.vibrate(ms);
