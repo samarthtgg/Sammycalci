@@ -1681,9 +1681,9 @@ if (pinInput === saved) {
   }
 
   // ❌ WRONG PIN
-  playError();   // 🔥 FAAA + full error sound
-  vibrate(100);
 
+playError();
+  playFaa();
   wrongPin++;
 
   // 🔥 CRITICAL FIX — let sound finish first
