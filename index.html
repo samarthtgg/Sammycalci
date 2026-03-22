@@ -1746,7 +1746,12 @@ async function compressImage(file) {
         const { data: { user } } = await supabase.auth.getUser();
         const blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', 0.6));
         const fileName = user.id + '/' + Date.now() + '.jpg';
-        await supabase.storage.from('vault-photos').upload(fileName, blob);
+        const { error: uploadError } = await supabase.storage.from('vault-photos').upload(fileName, blob);
+if (uploadError) {
+  showToast('Upload failed: ' + uploadError.message, true);
+  resolve();
+  return;
+}
         resolve();
       };
       img.src = e.target.result;
