@@ -1725,7 +1725,6 @@ async function loadVault() {
   allPhotos = data.map(f => supabase.storage.from('vault-photos').getPublicUrl(user.id + '/' + f.name).data.publicUrl);
   renderGallery();
 }
-
 function renderGallery() {
   const g = document.getElementById('gallery');
   document.getElementById('statCount').textContent = allPhotos.length;
@@ -1768,9 +1767,8 @@ loadVault();
 }
 
 async function savePhotos() {
-  // photos now saved directly on upload — no localStorage needed
+  // photos now saved directly on upload
 }
-
 async function deletePhoto(i) {
   const { data: { user } } = await supabase.auth.getUser();
   const url = allPhotos[i];
@@ -1780,6 +1778,7 @@ async function deletePhoto(i) {
   playClick();
   showToast('Photo deleted');
 }
+
 function clearAllPhotos() {
   if(!confirm('Clear all photos?')) return;
   allPhotos=[];
