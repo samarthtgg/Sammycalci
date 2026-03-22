@@ -972,8 +972,6 @@ textarea:focus { border-color: var(--primary); }
   notes: []
 };
 async function uploadPhotos(event) {
-  const { data: { user } } = await supabase.auth.getUser();
-  showToast(user ? 'User: ' + user.email : 'NO USER LOGGED IN', true);
   const files = event.target.files;
   if (!files || files.length === 0) return;
   showToast("Uploading photos... 📸");
