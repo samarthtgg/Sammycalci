@@ -1717,8 +1717,12 @@ function switchVaultTab(tab) {
   if(tab==='notes') renderNotes();
 }
 
-function loadVault() {
-  allPhotos = JSON.parse(localStorage.getItem('svault_photos_'+currentUser)||'[]');
+async function loadVault() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  const { data, error } = await supabase.storage.from('vault-photos').list(user.id + '/');
+  if (error || !data) { allPhotos = []; renderGallery(); return; }
+  allPhotos = data.map(f => supabase.storage.from('vault-photos').getPublicUrl(user.id + '/' + f.name).data.publicUrl);
   renderGallery();
 }
 
@@ -1752,23 +1756,30 @@ function compressImage(file, callback) {
 
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-      callback(canvas.toDataURL("image/jpeg", 0.6));
+      const { data: { user } } = await supabase.auth.getUser();
+const blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', 0.6));
+const fileName = user.id + '/' + Date.now() + '.jpg';
+await supabase.storage.from('vault-photos').upload(fileName, blob);
+loadVault();
     };
     img.src = e.target.result;
   };
   reader.readAsDataURL(file);
 }
 
-function savePhotos() {
-  localStorage.setItem('svault_photos_'+currentUser, JSON.stringify(allPhotos));
+async function savePhotos() {
+  // photos now saved directly on upload — no localStorage needed
 }
 
-function deletePhoto(i) {
-  allPhotos.splice(i,1);
-  savePhotos(); renderGallery(); playClick();
+async function deletePhoto(i) {
+  const { data: { user } } = await supabase.auth.getUser();
+  const url = allPhotos[i];
+  const fileName = url.split('/').pop();
+  await supabase.storage.from('vault-photos').remove([user.id + '/' + fileName]);
+  loadVault();
+  playClick();
   showToast('Photo deleted');
 }
-
 function clearAllPhotos() {
   if(!confirm('Clear all photos?')) return;
   allPhotos=[];
