@@ -1,4 +1,4 @@
-const CACHE_NAME = "sammycalci-v3";
+const CACHE_NAME = "sammycalci-v4";
 
 self.addEventListener("install", event => {
   self.skipWaiting();
