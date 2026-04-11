@@ -1961,7 +1961,11 @@ setInterval(()=>{
 <!-- ✅ Service Worker -->
 <script>
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/Sammycalci/service-worker.js");
+  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+    for(let registration of registrations) {
+      registration.unregister();
+    }
+  });
 }
 </script>
 
