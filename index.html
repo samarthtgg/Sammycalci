@@ -1735,10 +1735,41 @@ function renderGallery() {
 }
 async function compressImage(file, userId) {
   return new Promise((resolve) => {
+    if (!userId) { alert('ERROR: userId is null!'); resolve(); return; }
     const reader = new FileReader();
+    reader.onerror = () => { alert('FileReader error'); resolve(); };
     reader.onload = function (e) {
       const img = new Image();
+      img.onerror = () => { alert('Image load error'); resolve(); };
       img.onload = async function () {
+        try {
+          const canvas = document.createElement("canvas");
+          const c = canvas.getContext("2d");
+          const scale = 800 / img.width;
+          canvas.width = 800;
+          canvas.height = img.height * scale;
+          c.drawImage(img, 0, 0, canvas.width, canvas.height);
+          const blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', 0.6));
+          if (!blob) { alert('Blob is null!'); resolve(); return; }
+          const fileName = userId + '/' + Date.now() + '.jpg';
+          alert('Uploading: ' + fileName);
+          const { error: uploadError } = await supabase.storage.from('vault-photos').upload(fileName, blob, { upsert: true });
+          if (uploadError) {
+            alert('Upload failed: ' + uploadError.message + ' | ' + uploadError.statusCode);
+          } else {
+            alert('Upload SUCCESS!');
+          }
+          resolve();
+        } catch(err) {
+          alert('Exception: ' + err.message);
+          resolve();
+        }
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
         const canvas = document.createElement("canvas");
         const c = canvas.getContext("2d");
         const scale = 800 / img.width;
