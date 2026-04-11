@@ -7,6 +7,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>Samarth Ultra Vault</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script>
+const supabase = window.supabase.createClient(
+  "https://zndynzrnfcqewjmcxjiw.supabase.co",
+  "sb_publishable_nOCC2uyTqParpqd-IfaTzA_ov5yzFeP"
+);
+</script>
 <style>
 :root {
   --primary: #00c6ff;
@@ -1969,15 +1976,7 @@ if ("serviceWorker" in navigator) {
 }
 </script>
 
-<!-- ✅ Supabase (LOAD ONLY ONCE) -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
-<script>
-const supabase = window.supabase.createClient(
-  "https://zndynzrnfcqewjmcxjiw.supabase.co",
-  "sb_publishable_nOCC2uyTqParpqd-IfaTzA_ov5yzFeP"
-);
-</script>
 
 <!-- ✅ Camera hidden elements -->
 <video id="camera" autoplay playsinline style="display:none;"></video>
