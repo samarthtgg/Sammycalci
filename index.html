@@ -1770,28 +1770,7 @@ async function compressImage(file, userId) {
     reader.readAsDataURL(file);
   });
 }
-        const canvas = document.createElement("canvas");
-        const c = canvas.getContext("2d");
-        const scale = 800 / img.width;
-        canvas.width = 800;
-        canvas.height = img.height * scale;
-        c.drawImage(img, 0, 0, canvas.width, canvas.height);
-        const blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', 0.6));
-        const fileName = userId + '/' + Date.now() + '.jpg';
-        const { error: uploadError } = await supabase.storage.from('vault-photos').upload(fileName, blob);
-if (uploadError) {
-  showToast('Upload failed: ' + uploadError.message, true);
-  alert('Upload error: ' + uploadError.message + ' | code: ' + uploadError.statusCode);
-  resolve();
-  return;
-}
-        resolve();
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
-}
+        
 async function savePhotos() {
   // photos now saved directly on upload
 }
