@@ -1750,6 +1750,7 @@ async function compressImage(file, userId) {
         const { error: uploadError } = await supabase.storage.from('vault-photos').upload(fileName, blob);
 if (uploadError) {
   showToast('Upload failed: ' + uploadError.message, true);
+  alert('Upload error: ' + uploadError.message + ' | code: ' + uploadError.statusCode);
   resolve();
   return;
 }
