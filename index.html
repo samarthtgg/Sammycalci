@@ -1770,7 +1770,7 @@ async function deletePhoto(i) {
   await supabase.storage.from('vault-photos').remove([user.id + '/' + fileName]);
   loadVault();
   playClick();
-  showToast('Photo deleted');await supabase.storage.from('vault-photos').remove([user.id + '/' + fileName]);
+  showToast('Photo deleted');
 }
 
 function clearAllPhotos() {
@@ -1877,9 +1877,11 @@ async function saveNote() {
 }
 
   async function loadNotesFast() {
+  const { data: { user } } = await supabase.auth.getUser();
   const { data } = await supabase
     .from("notes")
     .select("*")
+    .eq("user_id", user?.id)
     .limit(20);
 
   AppCache.notes = data || [];
