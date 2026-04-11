@@ -1,4 +1,4 @@
-const CACHE_NAME = "sammycalci-v1";
+const CACHE_NAME = "sammycalci-v2";
 
 const urlsToCache = [
   "/Sammycalci/",
