@@ -1,23 +1,17 @@
-const CACHE_NAME = "sammycalci-v2";
-
-const urlsToCache = [
-  "/Sammycalci/",
-  "/Sammycalci/index.html",
-  "/Sammycalci/manifest.json",
-  "/Sammycalci/icon-192.png",
-  "/Sammycalci/icon-512.png"
-];
+const CACHE_NAME = "sammycalci-v3";
 
 self.addEventListener("install", event => {
+  self.skipWaiting();
+});
+
+self.addEventListener("activate", event => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(urlsToCache))
+    caches.keys().then(keys =>
+      Promise.all(keys.map(key => caches.delete(key)))
+    )
   );
 });
 
 self.addEventListener("fetch", event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => response || fetch(event.request))
-  );
+  event.respondWith(fetch(event.request));
 });
