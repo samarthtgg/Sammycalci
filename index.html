@@ -1649,8 +1649,7 @@ if (pinInput === saved) {
   }
 
 // ❌ WRONG PIN
-  document.getElementById('faaAudio').currentTime = 0;
-  document.getElementById('faaAudio').play();
+// audio removed
   playError();
   wrongPin++;
 
@@ -1672,6 +1671,7 @@ if (pinInput === saved) {
   if (wrongPin >= 3) {
     startLockout();
   }
+}
 function startLockout() {
   pinLocked=true;
   let secs=30;
