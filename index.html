@@ -1399,27 +1399,22 @@ async function login() {
   const email = document.getElementById("logUser").value + "@app.com";
   const password = document.getElementById("logPass").value;
 
-  // 🔥 Instant UI (no delay)
+  if (!email || !password) return showToast("Enter credentials ❌", true);
+
+  showToast("Signing in...");
+
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    showToast(error.message, true);
+    return;
+  }
+
+  currentUser = data.user.id;
+  playSuccess();
   showPage('calcPage');
-  showToast("Welcome...");
-
-  // Run login in background
-  setTimeout(async () => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-
-    if (error) {
-      showToast("Login failed ❌", true);
-      doLogout();
-      return;
-    }
-
-    currentUser = data.user.id;
-
-loadNotesFast();
-  }, 100);
+  showToast("Welcome ✅");
+  loadNotesFast();
 }
 function guestLogin() {
   resumeAudio();
