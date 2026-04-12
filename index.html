@@ -1307,6 +1307,11 @@ function stopCamera() {
 // ============================================================
 //  SPLASH
 // ============================================================
+  function vibrate(ms) {
+  if(settings.vibrate && navigator.vibrate) navigator.vibrate(ms);
+}
+function loadNotes() { loadNotesFast(); }
+function renderNotes() { renderNotesFast(); }
 setTimeout(()=>{
   document.getElementById('splash').style.opacity='0';
   document.getElementById('splash').style.transition='opacity 0.5s';
