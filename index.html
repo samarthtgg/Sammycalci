@@ -1267,26 +1267,8 @@ function playVault() {
 // 🔥 FAA viral sound — plays on correct vault PIN
 
 function playFaa() {
-  try {
-    if (ctx.state === 'suspended') ctx.resume();
-    const now = ctx.currentTime;
-    
-    // High pitched "FAA" alarm style
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
-    o.type = 'square';
-    o.frequency.setValueAtTime(880, now);
-    o.frequency.setValueAtTime(440, now + 0.15);
-    o.frequency.setValueAtTime(220, now + 0.3);
-    g.gain.setValueAtTime(1.0, now);
-    g.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
-    o.connect(g);
-    g.connect(ctx.destination);
-    o.start(now);
-    o.stop(now + 0.6);
-  } catch(e) {
-    alert('FAA error: ' + e.message);
-  }
+  // removed
+}
 // ============================================================
 //  UTILS
 // ============================================================
