@@ -979,17 +979,29 @@ textarea:focus { border-color: var(--primary); }
   notes: []
 };
 async function uploadPhotos(event) {
-  alert('uploadPhotos triggered, files: ' + (event.target.files?.length));
   const files = event.target.files;
-  if (!files || files.length === 0) return;
+  if (!files || !files.length) return;
+
   const { data: { user } } = await supabase.auth.getUser();
-if (!user) return showToast("Not logged in ❌", true);
-showToast("Uploading photos... 📸");
-for (let file of files) {
-    await compressImage(file, user.id);
+  if (!user) return showToast("Login required ❌", true);
+
+  showToast("Uploading...");
+
+  for (let file of files) {
+    const fileName = user.id + '/' + Date.now() + '.jpg';
+    const { error } = await supabase.storage
+      .from('vault-photos')
+      .upload(fileName, file, { upsert: true });
+
+    if (error) {
+      showToast(error.message, true);
+      alert('Upload error: ' + error.message);
+      return;
+    }
   }
+
   await loadVault();
-  showToast("Photos added 📸");
+  showToast("Upload success 📸");
 }
 
 async function initCamera() {
@@ -1728,43 +1740,7 @@ function renderGallery() {
       <button class="del-btn" onclick="event.stopPropagation();deletePhoto(${i})">✕</button>
     </div>`).join('');
 }
-async function compressImage(file, userId) {
-  return new Promise((resolve) => {
-    if (!userId) { alert('ERROR: userId is null!'); resolve(); return; }
-    const reader = new FileReader();
-    reader.onerror = () => { alert('FileReader error'); resolve(); };
-    reader.onload = function (e) {
-      const img = new Image();
-      img.onerror = () => { alert('Image load error'); resolve(); };
-      img.onload = async function () {
-        try {
-          const canvas = document.createElement("canvas");
-          const c = canvas.getContext("2d");
-          const scale = 800 / img.width;
-          canvas.width = 800;
-          canvas.height = img.height * scale;
-          c.drawImage(img, 0, 0, canvas.width, canvas.height);
-          const blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', 0.6));
-          if (!blob) { alert('Blob is null!'); resolve(); return; }
-          const fileName = userId + '/' + Date.now() + '.jpg';
-          alert('Uploading: ' + fileName);
-          const { error: uploadError } = await supabase.storage.from('vault-photos').upload(fileName, blob, { upsert: true });
-          if (uploadError) {
-            alert('Upload failed: ' + uploadError.message + ' | ' + uploadError.statusCode);
-          } else {
-            alert('Upload SUCCESS!');
-          }
-          resolve();
-        } catch(err) {
-          alert('Exception: ' + err.message);
-          resolve();
-        }
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
-}
+
         
 async function savePhotos() {
   // photos now saved directly on upload
