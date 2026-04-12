@@ -1405,6 +1405,7 @@ async function login() {
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
+    alert('LOGIN ERROR: ' + error.message + ' | status: ' + error.status);
     showToast(error.message, true);
     return;
   }
