@@ -287,6 +287,7 @@ textarea:focus{border-color:var(--primary)}
   <div class="viewer-controls">
     <div class="viewer-counter" id="viewerCounter"></div>
     <button class="icon-btn" onclick="window.downloadPhoto()">⬇</button>
+    <button class="icon-btn" onclick="window.deleteCurrentPhoto()" style="background:rgba(255,0,0,0.3);border-color:rgba(255,0,0,0.5)">🗑</button>
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -678,6 +679,12 @@ window.openViewer=function(i){viewerIndex=i;updateViewer();document.getElementBy
 function updateViewer(){document.getElementById('fullImg').src=allPhotos[viewerIndex].data||allPhotos[viewerIndex];document.getElementById('viewerCounter').textContent=(viewerIndex+1)+' / '+allPhotos.length;}
 window.navPhoto=function(dir){viewerIndex=(viewerIndex+dir+allPhotos.length)%allPhotos.length;document.getElementById('fullImg').style.opacity='0';setTimeout(()=>{updateViewer();document.getElementById('fullImg').style.opacity='1';},150);playKey();}
 window.closeViewer=function(){document.getElementById('viewer').classList.remove('active');playClick();}
+window.deleteCurrentPhoto=async function(){
+  if(!confirm('Delete this photo?'))return;
+  await window.deletePhoto(viewerIndex);
+  if(allPhotos.length===0){closeViewer();}
+  else{viewerIndex=Math.min(viewerIndex,allPhotos.length-1);updateViewer();}
+}
 window.downloadPhoto=function(){
   const src=allPhotos[viewerIndex].data||allPhotos[viewerIndex];
   if(!src)return;const a=document.createElement('a');a.href=src;a.download='Vault_'+Date.now()+'.jpg';a.click();showToast('Downloaded');
