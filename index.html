@@ -8,330 +8,123 @@
 <title>Samarth Ultra Vault</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
-:root {
-  --primary: #00c6ff;
-  --accent: #ff6b6b;
-  --gold: #ffd700;
-  --bg1: #060b18;
-  --bg2: #0d1b2a;
-  --glass: rgba(0,198,255,0.07);
-  --glass-border: rgba(0,198,255,0.2);
-  --success: #00ff88;
-  --danger: #ff4444;
-  --text: #e0f0ff;
-}
-.light-theme {
-  --bg1: #e8f4f8;
-  --bg2: #d0e8f0;
-  --glass: rgba(0,100,180,0.07);
-  --glass-border: rgba(0,100,180,0.25);
-  --text: #0a1a2e;
-  --primary: #0077aa;
-}
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: 'Rajdhani', sans-serif;
-  background: var(--bg1);
-  color: var(--text);
-  height: 100vh;
-  overflow: hidden;
-  transition: background 0.5s, color 0.5s;
-}
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.5;
-}
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(0,198,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,198,255,0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-  z-index: 0;
-}
-#splash {
-  position: fixed;
-  inset: 0;
-  background: #000;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  gap: 20px;
-}
-.splash-logo {
-  font-family: 'Orbitron', monospace;
-  font-size: clamp(36px, 8vw, 72px);
-  font-weight: 900;
-  letter-spacing: 16px;
-  color: var(--primary);
-  animation: pulseGlow 1.5s infinite alternate;
-}
-.splash-sub {
-  font-size: 14px;
-  letter-spacing: 6px;
-  color: rgba(0,198,255,0.5);
-  text-transform: uppercase;
-}
-.splash-bar {
-  width: 200px;
-  height: 3px;
-  background: rgba(0,198,255,0.15);
-  border-radius: 99px;
-  overflow: hidden;
-  margin-top: 10px;
-}
-.splash-bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--primary), #7fff00);
-  border-radius: 99px;
-  animation: fillBar 2.3s ease forwards;
-}
-@keyframes fillBar { from{width:0} to{width:100%} }
-@keyframes pulseGlow {
-  from { text-shadow: 0 0 10px var(--primary), 0 0 30px rgba(0,198,255,0.3); }
-  to   { text-shadow: 0 0 30px var(--primary), 0 0 80px rgba(0,198,255,0.5), 0 0 120px rgba(0,198,255,0.2); }
-}
-.page {
-  position: fixed;
-  inset: 0;
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 10;
-  padding: 16px;
-}
-.page.active { display: flex; }
-.page-full {
-  position: fixed;
-  inset: 0;
-  display: none;
-  z-index: 10;
-  padding: 16px;
-  flex-direction: column;
-}
-.page-full.active { display: flex; }
-.card {
-  width: 100%;
-  max-width: 380px;
-  background: var(--glass);
-  border: 1px solid var(--glass-border);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  padding: 28px 24px;
-  border-radius: 24px;
-  box-shadow: 0 8px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.07);
-  animation: slideUp 0.4s ease;
-}
-@keyframes slideUp {
-  from { opacity:0; transform: translateY(20px); }
-  to   { opacity:1; transform: translateY(0); }
-}
-h2 {
-  font-family: 'Orbitron', monospace;
-  font-size: 18px;
-  letter-spacing: 4px;
-  margin-bottom: 20px;
-  color: var(--primary);
-  text-transform: uppercase;
-}
-.divider { height: 1px; background: var(--glass-border); margin: 16px 0; }
-input[type=text], input[type=password], input[type=file] {
-  width: 100%;
-  padding: 12px 16px;
-  margin: 6px 0;
-  background: rgba(0,0,0,0.3);
-  border: 1px solid var(--glass-border);
-  border-radius: 12px;
-  color: var(--text);
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 15px;
-  outline: none;
-  transition: border-color 0.3s, box-shadow 0.3s;
-}
-input:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(0,198,255,0.1);
-}
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  width: 100%;
-  padding: 12px 16px;
-  margin: 5px 0;
-  border: none;
-  border-radius: 12px;
-  font-family: 'Orbitron', monospace;
-  font-size: 12px;
-  letter-spacing: 2px;
-  cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.3s, opacity 0.3s;
-  text-transform: uppercase;
-  position: relative;
-  overflow: hidden;
-}
-.btn::after { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0); transition: background 0.2s; }
-.btn:hover::after { background: rgba(255,255,255,0.08); }
-.btn:active { transform: scale(0.96); }
-.btn-primary { background: linear-gradient(135deg, var(--primary), #0077b6); color: #fff; box-shadow: 0 4px 20px rgba(0,198,255,0.25); }
-.btn-danger  { background: linear-gradient(135deg, var(--danger), #aa0000); color: #fff; box-shadow: 0 4px 20px rgba(255,68,68,0.2); }
-.btn-success { background: linear-gradient(135deg, var(--success), #009955); color: #000; box-shadow: 0 4px 20px rgba(0,255,136,0.2); }
-.btn-ghost   { background: var(--glass); border: 1px solid var(--glass-border); color: var(--text); }
-.btn-gold    { background: linear-gradient(135deg, var(--gold), #ff8c00); color: #000; box-shadow: 0 4px 20px rgba(255,215,0,0.25); }
-.btn-sm { width: auto; padding: 7px 14px; font-size: 10px; margin: 3px; }
-#calcPage { align-items: center; }
-.calc-card {
-  width: 100%;
-  max-width: 340px;
-  background: var(--glass);
-  border: 1px solid var(--glass-border);
-  backdrop-filter: blur(24px);
-  padding: 20px;
-  border-radius: 28px;
-  box-shadow: 0 8px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.07);
-}
-.calc-topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-.calc-topbar span { font-family: 'Orbitron', monospace; font-size: 11px; letter-spacing: 3px; color: var(--primary); }
-.calc-topbar-actions { display: flex; gap: 6px; }
-.icon-btn {
-  background: var(--glass);
-  border: 1px solid var(--glass-border);
-  color: var(--text);
-  border-radius: 10px;
-  padding: 6px 10px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background 0.2s, transform 0.15s;
-}
-.icon-btn:hover { background: rgba(0,198,255,0.15); transform: scale(1.05); }
-.calc-display {
-  background: rgba(0,0,0,0.5);
-  border: 1px solid var(--glass-border);
-  border-radius: 14px;
-  padding: 12px 16px;
-  text-align: right;
-  margin-bottom: 14px;
-}
-.calc-expr { font-size: 13px; color: rgba(0,198,255,0.5); min-height: 18px; font-family: 'Rajdhani'; letter-spacing: 1px; }
-.calc-main { font-family: 'Orbitron', monospace; font-size: 28px; color: var(--primary); min-height: 40px; word-break: break-all; transition: color 0.3s; }
-.calc-mem { font-size: 11px; color: var(--gold); min-height: 14px; }
-.calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-.calc-btn {
-  aspect-ratio: 1;
-  border: 1px solid var(--glass-border);
-  border-radius: 14px;
-  background: rgba(0,0,0,0.3);
-  color: var(--text);
-  font-family: 'Orbitron', monospace;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background 0.15s, transform 0.1s, box-shadow 0.2s;
-  display: flex; align-items: center; justify-content: center;
-}
-.calc-btn:hover { background: rgba(0,198,255,0.12); }
-.calc-btn:active { transform: scale(0.91); box-shadow: 0 0 10px rgba(0,198,255,0.3); }
-.calc-btn.op    { background: rgba(0,198,255,0.12); color: var(--primary); border-color: rgba(0,198,255,0.3); }
-.calc-btn.eq    { background: linear-gradient(135deg, var(--primary), #0077b6); color: #fff; border: none; box-shadow: 0 4px 20px rgba(0,198,255,0.3); }
-.calc-btn.clr   { background: rgba(255,68,68,0.12); color: var(--danger); border-color: rgba(255,68,68,0.3); }
-.calc-btn.sp    { background: rgba(255,215,0,0.1); color: var(--gold); border-color: rgba(255,215,0,0.3); }
-.calc-btn.wide  { grid-column: span 2; aspect-ratio: auto; padding: 12px; }
-.vault-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-.vault-header h2 { margin: 0; flex: 1; }
-.vault-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-.stat-box { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 14px; padding: 12px; text-align: center; }
-.stat-num { font-family: 'Orbitron', monospace; font-size: 24px; color: var(--primary); }
-.stat-label { font-size: 11px; letter-spacing: 2px; opacity: 0.6; text-transform: uppercase; }
-.vault-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
-.photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px; overflow-y: auto; flex: 1; padding-right: 4px; }
-.photo-grid::-webkit-scrollbar { width: 4px; }
-.photo-grid::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 99px; }
-.photo-thumb { position: relative; border-radius: 12px; overflow: hidden; cursor: pointer; aspect-ratio: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); transition: transform 0.2s, box-shadow 0.2s; }
-.photo-thumb:hover { transform: scale(1.04); box-shadow: 0 4px 20px rgba(0,198,255,0.3); }
-.photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
-.photo-thumb .del-btn { position: absolute; top: 4px; right: 4px; background: rgba(255,0,0,0.8); border: none; border-radius: 6px; color: #fff; width: 22px; height: 22px; font-size: 12px; cursor: pointer; display: none; align-items: center; justify-content: center; }
-.photo-thumb:hover .del-btn { display: flex; }
-#viewer { position: fixed; inset: 0; background: rgba(0,0,0,0.96); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; }
-#viewer.active { display: flex; }
-#viewer img { max-width: 92vw; max-height: 80vh; border-radius: 16px; box-shadow: 0 0 60px rgba(0,0,0,0.8); transition: opacity 0.25s; }
-.viewer-controls { position: absolute; bottom: 24px; display: flex; gap: 12px; align-items: center; }
-.viewer-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); border-radius: 50%; width: 46px; height: 46px; font-size: 20px; cursor: pointer; color: #fff; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
-.viewer-nav:hover { background: rgba(0,198,255,0.3); }
-.viewer-nav.left { left: 16px; }
-.viewer-nav.right { right: 16px; }
-.viewer-close { position: absolute; top: 16px; right: 16px; background: rgba(255,0,0,0.7); border: none; border-radius: 12px; color: #fff; width: 40px; height: 40px; font-size: 18px; cursor: pointer; transition: background 0.2s; }
-.viewer-close:hover { background: rgba(255,0,0,1); }
-.viewer-counter { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); border-radius: 99px; padding: 6px 16px; font-size: 13px; font-family: 'Orbitron', monospace; letter-spacing: 2px; }
-.history-list { overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 8px; padding-right: 4px; }
-.history-list::-webkit-scrollbar { width: 4px; }
-.history-list::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 99px; }
-.history-item { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 12px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; animation: slideUp 0.3s ease; }
-.history-item .expr { opacity: 0.6; }
-.history-item .result { font-family: 'Orbitron'; color: var(--primary); font-size: 16px; }
-.note-item { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 12px; padding: 12px; margin-bottom: 8px; position: relative; }
-.note-title { font-family: 'Orbitron'; font-size: 13px; color: var(--primary); margin-bottom: 4px; }
-.note-body { font-size: 13px; opacity: 0.8; white-space: pre-wrap; word-break: break-word; }
-.note-del { position: absolute; top: 8px; right: 8px; background: rgba(255,68,68,0.15); border: none; border-radius: 8px; color: var(--danger); padding: 2px 8px; cursor: pointer; font-size: 12px; }
-.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(0); background: rgba(10,10,20,0.95); border: 1px solid var(--glass-border); color: var(--text); padding: 12px 24px; border-radius: 99px; font-size: 14px; letter-spacing: 1px; z-index: 99999; backdrop-filter: blur(12px); transition: opacity 0.4s, transform 0.4s; opacity: 0; pointer-events: none; white-space: nowrap; }
-.toast.show { opacity: 1; }
-.tab-bar { display: flex; gap: 6px; margin-bottom: 14px; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 4px; }
-.tab { flex: 1; padding: 8px; border: none; border-radius: 10px; background: transparent; color: var(--text); font-family: 'Orbitron'; font-size: 10px; letter-spacing: 1px; cursor: pointer; transition: background 0.2s, color 0.2s; opacity: 0.5; }
-.tab.active { background: var(--primary); color: #fff; opacity: 1; }
-.switch-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--glass-border); }
-.switch-label { font-size: 14px; letter-spacing: 1px; }
-.switch { position: relative; width: 44px; height: 24px; }
-.switch input { display: none; }
-.switch-slider { position: absolute; inset: 0; background: rgba(255,255,255,0.1); border-radius: 99px; cursor: pointer; transition: background 0.3s; }
-.switch-slider::after { content: ''; position: absolute; left: 3px; top: 3px; width: 18px; height: 18px; background: #fff; border-radius: 50%; transition: transform 0.3s; }
-.switch input:checked + .switch-slider { background: var(--primary); }
-.switch input:checked + .switch-slider::after { transform: translateX(20px); }
-.pin-display { display: flex; justify-content: center; gap: 12px; margin: 20px 0; }
-.pin-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--glass-border); transition: background 0.2s, border-color 0.2s; }
-.pin-dot.filled { background: var(--primary); border-color: var(--primary); }
-.pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.pin-key { aspect-ratio: 1; border: 1px solid var(--glass-border); border-radius: 16px; background: var(--glass); color: var(--text); font-family: 'Orbitron'; font-size: 18px; cursor: pointer; transition: background 0.15s, transform 0.1s; }
-.pin-key:hover { background: rgba(0,198,255,0.15); }
-.pin-key:active { transform: scale(0.9); }
-.pin-key.del { font-size: 14px; color: var(--danger); }
-@keyframes shake { 0%,100% { transform: translateX(0); } 20%,60% { transform: translateX(-10px); } 40%,80% { transform: translateX(10px); } }
-.shake { animation: shake 0.4s ease; }
-.strength-bar { height: 4px; border-radius: 99px; background: rgba(255,255,255,0.1); margin-top: 4px; overflow: hidden; }
-.strength-fill { height: 100%; border-radius: 99px; transition: width 0.3s, background 0.3s; }
-textarea { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 12px; color: var(--text); font-family: 'Rajdhani'; font-size: 14px; padding: 10px; resize: none; outline: none; }
-textarea:focus { border-color: var(--primary); }
-.badge { background: var(--danger); color: #fff; border-radius: 99px; padding: 1px 7px; font-size: 11px; font-family: 'Orbitron'; }
-.settings-section { margin-bottom: 16px; }
-.settings-title { font-family: 'Orbitron'; font-size: 11px; letter-spacing: 3px; color: rgba(0,198,255,0.5); margin-bottom: 10px; text-transform: uppercase; }
-.scan-line { position: fixed; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--primary), transparent); opacity: 0.4; animation: scan 4s linear infinite; z-index: 1; pointer-events: none; }
-@keyframes scan { from { top: 0; } to { top: 100vh; } }
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 99px; }
-.search-bar { display: flex; gap: 8px; margin-bottom: 10px; }
-.search-bar input { margin: 0; flex: 1; }
-* { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+:root{--primary:#00c6ff;--gold:#ffd700;--bg1:#060b18;--glass:rgba(0,198,255,0.07);--glass-border:rgba(0,198,255,0.2);--success:#00ff88;--danger:#ff4444;--text:#e0f0ff}
+.light-theme{--bg1:#e8f4f8;--glass:rgba(0,100,180,0.07);--glass-border:rgba(0,100,180,0.25);--text:#0a1a2e;--primary:#0077aa}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Rajdhani',sans-serif;background:var(--bg1);color:var(--text);height:100vh;overflow:hidden;transition:background .5s,color .5s}
+body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,198,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,198,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+#splash{position:fixed;inset:0;background:#000;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999;gap:20px}
+.splash-logo{font-family:'Orbitron',monospace;font-size:clamp(36px,8vw,72px);font-weight:900;letter-spacing:16px;color:var(--primary);animation:pulseGlow 1.5s infinite alternate}
+.splash-sub{font-size:14px;letter-spacing:6px;color:rgba(0,198,255,.5);text-transform:uppercase}
+.splash-bar{width:200px;height:3px;background:rgba(0,198,255,.15);border-radius:99px;overflow:hidden;margin-top:10px}
+.splash-bar-fill{height:100%;background:linear-gradient(90deg,var(--primary),#7fff00);border-radius:99px;animation:fillBar 2.3s ease forwards}
+@keyframes fillBar{from{width:0}to{width:100%}}
+@keyframes pulseGlow{from{text-shadow:0 0 10px var(--primary),0 0 30px rgba(0,198,255,.3)}to{text-shadow:0 0 30px var(--primary),0 0 80px rgba(0,198,255,.5)}}
+.page{position:fixed;inset:0;display:none;justify-content:center;align-items:center;z-index:10;padding:16px}
+.page.active{display:flex}
+.page-full{position:fixed;inset:0;display:none;z-index:10;padding:16px;flex-direction:column}
+.page-full.active{display:flex}
+.card{width:100%;max-width:380px;background:var(--glass);border:1px solid var(--glass-border);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);padding:28px 24px;border-radius:24px;box-shadow:0 8px 60px rgba(0,0,0,.5);animation:slideUp .4s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+h2{font-family:'Orbitron',monospace;font-size:18px;letter-spacing:4px;margin-bottom:20px;color:var(--primary);text-transform:uppercase}
+input[type=text],input[type=password]{width:100%;padding:12px 16px;margin:6px 0;background:rgba(0,0,0,.3);border:1px solid var(--glass-border);border-radius:12px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:15px;outline:none;transition:border-color .3s}
+input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(0,198,255,.1)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:12px 16px;margin:5px 0;border:none;border-radius:12px;font-family:'Orbitron',monospace;font-size:12px;letter-spacing:2px;cursor:pointer;transition:transform .15s;text-transform:uppercase;position:relative;overflow:hidden}
+.btn:active{transform:scale(.96)}
+.btn-primary{background:linear-gradient(135deg,var(--primary),#0077b6);color:#fff;box-shadow:0 4px 20px rgba(0,198,255,.25)}
+.btn-danger{background:linear-gradient(135deg,var(--danger),#aa0000);color:#fff}
+.btn-success{background:linear-gradient(135deg,var(--success),#009955);color:#000}
+.btn-ghost{background:var(--glass);border:1px solid var(--glass-border);color:var(--text)}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#ff8c00);color:#000}
+.btn-sm{width:auto;padding:7px 14px;font-size:10px;margin:3px}
+#calcPage{align-items:center}
+.calc-card{width:100%;max-width:340px;background:var(--glass);border:1px solid var(--glass-border);backdrop-filter:blur(24px);padding:20px;border-radius:28px;box-shadow:0 8px 60px rgba(0,0,0,.6)}
+.calc-topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.calc-topbar span{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:3px;color:var(--primary)}
+.calc-topbar-actions{display:flex;gap:6px}
+.icon-btn{background:var(--glass);border:1px solid var(--glass-border);color:var(--text);border-radius:10px;padding:6px 10px;cursor:pointer;font-size:14px;transition:background .2s}
+.icon-btn:hover{background:rgba(0,198,255,.15)}
+.calc-display{background:rgba(0,0,0,.5);border:1px solid var(--glass-border);border-radius:14px;padding:12px 16px;text-align:right;margin-bottom:14px}
+.calc-expr{font-size:13px;color:rgba(0,198,255,.5);min-height:18px;font-family:'Rajdhani';letter-spacing:1px}
+.calc-main{font-family:'Orbitron',monospace;font-size:28px;color:var(--primary);min-height:40px;word-break:break-all}
+.calc-mem{font-size:11px;color:var(--gold);min-height:14px}
+.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.calc-btn{aspect-ratio:1;border:1px solid var(--glass-border);border-radius:14px;background:rgba(0,0,0,.3);color:var(--text);font-family:'Orbitron',monospace;font-size:14px;cursor:pointer;transition:background .15s,transform .1s;display:flex;align-items:center;justify-content:center}
+.calc-btn:active{transform:scale(.91)}
+.calc-btn.op{background:rgba(0,198,255,.12);color:var(--primary);border-color:rgba(0,198,255,.3)}
+.calc-btn.eq{background:linear-gradient(135deg,var(--primary),#0077b6);color:#fff;border:none}
+.calc-btn.clr{background:rgba(255,68,68,.12);color:var(--danger);border-color:rgba(255,68,68,.3)}
+.calc-btn.sp{background:rgba(255,215,0,.1);color:var(--gold);border-color:rgba(255,215,0,.3)}
+.vault-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.vault-header h2{margin:0;flex:1}
+.vault-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.stat-box{background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:12px;text-align:center}
+.stat-num{font-family:'Orbitron',monospace;font-size:24px;color:var(--primary)}
+.stat-label{font-size:11px;letter-spacing:2px;opacity:.6;text-transform:uppercase}
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;overflow-y:auto;flex:1;padding-right:4px}
+.photo-thumb{position:relative;border-radius:12px;overflow:hidden;cursor:pointer;aspect-ratio:1;background:rgba(0,0,0,.3);border:1px solid var(--glass-border);transition:transform .2s}
+.photo-thumb:hover{transform:scale(1.04)}
+.photo-thumb img{width:100%;height:100%;object-fit:cover}
+.photo-thumb .del-btn{position:absolute;top:4px;right:4px;background:rgba(255,0,0,.8);border:none;border-radius:6px;color:#fff;width:22px;height:22px;font-size:12px;cursor:pointer;display:none;align-items:center;justify-content:center}
+.photo-thumb:hover .del-btn{display:flex}
+#viewer{position:fixed;inset:0;background:rgba(0,0,0,.96);display:none;flex-direction:column;justify-content:center;align-items:center;z-index:1000}
+#viewer.active{display:flex}
+#viewer img{max-width:92vw;max-height:80vh;border-radius:16px;transition:opacity .25s}
+.viewer-controls{position:absolute;bottom:24px;display:flex;gap:12px;align-items:center}
+.viewer-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:50%;width:46px;height:46px;font-size:20px;cursor:pointer;color:#fff;display:flex;align-items:center;justify-content:center}
+.viewer-nav.left{left:16px}
+.viewer-nav.right{right:16px}
+.viewer-close{position:absolute;top:16px;right:16px;background:rgba(255,0,0,.7);border:none;border-radius:12px;color:#fff;width:40px;height:40px;font-size:18px;cursor:pointer}
+.viewer-counter{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:99px;padding:6px 16px;font-size:13px;font-family:'Orbitron',monospace;letter-spacing:2px}
+.note-item{background:var(--glass);border:1px solid var(--glass-border);border-radius:12px;padding:12px;margin-bottom:8px;position:relative}
+.note-title{font-family:'Orbitron';font-size:13px;color:var(--primary);margin-bottom:4px}
+.note-body{font-size:13px;opacity:.8;white-space:pre-wrap;word-break:break-word}
+.note-del{position:absolute;top:8px;right:8px;background:rgba(255,68,68,.15);border:none;border-radius:8px;color:var(--danger);padding:2px 8px;cursor:pointer;font-size:12px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(10,10,20,.95);border:1px solid var(--glass-border);color:var(--text);padding:12px 24px;border-radius:99px;font-size:14px;letter-spacing:1px;z-index:99999;backdrop-filter:blur(12px);transition:opacity .4s;opacity:0;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+.tab-bar{display:flex;gap:6px;margin-bottom:14px;background:rgba(0,0,0,.3);border-radius:12px;padding:4px}
+.tab{flex:1;padding:8px;border:none;border-radius:10px;background:transparent;color:var(--text);font-family:'Orbitron';font-size:10px;letter-spacing:1px;cursor:pointer;transition:background .2s;opacity:.5}
+.tab.active{background:var(--primary);color:#fff;opacity:1}
+.switch-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--glass-border)}
+.switch-label{font-size:14px;letter-spacing:1px}
+.switch{position:relative;width:44px;height:24px}
+.switch input{display:none}
+.switch-slider{position:absolute;inset:0;background:rgba(255,255,255,.1);border-radius:99px;cursor:pointer;transition:background .3s}
+.switch-slider::after{content:'';position:absolute;left:3px;top:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .3s}
+.switch input:checked+.switch-slider{background:var(--primary)}
+.switch input:checked+.switch-slider::after{transform:translateX(20px)}
+.pin-display{display:flex;justify-content:center;gap:12px;margin:20px 0}
+.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--glass-border);transition:background .2s,border-color .2s}
+.pin-dot.filled{background:var(--primary);border-color:var(--primary)}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pin-key{aspect-ratio:1;border:1px solid var(--glass-border);border-radius:16px;background:var(--glass);color:var(--text);font-family:'Orbitron';font-size:18px;cursor:pointer;transition:background .15s,transform .1s}
+.pin-key:active{transform:scale(.9)}
+.pin-key.del{font-size:14px;color:var(--danger)}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
+.shake{animation:shake .4s ease}
+.strength-bar{height:4px;border-radius:99px;background:rgba(255,255,255,.1);margin-top:4px;overflow:hidden}
+.strength-fill{height:100%;border-radius:99px;transition:width .3s,background .3s}
+textarea{width:100%;background:rgba(0,0,0,.3);border:1px solid var(--glass-border);border-radius:12px;color:var(--text);font-family:'Rajdhani';font-size:14px;padding:10px;resize:none;outline:none}
+textarea:focus{border-color:var(--primary)}
+.settings-section{margin-bottom:16px}
+.settings-title{font-family:'Orbitron';font-size:11px;letter-spacing:3px;color:rgba(0,198,255,.5);margin-bottom:10px;text-transform:uppercase}
+.scan-line{position:fixed;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--primary),transparent);opacity:.4;animation:scan 4s linear infinite;z-index:1;pointer-events:none}
+@keyframes scan{from{top:0}to{top:100vh}}
+.search-bar{display:flex;gap:8px;margin-bottom:10px}
+*{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.history-list{overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:8px}
+.history-item{background:var(--glass);border:1px solid var(--glass-border);border-radius:12px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;font-size:14px}
+.history-item .expr{opacity:.6}
+.history-item .result{font-family:'Orbitron';color:var(--primary);font-size:16px}
 </style>
 </head>
 <body>
 <div class="scan-line"></div>
-
-<!-- SPLASH -->
 <div id="splash">
   <div class="splash-logo">SAMARTH</div>
   <div class="splash-sub">Ultra Vault · Secure · Private</div>
   <div class="splash-bar"><div class="splash-bar-fill"></div></div>
 </div>
-
-<!-- AUTH -->
 <div class="page" id="authPage">
   <div class="card">
     <div class="tab-bar">
@@ -343,7 +136,7 @@ textarea:focus { border-color: var(--primary); }
       <input type="text" id="logUser" placeholder="Username" autocomplete="off">
       <div style="position:relative">
         <input type="password" id="logPass" placeholder="Password" style="padding-right:44px">
-        <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;opacity:0.5" onclick="togglePw('logPass',this)">👁</span>
+        <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;opacity:.5" onclick="togglePw('logPass',this)">👁</span>
       </div>
       <button class="btn btn-primary" onclick="login()">🔑 SIGN IN</button>
       <button class="btn btn-ghost" onclick="guestLogin()">👤 Guest Mode</button>
@@ -352,45 +145,33 @@ textarea:focus { border-color: var(--primary); }
       <h2>✨ Register</h2>
       <input type="text" id="regUser" placeholder="Choose username" autocomplete="off">
       <div style="position:relative">
-        <input type="password" id="regPass" placeholder="Password" oninput="checkStrength(this)" style="padding-right:44px">
-        <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;opacity:0.5" onclick="togglePw('regPass',this)">👁</span>
+        <input type="password" id="regPass" placeholder="Password (min 6 chars)" oninput="checkStrength(this)" style="padding-right:44px">
+        <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;opacity:.5" onclick="togglePw('regPass',this)">👁</span>
       </div>
       <div class="strength-bar"><div class="strength-fill" id="strengthFill" style="width:0;background:#ff4444"></div></div>
       <button class="btn btn-success" onclick="register()">🚀 CREATE ACCOUNT</button>
     </div>
   </div>
 </div>
-
-<!-- PIN SCREEN -->
 <div class="page" id="pinPage">
   <div class="card">
     <div style="text-align:center">
       <div style="font-size:40px;margin-bottom:8px">🔐</div>
       <h2 style="text-align:center">VAULT PIN</h2>
-      <div id="pinSubtitle" style="font-size:12px;opacity:0.5;letter-spacing:2px;margin-bottom:6px">ENTER 4-DIGIT PIN</div>
+      <div id="pinSubtitle" style="font-size:12px;opacity:.5;letter-spacing:2px;margin-bottom:6px">ENTER 4-DIGIT PIN</div>
       <div class="pin-display" id="pinDots">
         <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
       </div>
     </div>
-    <div class="pin-pad">
-      <button class="pin-key" onclick="pinPress(1)">1</button>
-      <button class="pin-key" onclick="pinPress(2)">2</button>
-      <button class="pin-key" onclick="pinPress(3)">3</button>
-      <button class="pin-key" onclick="pinPress(4)">4</button>
-      <button class="pin-key" onclick="pinPress(5)">5</button>
-      <button class="pin-key" onclick="pinPress(6)">6</button>
-      <button class="pin-key" onclick="pinPress(7)">7</button>
-      <button class="pin-key" onclick="pinPress(8)">8</button>
-      <button class="pin-key" onclick="pinPress(9)">9</button>
-      <button class="pin-key" onclick="backToCalc()">↩</button>
-      <button class="pin-key" onclick="pinPress(0)">0</button>
-      <button class="pin-key del" onclick="pinDelete()">⌫</button>
+    <div class="pin-pad" id="pinPad">
+      <button class="pin-key" onclick="pinPress(1)">1</button><button class="pin-key" onclick="pinPress(2)">2</button><button class="pin-key" onclick="pinPress(3)">3</button>
+      <button class="pin-key" onclick="pinPress(4)">4</button><button class="pin-key" onclick="pinPress(5)">5</button><button class="pin-key" onclick="pinPress(6)">6</button>
+      <button class="pin-key" onclick="pinPress(7)">7</button><button class="pin-key" onclick="pinPress(8)">8</button><button class="pin-key" onclick="pinPress(9)">9</button>
+      <button class="pin-key" onclick="backToCalc()">↩</button><button class="pin-key" onclick="pinPress(0)">0</button><button class="pin-key del" onclick="pinDelete()">⌫</button>
     </div>
     <div id="lockCountdown" style="text-align:center;color:var(--danger);font-size:12px;margin-top:8px;min-height:16px"></div>
   </div>
 </div>
-
-<!-- CALCULATOR -->
 <div class="page" id="calcPage">
   <div class="calc-card">
     <div class="calc-topbar">
@@ -408,26 +189,11 @@ textarea:focus { border-color: var(--primary); }
       <div class="calc-mem" id="calcMem"></div>
     </div>
     <div class="calc-grid">
-      <button class="calc-btn clr" onclick="cPress('C')">C</button>
-      <button class="calc-btn sp" onclick="cPress('%')">%</button>
-      <button class="calc-btn sp" onclick="cPress('√')">√</button>
-      <button class="calc-btn op" onclick="cPress('/')">÷</button>
-      <button class="calc-btn" onclick="cPress('7')">7</button>
-      <button class="calc-btn" onclick="cPress('8')">8</button>
-      <button class="calc-btn" onclick="cPress('9')">9</button>
-      <button class="calc-btn op" onclick="cPress('*')">×</button>
-      <button class="calc-btn" onclick="cPress('4')">4</button>
-      <button class="calc-btn" onclick="cPress('5')">5</button>
-      <button class="calc-btn" onclick="cPress('6')">6</button>
-      <button class="calc-btn op" onclick="cPress('-')">−</button>
-      <button class="calc-btn" onclick="cPress('1')">1</button>
-      <button class="calc-btn" onclick="cPress('2')">2</button>
-      <button class="calc-btn" onclick="cPress('3')">3</button>
-      <button class="calc-btn op" onclick="cPress('+')">+</button>
-      <button class="calc-btn sp" onclick="cPress('±')">±</button>
-      <button class="calc-btn" onclick="cPress('0')">0</button>
-      <button class="calc-btn" onclick="cPress('.')">.</button>
-      <button class="calc-btn eq" onclick="cPress('=')">=</button>
+      <button class="calc-btn clr" onclick="cPress('C')">C</button><button class="calc-btn sp" onclick="cPress('%')">%</button><button class="calc-btn sp" onclick="cPress('√')">√</button><button class="calc-btn op" onclick="cPress('/')">÷</button>
+      <button class="calc-btn" onclick="cPress('7')">7</button><button class="calc-btn" onclick="cPress('8')">8</button><button class="calc-btn" onclick="cPress('9')">9</button><button class="calc-btn op" onclick="cPress('*')">×</button>
+      <button class="calc-btn" onclick="cPress('4')">4</button><button class="calc-btn" onclick="cPress('5')">5</button><button class="calc-btn" onclick="cPress('6')">6</button><button class="calc-btn op" onclick="cPress('-')">−</button>
+      <button class="calc-btn" onclick="cPress('1')">1</button><button class="calc-btn" onclick="cPress('2')">2</button><button class="calc-btn" onclick="cPress('3')">3</button><button class="calc-btn op" onclick="cPress('+')">+</button>
+      <button class="calc-btn sp" onclick="cPress('±')">±</button><button class="calc-btn" onclick="cPress('0')">0</button><button class="calc-btn" onclick="cPress('.')">.</button><button class="calc-btn eq" onclick="cPress('=')">=</button>
     </div>
     <div style="display:flex;gap:6px;margin-top:10px">
       <button class="calc-btn sp btn-sm" style="flex:1;aspect-ratio:auto;padding:8px 0" onclick="cPress('M+')">M+</button>
@@ -437,8 +203,6 @@ textarea:focus { border-color: var(--primary); }
     </div>
   </div>
 </div>
-
-<!-- VAULT PAGE -->
 <div class="page-full" id="vaultPage">
   <div style="max-width:600px;width:100%;margin:auto;height:100%;display:flex;flex-direction:column">
     <div class="vault-header">
@@ -455,8 +219,8 @@ textarea:focus { border-color: var(--primary); }
         <div class="stat-box"><div class="stat-num" id="statSize">0 KB</div><div class="stat-label">Storage</div></div>
       </div>
       <div class="search-bar">
-        <button class="btn btn-primary" style="width:auto;margin:0" onclick="document.getElementById('photoFileInput').click()">📁 ADD</button>
-        <input type="file" id="photoFileInput" multiple accept="image/*" style="display:none" onchange="uploadPhotos(event)">
+        <button class="btn btn-primary" style="width:auto;margin:0" onclick="document.getElementById('photoInput').click()">📁 ADD</button>
+        <input type="file" id="photoInput" multiple accept="image/*" style="display:none" onchange="uploadPhotos(event)">
         <button class="btn btn-danger" style="width:auto;margin:0" onclick="clearAllPhotos()">🗑 CLEAR</button>
         <button class="btn btn-gold" style="width:auto;margin:0" onclick="sortPhotos()">⟳ SORT</button>
       </div>
@@ -470,15 +234,11 @@ textarea:focus { border-color: var(--primary); }
     </div>
   </div>
 </div>
-
-<!-- INTRUDER PAGE -->
 <div class="page-full" id="intruderPage">
-  <h2 style="text-align:center;">🕵️ Intruder Alerts</h2>
+  <h2 style="text-align:center">🕵️ Intruder Alerts</h2>
   <div id="intruderList" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px;overflow-y:auto"></div>
-  <button onclick="clearIntruders()" style="margin:15px;padding:10px;width:90%;background:red;color:white;border:none;border-radius:10px;">Clear All 🚫</button>
+  <button onclick="clearIntruders()" style="margin:15px;padding:10px;width:90%;background:red;color:white;border:none;border-radius:10px">Clear All 🚫</button>
 </div>
-
-<!-- HISTORY PAGE -->
 <div class="page-full" id="historyPage">
   <div style="max-width:500px;width:100%;margin:auto;height:100%;display:flex;flex-direction:column">
     <div class="vault-header">
@@ -489,8 +249,6 @@ textarea:focus { border-color: var(--primary); }
     <div class="history-list" id="historyList"></div>
   </div>
 </div>
-
-<!-- SETTINGS PAGE -->
 <div class="page-full" id="settingsPage">
   <div style="max-width:500px;width:100%;margin:auto;height:100%;overflow-y:auto">
     <div class="vault-header">
@@ -500,18 +258,9 @@ textarea:focus { border-color: var(--primary); }
     <div class="card">
       <div class="settings-section">
         <div class="settings-title">Preferences</div>
-        <div class="switch-row">
-          <span class="switch-label">Sound Effects</span>
-          <label class="switch"><input type="checkbox" id="soundToggle" checked onchange="saveSetting('sound',this.checked)"><div class="switch-slider"></div></label>
-        </div>
-        <div class="switch-row">
-          <span class="switch-label">Auto Logout (2 min)</span>
-          <label class="switch"><input type="checkbox" id="autoLogoutToggle" checked onchange="saveSetting('autoLogout',this.checked)"><div class="switch-slider"></div></label>
-        </div>
-        <div class="switch-row">
-          <span class="switch-label">Vibration</span>
-          <label class="switch"><input type="checkbox" id="vibrateToggle" checked onchange="saveSetting('vibrate',this.checked)"><div class="switch-slider"></div></label>
-        </div>
+        <div class="switch-row"><span class="switch-label">Sound Effects</span><label class="switch"><input type="checkbox" id="soundToggle" checked onchange="saveSetting('sound',this.checked)"><div class="switch-slider"></div></label></div>
+        <div class="switch-row"><span class="switch-label">Auto Logout (2 min)</span><label class="switch"><input type="checkbox" id="autoLogoutToggle" checked onchange="saveSetting('autoLogout',this.checked)"><div class="switch-slider"></div></label></div>
+        <div class="switch-row"><span class="switch-label">Vibration</span><label class="switch"><input type="checkbox" id="vibrateToggle" checked onchange="saveSetting('vibrate',this.checked)"><div class="switch-slider"></div></label></div>
       </div>
       <div class="settings-section">
         <div class="settings-title">Vault PIN</div>
@@ -522,17 +271,14 @@ textarea:focus { border-color: var(--primary); }
       <div class="settings-section">
         <div class="settings-title">Account</div>
         <div style="background:var(--glass);border:1px solid var(--glass-border);border-radius:12px;padding:14px;margin-bottom:10px">
-          <div style="font-size:13px;opacity:0.6">Logged in as</div>
+          <div style="font-size:13px;opacity:.6">Logged in as</div>
           <div style="font-family:'Orbitron';font-size:18px;color:var(--primary)" id="settingsUsername"></div>
         </div>
         <button class="btn btn-danger" onclick="doLogout()">🚪 LOGOUT</button>
-        <button class="btn btn-ghost" onclick="deleteAccount()">⚠️ DELETE ACCOUNT</button>
       </div>
     </div>
   </div>
 </div>
-
-<!-- FULLSCREEN VIEWER -->
 <div id="viewer">
   <button class="viewer-close" onclick="closeViewer()">✕</button>
   <button class="viewer-nav left" onclick="navPhoto(-1)">‹</button>
@@ -543,163 +289,115 @@ textarea:focus { border-color: var(--primary); }
     <button class="icon-btn" onclick="downloadPhoto()">⬇</button>
   </div>
 </div>
-
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
+<video id="camera" autoplay playsinline style="display:none"></video>
+<canvas id="snapCanvas" style="display:none"></canvas>
 
-<script>
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, deleteDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAyFrv3NTQHtKU0No2Qtjn1sBwaFGAPmuM",
+  authDomain: "sammycalci.firebaseapp.com",
+  projectId: "sammycalci",
+  storageBucket: "sammycalci.firebasestorage.app",
+  messagingSenderId: "69558511035",
+  appId: "1:69558511035:web:ad27c29de889a8983bd09e"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
 // ============================================================
 //  STATE
 // ============================================================
 let currentUser = null;
-let calcBuffer = '';
-let calcExpr = '';
-let calcNewNum = true;
-let memory = 0;
-let wrongPin = 0;
-let pinLocked = false;
-let pinInput = '';
-let viewerIndex = 0;
-let lastActivity = Date.now();
-let calcHistory = [];
-let secretBuf = '';
-let currentVaultTab = 'photos';
-let allPhotos = [];
-let sortAsc = true;
-let cameraStream = null;
-const SETTINGS_KEY = 'svault_settings';
-let settings = { sound: true, autoLogout: true, vibrate: true };
+let calcBuffer='', calcExpr='', calcNewNum=true, memory=0;
+let wrongPin=0, pinLocked=false, pinInput='';
+let viewerIndex=0, lastActivity=Date.now();
+let calcHistory=[], secretBuf='', currentVaultTab='photos';
+let allPhotos=[], sortAsc=true, cameraStream=null;
+const SETTINGS_KEY='svault_settings';
+let settings={sound:true,autoLogout:true,vibrate:true};
 
 // ============================================================
 //  UTILS
 // ============================================================
-function showToast(msg, isError=false) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.style.borderColor = isError ? 'rgba(255,68,68,0.4)' : 'var(--glass-border)';
+function showToast(msg,isError=false){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.style.borderColor=isError?'rgba(255,68,68,.4)':'var(--glass-border)';
   t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2400);
+  setTimeout(()=>t.classList.remove('show'),2400);
 }
-function showPage(id) {
-  document.querySelectorAll('.page,.page-full').forEach(p => p.classList.remove('active'));
+function showPage(id){
+  document.querySelectorAll('.page,.page-full').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  if (id !== 'pinPage') stopCamera();
-  if (id === 'intruderPage') renderIntruders();
+  if(id!=='pinPage') stopCamera();
+  if(id==='intruderPage') renderIntruders();
 }
-function vibrate(ms) {
-  if(settings.vibrate && navigator.vibrate) navigator.vibrate(ms);
-}
-function escHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
+function vibrate(ms){if(settings.vibrate&&navigator.vibrate)navigator.vibrate(ms);}
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 // ============================================================
 //  AUDIO
 // ============================================================
-let ctx = new (window.AudioContext || window.webkitAudioContext)();
-function safeResume() { if(ctx.state==='suspended') ctx.resume(); }
-function resumeAudio() { if(ctx.state==='suspended') ctx.resume(); }
-function playBeep(freq=880, dur=0.08, type='sine', vol=0.2) {
-  if(!settings.sound) return;
-  try {
-    safeResume();
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
-    o.type = type;
-    o.frequency.setValueAtTime(freq, ctx.currentTime);
-    g.gain.setValueAtTime(0.001, ctx.currentTime);
-    g.gain.exponentialRampToValueAtTime(vol, ctx.currentTime+0.01);
-    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+dur);
-    o.connect(g); g.connect(ctx.destination);
-    o.start(); o.stop(ctx.currentTime+dur);
-  } catch(e) {}
+let actx=new(window.AudioContext||window.webkitAudioContext)();
+function safeResume(){if(actx.state==='suspended')actx.resume();}
+function resumeAudio(){if(actx.state==='suspended')actx.resume();}
+function playBeep(freq=880,dur=0.08,type='sine',vol=0.2){
+  if(!settings.sound)return;
+  try{safeResume();const o=actx.createOscillator(),g=actx.createGain();o.type=type;o.frequency.setValueAtTime(freq,actx.currentTime);g.gain.setValueAtTime(0.001,actx.currentTime);g.gain.exponentialRampToValueAtTime(vol,actx.currentTime+0.01);g.gain.exponentialRampToValueAtTime(0.0001,actx.currentTime+dur);o.connect(g);g.connect(actx.destination);o.start();o.stop(actx.currentTime+dur);}catch(e){}
 }
-function playSuccess() {
-  if(!settings.sound) return;
-  safeResume();
-  playBeep(600,0.08,'sine',0.15);
-  setTimeout(()=>playBeep(800,0.1,'sine',0.18),80);
-  setTimeout(()=>playBeep(1000,0.12,'sine',0.2),160);
-}
-function playError() {
-  if(!settings.sound) return;
-  try {
-    safeResume();
-    const now = ctx.currentTime;
-    const o0 = ctx.createOscillator();
-    const g0 = ctx.createGain();
-    o0.type='sawtooth';
-    o0.frequency.setValueAtTime(1200,now);
-    o0.frequency.exponentialRampToValueAtTime(150,now+0.5);
-    g0.gain.setValueAtTime(0.001,now);
-    g0.gain.exponentialRampToValueAtTime(0.5,now+0.02);
-    g0.gain.exponentialRampToValueAtTime(0.001,now+0.5);
-    o0.connect(g0); g0.connect(ctx.destination);
-    o0.start(now); o0.stop(now+0.5);
-  } catch(e) {}
-}
-function playKey() { if(!settings.sound) return; playBeep(900,0.03,'sine',0.06); }
-function playClick() { if(!settings.sound) return; playBeep(500,0.05,'square',0.06); }
-function playVault() {
-  if(!settings.sound) return;
-  safeResume();
-  [400,550,700,900].forEach((f,i)=>setTimeout(()=>playBeep(f,0.12,'sine',0.12),i*90));
-}
+function playSuccess(){if(!settings.sound)return;safeResume();playBeep(600,0.08,'sine',0.15);setTimeout(()=>playBeep(800,0.1,'sine',0.18),80);setTimeout(()=>playBeep(1000,0.12,'sine',0.2),160);}
+function playError(){if(!settings.sound)return;try{safeResume();const now=actx.currentTime,o=actx.createOscillator(),g=actx.createGain();o.type='sawtooth';o.frequency.setValueAtTime(1200,now);o.frequency.exponentialRampToValueAtTime(150,now+0.5);g.gain.setValueAtTime(0.001,now);g.gain.exponentialRampToValueAtTime(0.5,now+0.02);g.gain.exponentialRampToValueAtTime(0.001,now+0.5);o.connect(g);g.connect(actx.destination);o.start(now);o.stop(now+0.5);}catch(e){}}
+function playKey(){if(!settings.sound)return;playBeep(900,0.03,'sine',0.06);}
+function playClick(){if(!settings.sound)return;playBeep(500,0.05,'square',0.06);}
+function playVault(){if(!settings.sound)return;safeResume();[400,550,700,900].forEach((f,i)=>setTimeout(()=>playBeep(f,0.12,'sine',0.12),i*90));}
 
 // ============================================================
-//  CAMERA / INTRUDER
+//  CAMERA
 // ============================================================
-function stopCamera() {
-  if(cameraStream) { cameraStream.getTracks().forEach(t=>t.stop()); cameraStream=null; }
-}
-async function initCamera() {
+function stopCamera(){if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null;}}
+async function initCamera(){
   stopCamera();
-  try {
-    cameraStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}});
-    const video = document.getElementById('camera');
-    video.srcObject = cameraStream;
-    await video.play();
-    await new Promise(resolve=>{ if(video.readyState>=3) return resolve(); video.onloadeddata=resolve; });
-  } catch(e) { console.log('Camera denied'); }
+  try{cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}});const v=document.getElementById('camera');v.srcObject=cameraStream;await v.play();}catch(e){}
 }
-async function captureIntruder() {
-  const video = document.getElementById('camera');
-  const canvas = document.getElementById('snapCanvas');
-  const c = canvas.getContext('2d');
-  await new Promise(resolve=>{ const check=()=>{ if(video.videoWidth>0&&video.videoHeight>0) resolve(); else requestAnimationFrame(check); }; check(); });
-  canvas.width=video.videoWidth; canvas.height=video.videoHeight;
-  c.drawImage(video,0,0);
-  const img = canvas.toDataURL('image/jpeg',0.7);
-  if(!img||img.length<10000) return captureIntruder();
-  let intruders = JSON.parse(localStorage.getItem('intruders')||'[]');
-  intruders.unshift({img, time:new Date().toLocaleString(), user:currentUser});
-  if(intruders.length>10) intruders=intruders.slice(0,10);
+async function captureIntruder(){
+  const v=document.getElementById('camera'),c=document.getElementById('snapCanvas'),ctx=c.getContext('2d');
+  await new Promise(r=>{const chk=()=>{if(v.videoWidth>0)r();else requestAnimationFrame(chk);};chk();});
+  c.width=v.videoWidth;c.height=v.videoHeight;ctx.drawImage(v,0,0);
+  const img=c.toDataURL('image/jpeg',0.7);
+  if(!img||img.length<10000)return captureIntruder();
+  let intruders=JSON.parse(localStorage.getItem('intruders')||'[]');
+  intruders.unshift({img,time:new Date().toLocaleString(),user:currentUser?.uid});
+  if(intruders.length>10)intruders=intruders.slice(0,10);
   localStorage.setItem('intruders',JSON.stringify(intruders));
   stopCamera();
 }
-function renderIntruders() {
-  const list = document.getElementById('intruderList');
-  const intruders = JSON.parse(localStorage.getItem('intruders')||'[]');
-  if(!intruders.length) { list.innerHTML="<p style='text-align:center'>No intruders yet 🚫</p>"; return; }
-  list.innerHTML = intruders.map(i=>`<div style="background:#111;border-radius:10px;padding:5px"><img src="${i.img}" style="width:100%;border-radius:8px"><div style="font-size:10px;text-align:center">${i.time}</div></div>`).join('');
+function renderIntruders(){
+  const list=document.getElementById('intruderList');
+  const intruders=JSON.parse(localStorage.getItem('intruders')||'[]');
+  if(!intruders.length){list.innerHTML="<p style='text-align:center'>No intruders yet</p>";return;}
+  list.innerHTML=intruders.map(i=>`<div style="background:#111;border-radius:10px;padding:5px"><img src="${i.img}" style="width:100%;border-radius:8px"><div style="font-size:10px;text-align:center">${i.time}</div></div>`).join('');
 }
-function clearIntruders() {
-  localStorage.removeItem('intruders');
-  renderIntruders();
-  showToast('Intruders cleared 🚫');
-}
+function clearIntruders(){localStorage.removeItem('intruders');renderIntruders();showToast('Cleared');}
 
 // ============================================================
 //  SETTINGS
 // ============================================================
-function loadSettings() {
-  const s = JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}');
-  settings = {sound:true, autoLogout:true, vibrate:true, ...s};
-  document.getElementById('soundToggle').checked = settings.sound;
-  document.getElementById('autoLogoutToggle').checked = settings.autoLogout;
-  document.getElementById('vibrateToggle').checked = settings.vibrate;
+function loadSettings(){
+  const s=JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}');
+  settings={sound:true,autoLogout:true,vibrate:true,...s};
+  document.getElementById('soundToggle').checked=settings.sound;
+  document.getElementById('autoLogoutToggle').checked=settings.autoLogout;
+  document.getElementById('vibrateToggle').checked=settings.vibrate;
 }
-function saveSetting(key,val) { settings[key]=val; localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings)); }
+function saveSetting(key,val){settings[key]=val;localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));}
 
 // ============================================================
 //  SPLASH
@@ -715,94 +413,84 @@ setTimeout(()=>{
 },2500);
 
 // ============================================================
-//  AUTH — localStorage only
+//  AUTH
 // ============================================================
-function switchAuthTab(tab) {
-  document.getElementById('loginForm').style.display = tab==='login'?'block':'none';
-  document.getElementById('registerForm').style.display = tab==='register'?'block':'none';
-  document.getElementById('tabLogin').classList.toggle('active', tab==='login');
-  document.getElementById('tabRegister').classList.toggle('active', tab==='register');
+function switchAuthTab(tab){
+  document.getElementById('loginForm').style.display=tab==='login'?'block':'none';
+  document.getElementById('registerForm').style.display=tab==='register'?'block':'none';
+  document.getElementById('tabLogin').classList.toggle('active',tab==='login');
+  document.getElementById('tabRegister').classList.toggle('active',tab==='register');
   playClick();
 }
-function togglePw(id, btn) {
-  const el = document.getElementById(id);
-  if(el.type==='password'){el.type='text';btn.style.opacity='1';}
-  else{el.type='password';btn.style.opacity='0.5';}
+function togglePw(id,btn){const el=document.getElementById(id);if(el.type==='password'){el.type='text';btn.style.opacity='1';}else{el.type='password';btn.style.opacity='0.5';}}
+function checkStrength(inp){
+  const v=inp.value;let s=0;
+  if(v.length>=6)s++;if(/[A-Z]/.test(v))s++;if(/[0-9]/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;
+  const colors=['#ff4444','#ff8800','#ffcc00','#00ff88'],widths=['25%','50%','75%','100%'];
+  const fill=document.getElementById('strengthFill');
+  fill.style.width=s>0?widths[s-1]:'0';fill.style.background=s>0?colors[s-1]:'#ff4444';
 }
-function checkStrength(inp) {
-  const v = inp.value;
-  let s = 0;
-  if(v.length>=6) s++;
-  if(/[A-Z]/.test(v)) s++;
-  if(/[0-9]/.test(v)) s++;
-  if(/[^A-Za-z0-9]/.test(v)) s++;
-  const colors=['#ff4444','#ff8800','#ffcc00','#00ff88'];
-  const widths=['25%','50%','75%','100%'];
-  const fill = document.getElementById('strengthFill');
-  fill.style.width = s>0?widths[s-1]:'0';
-  fill.style.background = s>0?colors[s-1]:'#ff4444';
+
+window.register = async function(){
+  const username=document.getElementById('regUser').value.trim();
+  const password=document.getElementById('regPass').value;
+  if(!username||!password)return showToast('Fill all fields',true);
+  if(password.length<6)return showToast('Password min 6 chars',true);
+  showToast('Creating account...');
+  try{
+    const email=username+'@sammyvault.app';
+    const cred=await createUserWithEmailAndPassword(auth,email,password);
+    await setDoc(doc(db,'users',cred.user.uid),{username,createdAt:new Date().toISOString()});
+    playSuccess();
+    showToast('Account created! Login now ✅');
+    switchAuthTab('login');
+    document.getElementById('logUser').value=username;
+  }catch(e){
+    showToast(e.message.includes('email-already-in-use')?'Username taken ❌':e.message,true);
+  }
 }
-function register() {
-  const username = document.getElementById('regUser').value.trim();
-  const password = document.getElementById('regPass').value;
-  if(!username||!password) return showToast('Fill all fields', true);
-  if(password.length<4) return showToast('Password too short', true);
-  const users = JSON.parse(localStorage.getItem('svault_users')||'{}');
-  if(users[username]) return showToast('Username taken ❌', true);
-  users[username] = btoa(password);
-  localStorage.setItem('svault_users', JSON.stringify(users));
-  playSuccess();
-  showToast('Account created! Login now ✅');
-  switchAuthTab('login');
+
+window.login = async function(){
+  const username=document.getElementById('logUser').value.trim();
+  const password=document.getElementById('logPass').value;
+  if(!username||!password)return showToast('Enter credentials',true);
+  showToast('Signing in...');
+  try{
+    const email=username+'@sammyvault.app';
+    const cred=await signInWithEmailAndPassword(auth,email,password);
+    currentUser=cred.user;
+    calcHistory=JSON.parse(localStorage.getItem('svault_history_'+currentUser.uid)||'[]');
+    playSuccess();vibrate(30);
+    showPage('calcPage');
+    showToast('Welcome back, '+username+' ✅');
+  }catch(e){
+    showToast(e.message.includes('invalid-credential')?'Wrong username or password ❌':e.message,true);
+  }
 }
-function login() {
-  const username = document.getElementById('logUser').value.trim();
-  const password = document.getElementById('logPass').value;
-  if(!username||!password) return showToast('Enter credentials ❌', true);
-  const users = JSON.parse(localStorage.getItem('svault_users')||'{}');
-  if(!users[username]) return showToast('User not found ❌', true);
-  if(users[username] !== btoa(password)) return showToast('Wrong password ❌', true);
-  currentUser = username;
-  calcHistory = JSON.parse(localStorage.getItem('svault_history_'+username)||'[]');
-  playSuccess();
-  vibrate(30);
-  showPage('calcPage');
-  showToast('Welcome back, '+username+'! ✅');
-}
-function guestLogin() {
+
+window.guestLogin = function(){
   resumeAudio();
-  currentUser = 'guest';
-  calcHistory = [];
+  currentUser={uid:'guest',isGuest:true};
+  calcHistory=[];
   playSuccess();
   showPage('calcPage');
   showToast('Welcome, Guest!');
 }
-function doLogout() {
+
+window.doLogout = async function(){
   stopCamera();
-  currentUser = null;
-  calcBuffer=''; calcExpr=''; calcNewNum=true; allPhotos=[];
+  if(currentUser&&!currentUser.isGuest)await signOut(auth);
+  currentUser=null;calcBuffer='';calcExpr='';calcNewNum=true;allPhotos=[];
   document.getElementById('calcMain').textContent='0';
   document.getElementById('calcExpr').textContent='';
-  playClick();
-  showPage('authPage');
-}
-function deleteAccount() {
-  if(!confirm('Delete account? ALL data will be lost!')) return;
-  const users = JSON.parse(localStorage.getItem('svault_users')||'{}');
-  delete users[currentUser];
-  localStorage.setItem('svault_users', JSON.stringify(users));
-  ['photos','notes','history','pin'].forEach(k=>localStorage.removeItem('svault_'+k+'_'+currentUser));
-  doLogout();
-  showToast('Account deleted');
+  playClick();showPage('authPage');
 }
 
 // ============================================================
 //  CALCULATOR
 // ============================================================
-function cPress(v) {
-  resumeAudio();
-  playKey(); vibrate(15);
-  lastActivity = Date.now();
+window.cPress = function(v){
+  resumeAudio();playKey();vibrate(15);lastActivity=Date.now();
   if(v==='C'){calcBuffer='';calcExpr='';calcNewNum=true;updateDisp('0');return;}
   if(v==='M+'){memory+=parseFloat(calcBuffer||0);showToast('M = '+memory);return;}
   if(v==='MR'){calcBuffer=String(memory);calcNewNum=false;updateDisp(calcBuffer);return;}
@@ -812,230 +500,187 @@ function cPress(v) {
   if(v==='%'){calcBuffer=String(parseFloat(calcBuffer||0)/100);updateDisp(calcBuffer);return;}
   if(v==='±'){calcBuffer=String(-parseFloat(calcBuffer||0));updateDisp(calcBuffer);return;}
   if(v==='='){
-    if(!calcExpr) return;
-    try {
-      const expr = calcExpr+calcBuffer;
-      const res = Function('"use strict";return('+expr.replace(/×/g,'*').replace(/÷/g,'/')+')')();
-      const clean = parseFloat(res.toFixed(10));
-      const entry = {expr:expr+' =',result:clean,time:new Date().toLocaleTimeString()};
-      calcHistory.unshift(entry);
-      if(calcHistory.length>50) calcHistory.pop();
-      localStorage.setItem('svault_history_'+currentUser,JSON.stringify(calcHistory));
+    if(!calcExpr)return;
+    try{
+      const expr=calcExpr+calcBuffer;
+      const res=Function('"use strict";return('+expr.replace(/×/g,'*').replace(/÷/g,'/')+')')();
+      const clean=parseFloat(res.toFixed(10));
+      calcHistory.unshift({expr:expr+' =',result:clean,time:new Date().toLocaleTimeString()});
+      if(calcHistory.length>50)calcHistory.pop();
+      if(currentUser)localStorage.setItem('svault_history_'+currentUser.uid,JSON.stringify(calcHistory));
       calcExpr='';calcBuffer=String(clean);calcNewNum=true;
-      updateDisp(String(clean));
-      document.getElementById('calcExpr').textContent=expr+' =';
+      updateDisp(String(clean));document.getElementById('calcExpr').textContent=expr+' =';
       playSuccess();
-    } catch(e){showToast('Error',true);playError();calcBuffer='';calcExpr='';updateDisp('Err');calcNewNum=true;}
+    }catch(e){showToast('Error',true);playError();calcBuffer='';calcExpr='';updateDisp('Err');calcNewNum=true;}
     return;
   }
-  const ops=['+','-','*','/'];
-  if(ops.includes(v)){
-    if(calcBuffer){calcExpr+=calcBuffer;calcBuffer='';}
-    calcExpr+=v==='*'?'×':v==='/'?'÷':v;
-    calcNewNum=true;
-    document.getElementById('calcExpr').textContent=calcExpr;
-    return;
-  }
+  if(['+','-','*','/'].includes(v)){if(calcBuffer){calcExpr+=calcBuffer;calcBuffer='';}calcExpr+=v==='*'?'×':v==='/'?'÷':v;calcNewNum=true;document.getElementById('calcExpr').textContent=calcExpr;return;}
   if(calcNewNum){calcBuffer='';calcNewNum=false;}
-  if(v==='.'&&calcBuffer.includes('.')) return;
-  calcBuffer+=v;
-  updateDisp(calcBuffer);
-  document.getElementById('calcExpr').textContent=calcExpr;
+  if(v==='.'&&calcBuffer.includes('.'))return;
+  calcBuffer+=v;updateDisp(calcBuffer);document.getElementById('calcExpr').textContent=calcExpr;
   secretBuf=(secretBuf+v).slice(-3);
   if(secretBuf==='777'){
-    playVault(); vibrate(50);
-    pinInput=''; updatePinDots(); wrongPin=0; pinLocked=false;
+    playVault();vibrate(50);
+    pinInput='';updatePinDots();wrongPin=0;pinLocked=false;
     document.getElementById('lockCountdown').textContent='';
-    document.getElementById('pinSubtitle').textContent='ENTER 4-DIGIT PIN';
     showPage('pinPage');
   }
-  if(memory!==0) document.getElementById('calcMem').textContent='M: '+memory;
+  if(memory!==0)document.getElementById('calcMem').textContent='M: '+memory;
 }
-function updateDisp(v){
-  const el=document.getElementById('calcMain');
-  el.textContent=v.length>12?parseFloat(v).toExponential(4):v;
-  el.style.fontSize=v.length>10?'20px':'28px';
-}
+function updateDisp(v){const el=document.getElementById('calcMain');el.textContent=v.length>12?parseFloat(v).toExponential(4):v;el.style.fontSize=v.length>10?'20px':'28px';}
 
 // ============================================================
 //  HISTORY
 // ============================================================
-function showHistory(){playClick();showPage('historyPage');renderHistory();}
+window.showHistory=function(){playClick();showPage('historyPage');renderHistory();}
 function renderHistory(){
   const el=document.getElementById('historyList');
-  if(!calcHistory.length){el.innerHTML='<div style="text-align:center;opacity:0.4;padding:40px;font-size:14px;letter-spacing:2px">NO HISTORY YET</div>';return;}
+  if(!calcHistory.length){el.innerHTML='<div style="text-align:center;opacity:.4;padding:40px">NO HISTORY YET</div>';return;}
   el.innerHTML=calcHistory.map(h=>`<div class="history-item"><span class="expr">${h.expr}</span><span class="result">${h.result}</span></div>`).join('');
 }
-function clearHistory(){calcHistory=[];localStorage.removeItem('svault_history_'+currentUser);renderHistory();showToast('History cleared');}
+window.clearHistory=function(){calcHistory=[];if(currentUser)localStorage.removeItem('svault_history_'+currentUser.uid);renderHistory();showToast('Cleared');}
 
 // ============================================================
 //  SETTINGS PAGE
 // ============================================================
-function showSettings(){
-  playClick();
-  document.getElementById('settingsUsername').textContent=currentUser;
-  loadSettings();
-  showPage('settingsPage');
-}
-function changePin(){
-  const p1=document.getElementById('newPin').value;
-  const p2=document.getElementById('confirmPin').value;
-  if(p1.length!==4||p2.length!==4) return showToast('PIN must be 4 digits',true);
-  if(p1!==p2) return showToast('PINs do not match',true);
-  if(!/^\d{4}$/.test(p1)) return showToast('Only numbers allowed',true);
-  localStorage.setItem('svault_pin_'+currentUser,p1);
-  playSuccess(); showToast('PIN changed!');
-  document.getElementById('newPin').value='';
-  document.getElementById('confirmPin').value='';
+window.showSettings=function(){playClick();if(currentUser)document.getElementById('settingsUsername').textContent=currentUser.isGuest?'Guest':currentUser.email?.split('@')[0];loadSettings();showPage('settingsPage');}
+window.changePin=function(){
+  const p1=document.getElementById('newPin').value,p2=document.getElementById('confirmPin').value;
+  if(p1.length!==4||p2.length!==4)return showToast('PIN must be 4 digits',true);
+  if(p1!==p2)return showToast('PINs do not match',true);
+  if(!/^\d{4}$/.test(p1))return showToast('Only numbers',true);
+  if(currentUser)localStorage.setItem('svault_pin_'+currentUser.uid,p1);
+  playSuccess();showToast('PIN changed!');
+  document.getElementById('newPin').value='';document.getElementById('confirmPin').value='';
 }
 
 // ============================================================
 //  PIN
 // ============================================================
-function pinPress(n){
-  if(pinLocked) return;
-  playKey(); vibrate(15);
-  if(pinInput.length>=4) return;
-  pinInput+=String(n);
-  updatePinDots();
-  if(pinInput.length===4) setTimeout(checkPin,120);
+window.pinPress=function(n){
+  if(pinLocked)return;playKey();vibrate(15);
+  if(pinInput.length>=4)return;
+  pinInput+=String(n);updatePinDots();
+  if(pinInput.length===4)setTimeout(checkPin,120);
 }
-function pinDelete(){if(!pinInput.length) return;playKey();pinInput=pinInput.slice(0,-1);updatePinDots();}
-function updatePinDots(){document.querySelectorAll('.pin-dot').forEach((d,i)=>{d.classList.toggle('filled',i<pinInput.length);});}
+window.pinDelete=function(){if(!pinInput.length)return;playKey();pinInput=pinInput.slice(0,-1);updatePinDots();}
+function updatePinDots(){document.querySelectorAll('.pin-dot').forEach((d,i)=>d.classList.toggle('filled',i<pinInput.length));}
 async function checkPin(){
-  const saved=localStorage.getItem('svault_pin_'+currentUser)||'1234';
+  const uid=currentUser?.uid||'guest';
+  const saved=localStorage.getItem('svault_pin_'+uid)||'1234';
   if(pinInput===saved){
-    playVault(); vibrate(60);
-    showPage('vaultPage');
-    loadVault();
-    switchVaultTab('photos');
-    pinInput=''; updatePinDots(); wrongPin=0;
-    return;
+    playVault();vibrate(60);showPage('vaultPage');loadVault();switchVaultTab('photos');pinInput='';updatePinDots();wrongPin=0;return;
   }
-  playError(); wrongPin++;
-  vibrate([100,50,100]);
+  playError();wrongPin++;vibrate([100,50,100]);
   document.getElementById('pinPad').classList.add('shake');
   setTimeout(()=>document.getElementById('pinPad').classList.remove('shake'),400);
   await new Promise(r=>setTimeout(r,1500));
-  try { await initCamera(); await new Promise(r=>setTimeout(r,300)); await captureIntruder(); } catch(e){}
-  showPage('intruderPage');
-  pinInput=''; updatePinDots();
-  if(wrongPin>=3) startLockout();
+  try{await initCamera();await new Promise(r=>setTimeout(r,300));await captureIntruder();}catch(e){}
+  showPage('intruderPage');pinInput='';updatePinDots();
+  if(wrongPin>=3)startLockout();
 }
 function startLockout(){
-  pinLocked=true;
-  let secs=30;
+  pinLocked=true;let secs=30;
   const interval=setInterval(()=>{
-    document.getElementById('lockCountdown').textContent='🔒 Locked — wait '+secs+'s';
-    secs--;
+    document.getElementById('lockCountdown').textContent='🔒 Locked — wait '+secs+'s';secs--;
     if(secs<0){clearInterval(interval);pinLocked=false;wrongPin=0;document.getElementById('lockCountdown').textContent='';}
   },1000);
 }
 
 // ============================================================
-//  VAULT — PHOTOS (localStorage, base64)
+//  VAULT PHOTOS — Firestore
 // ============================================================
-function switchVaultTab(tab){
+window.switchVaultTab=function(tab){
   currentVaultTab=tab;
   document.getElementById('vTabPhoto').classList.toggle('active',tab==='photos');
   document.getElementById('vTabNote').classList.toggle('active',tab==='notes');
   document.getElementById('photoVault').style.display=tab==='photos'?'flex':'none';
   document.getElementById('noteVault').style.display=tab==='notes'?'flex':'none';
-  playClick();
-  if(tab==='notes') renderNotes();
+  playClick();if(tab==='notes')renderNotes();
 }
-function loadVault(){
-  const stored=localStorage.getItem('svault_photos_'+currentUser);
-  allPhotos=stored?JSON.parse(stored):[];
-  renderGallery();
+
+async function loadVault(){
+  if(!currentUser||currentUser.isGuest){allPhotos=[];renderGallery();return;}
+  showToast('Loading photos...');
+  try{
+    const q=query(collection(db,'photos'),where('uid','==',currentUser.uid));
+    const snap=await getDocs(q);
+    allPhotos=[];
+    snap.forEach(d=>allPhotos.push({id:d.id,...d.data()}));
+    allPhotos.sort((a,b)=>b.createdAt-a.createdAt);
+    renderGallery();
+  }catch(e){showToast('Load error',true);allPhotos=[];renderGallery();}
 }
+
 function renderGallery(){
   const g=document.getElementById('gallery');
   document.getElementById('statCount').textContent=allPhotos.length;
-  const bytes=allPhotos.reduce((a,p)=>a+p.length*0.75,0);
-  document.getElementById('statSize').textContent=bytes>1024*1024?(bytes/1024/1024).toFixed(1)+' MB':Math.round(bytes/1024)+' KB';
-  if(!allPhotos.length){g.innerHTML='<div style="text-align:center;opacity:0.4;padding:40px;font-size:13px;letter-spacing:2px;grid-column:1/-1">VAULT IS EMPTY</div>';return;}
-  g.innerHTML=allPhotos.map((p,i)=>`<div class="photo-thumb" onclick="openViewer(${i})"><img src="${p}" loading="lazy" alt="Photo ${i+1}"><button class="del-btn" onclick="event.stopPropagation();deletePhoto(${i})">✕</button></div>`).join('');
+  document.getElementById('statSize').textContent=allPhotos.length+' photos';
+  if(!allPhotos.length){g.innerHTML='<div style="text-align:center;opacity:.4;padding:40px;font-size:13px;letter-spacing:2px;grid-column:1/-1">VAULT IS EMPTY</div>';return;}
+  g.innerHTML=allPhotos.map((p,i)=>`<div class="photo-thumb" onclick="openViewer(${i})"><img src="${p.data}" loading="lazy" alt="Photo ${i+1}"><button class="del-btn" onclick="event.stopPropagation();deletePhoto(${i})">✕</button></div>`).join('');
 }
-function uploadPhotos(event){
+
+window.uploadPhotos=function(event){
   const files=event.target.files;
-  if(!files||!files.length) return;
-  if(!currentUser||currentUser==='guest') return showToast('Login required',true);
+  if(!files||!files.length)return;
+  if(!currentUser||currentUser.isGuest)return showToast('Login required',true);
   showToast('Adding photos...');
   const fileArr=Array.from(files);
-  let processed=0;
+  let done=0;
   fileArr.forEach(file=>{
     const reader=new FileReader();
-    reader.onload=function(e){
+    reader.onload=async function(e){
       const img=new Image();
-      img.onload=function(){
-        try {
+      img.onload=async function(){
+        try{
           const canvas=document.createElement('canvas');
-          const MAX=600;
-          const scale=Math.min(1,MAX/Math.max(img.width,img.height));
-          canvas.width=Math.round(img.width*scale);
-          canvas.height=Math.round(img.height*scale);
+          const MAX=500,scale=Math.min(1,MAX/Math.max(img.width,img.height));
+          canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);
           canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
           const base64=canvas.toDataURL('image/jpeg',0.5);
-          allPhotos.push(base64);
-          processed++;
-          if(processed===fileArr.length){
-            try {
-              localStorage.setItem('svault_photos_'+currentUser,JSON.stringify(allPhotos));
-            } catch(e2){
-              allPhotos.shift();
-              localStorage.setItem('svault_photos_'+currentUser,JSON.stringify(allPhotos));
-              showToast('Storage full, removed oldest',true);
-            }
-            renderGallery();
-            showToast('Photos added');
-            event.target.value='';
-          }
-        } catch(err){showToast('Error: '+err.message,true);}
+          await addDoc(collection(db,'photos'),{uid:currentUser.uid,data:base64,createdAt:Date.now()});
+          done++;
+          if(done===fileArr.length){await loadVault();showToast('Photos added ✅');}
+        }catch(err){showToast('Error: '+err.message,true);}
       };
-      img.onerror=function(){showToast('Cannot read image',true);};
       img.src=e.target.result;
     };
     reader.readAsDataURL(file);
   });
+  event.target.value='';
 }
-function deletePhoto(i){
-  allPhotos.splice(i,1);
-  localStorage.setItem('svault_photos_'+currentUser,JSON.stringify(allPhotos));
-  renderGallery();
-  playClick();
-  showToast('Photo deleted');
+
+window.deletePhoto=async function(i){
+  if(!currentUser||currentUser.isGuest)return;
+  try{
+    await deleteDoc(doc(db,'photos',allPhotos[i].id));
+    await loadVault();playClick();showToast('Photo deleted');
+  }catch(e){showToast('Delete failed',true);}
 }
-function clearAllPhotos(){
-  if(!confirm('Clear all photos?')) return;
-  allPhotos=[];
-  localStorage.setItem('svault_photos_'+currentUser,JSON.stringify(allPhotos));
-  renderGallery();
-  playError(); showToast('Vault cleared');
+
+window.clearAllPhotos=async function(){
+  if(!confirm('Clear all photos?'))return;
+  if(!currentUser||currentUser.isGuest)return;
+  try{
+    const q=query(collection(db,'photos'),where('uid','==',currentUser.uid));
+    const snap=await getDocs(q);
+    await Promise.all(snap.docs.map(d=>deleteDoc(doc(db,'photos',d.id))));
+    allPhotos=[];renderGallery();playError();showToast('Vault cleared');
+  }catch(e){showToast('Error',true);}
 }
-function sortPhotos(){
-  sortAsc=!sortAsc;
-  allPhotos.reverse();
-  localStorage.setItem('svault_photos_'+currentUser,JSON.stringify(allPhotos));
-  renderGallery(); playClick();
-  showToast('Photos sorted');
-}
+
+window.sortPhotos=function(){sortAsc=!sortAsc;allPhotos.reverse();renderGallery();playClick();showToast('Sorted');}
 
 // ============================================================
 //  VIEWER
 // ============================================================
-function openViewer(i){viewerIndex=i;updateViewer();document.getElementById('viewer').classList.add('active');playClick();}
-function updateViewer(){document.getElementById('fullImg').src=allPhotos[viewerIndex];document.getElementById('viewerCounter').textContent=(viewerIndex+1)+' / '+allPhotos.length;}
-function navPhoto(dir){viewerIndex=(viewerIndex+dir+allPhotos.length)%allPhotos.length;document.getElementById('fullImg').style.opacity='0';setTimeout(()=>{updateViewer();document.getElementById('fullImg').style.opacity='1';},150);playKey();}
-function closeViewer(){document.getElementById('viewer').classList.remove('active');playClick();}
-function downloadPhoto(){
-  const img=allPhotos[viewerIndex];
-  if(!img) return;
-  const a=document.createElement('a');
-  a.href=img;
-  a.download='Vault_'+Date.now()+'.jpg';
-  a.click();
-  showToast('Downloaded 📸');
+window.openViewer=function(i){viewerIndex=i;updateViewer();document.getElementById('viewer').classList.add('active');playClick();}
+function updateViewer(){document.getElementById('fullImg').src=allPhotos[viewerIndex].data||allPhotos[viewerIndex];document.getElementById('viewerCounter').textContent=(viewerIndex+1)+' / '+allPhotos.length;}
+window.navPhoto=function(dir){viewerIndex=(viewerIndex+dir+allPhotos.length)%allPhotos.length;document.getElementById('fullImg').style.opacity='0';setTimeout(()=>{updateViewer();document.getElementById('fullImg').style.opacity='1';},150);playKey();}
+window.closeViewer=function(){document.getElementById('viewer').classList.remove('active');playClick();}
+window.downloadPhoto=function(){
+  const src=allPhotos[viewerIndex].data||allPhotos[viewerIndex];
+  if(!src)return;const a=document.createElement('a');a.href=src;a.download='Vault_'+Date.now()+'.jpg';a.click();showToast('Downloaded');
 }
 let startX=0;
 document.getElementById('viewer').addEventListener('touchstart',e=>startX=e.touches[0].clientX);
@@ -1043,62 +688,55 @@ document.getElementById('viewer').addEventListener('touchend',e=>{const d=e.chan
 document.addEventListener('keydown',e=>{if(document.getElementById('viewer').classList.contains('active')){if(e.key==='ArrowRight')navPhoto(1);if(e.key==='ArrowLeft')navPhoto(-1);if(e.key==='Escape')closeViewer();}});
 
 // ============================================================
-//  NOTES (localStorage)
+//  NOTES — Firestore
 // ============================================================
-function loadNotes(){renderNotes();}
-function renderNotes(){
-  const notes=JSON.parse(localStorage.getItem('svault_notes_'+currentUser)||'[]');
-  const el=document.getElementById('notesList');
-  if(!notes.length){el.innerHTML='<div style="text-align:center;opacity:0.4;padding:20px">NO NOTES YET</div>';return;}
-  el.innerHTML=notes.map((n,i)=>`<div class="note-item"><button class="note-del" onclick="deleteNote(${i})">✕</button><div class="note-title">${escHtml(n.title||'')}</div><div class="note-body">${escHtml(n.body||'')}</div><div style="font-size:11px;opacity:0.4">${n.time}</div></div>`).join('');
+async function renderNotes(){
+  if(!currentUser||currentUser.isGuest){document.getElementById('notesList').innerHTML='<div style="text-align:center;opacity:.4;padding:20px">Login to save notes</div>';return;}
+  try{
+    const q=query(collection(db,'notes'),where('uid','==',currentUser.uid));
+    const snap=await getDocs(q);
+    const notes=[];snap.forEach(d=>notes.push({id:d.id,...d.data()}));
+    notes.sort((a,b)=>b.createdAt-a.createdAt);
+    const el=document.getElementById('notesList');
+    if(!notes.length){el.innerHTML='<div style="text-align:center;opacity:.4;padding:20px">NO NOTES YET</div>';return;}
+    el.innerHTML=notes.map(n=>`<div class="note-item"><button class="note-del" onclick="deleteNote('${n.id}')">✕</button><div class="note-title">${escHtml(n.title||'')}</div><div class="note-body">${escHtml(n.body||'')}</div><div style="font-size:11px;opacity:.4">${n.time}</div></div>`).join('');
+  }catch(e){showToast('Load error',true);}
 }
-function saveNote(){
+
+window.saveNote=async function(){
+  if(!currentUser||currentUser.isGuest)return showToast('Login required',true);
   const title=document.getElementById('noteTitle').value.trim();
   const body=document.getElementById('noteBody').value.trim();
-  if(!title&&!body) return;
-  const notes=JSON.parse(localStorage.getItem('svault_notes_'+currentUser)||'[]');
-  notes.unshift({title,body,time:new Date().toLocaleString()});
-  localStorage.setItem('svault_notes_'+currentUser,JSON.stringify(notes));
-  document.getElementById('noteTitle').value='';
-  document.getElementById('noteBody').value='';
-  renderNotes();
-  showToast('Note saved');
+  if(!title&&!body)return;
+  try{
+    await addDoc(collection(db,'notes'),{uid:currentUser.uid,title,body,time:new Date().toLocaleString(),createdAt:Date.now()});
+    document.getElementById('noteTitle').value='';document.getElementById('noteBody').value='';
+    renderNotes();showToast('Note saved');
+  }catch(e){showToast('Save error',true);}
 }
-function deleteNote(i){
-  const notes=JSON.parse(localStorage.getItem('svault_notes_'+currentUser)||'[]');
-  notes.splice(i,1);
-  localStorage.setItem('svault_notes_'+currentUser,JSON.stringify(notes));
-  renderNotes();
-  playClick();
-  showToast('Note deleted');
+
+window.deleteNote=async function(id){
+  try{await deleteDoc(doc(db,'notes',id));renderNotes();playClick();showToast('Note deleted');}catch(e){showToast('Error',true);}
 }
 
 // ============================================================
-//  THEME / BACK
+//  MISC
 // ============================================================
-function toggleTheme(){document.body.classList.toggle('light-theme');playClick();}
-function backToCalc(){playClick();showPage('calcPage');}
+window.toggleTheme=function(){document.body.classList.toggle('light-theme');playClick();}
+window.backToCalc=function(){playClick();showPage('calcPage');}
 
-// ============================================================
-//  AUTO LOGOUT
-// ============================================================
 document.addEventListener('click',()=>{lastActivity=Date.now();resumeAudio();});
 setInterval(()=>{
-  if(!settings.autoLogout||!currentUser) return;
+  if(!settings.autoLogout||!currentUser)return;
   if(Date.now()-lastActivity>120000){showToast('Auto-logged out');doLogout();}
 },5000);
-</script>
 
-<script>
+// Unregister old service workers
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.getRegistrations().then(function(regs){
-    regs.forEach(r=>r.unregister());
-  });
+  navigator.serviceWorker.getRegistrations().then(regs=>regs.forEach(r=>r.unregister()));
   caches.keys().then(keys=>keys.forEach(k=>caches.delete(k)));
 }
-</script>
 
-<video id="camera" autoplay playsinline style="display:none;"></video>
-<canvas id="snapCanvas" style="display:none;"></canvas>
+</script>
 </body>
 </html>
