@@ -1,4 +1,4 @@
-const CACHE_NAME = "sammycalci-v4";
+const CACHE_NAME = "sammycalci-v99";
 
 self.addEventListener("install", event => {
   self.skipWaiting();
@@ -10,6 +10,7 @@ self.addEventListener("activate", event => {
       Promise.all(keys.map(key => caches.delete(key)))
     )
   );
+  self.clients.claim();
 });
 
 self.addEventListener("fetch", event => {
