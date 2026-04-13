@@ -385,7 +385,7 @@ function renderIntruders(){
   if(!intruders.length){list.innerHTML="<p style='text-align:center'>No intruders yet</p>";return;}
   list.innerHTML=intruders.map(i=>`<div style="background:#111;border-radius:10px;padding:5px"><img src="${i.img}" style="width:100%;border-radius:8px"><div style="font-size:10px;text-align:center">${i.time}</div></div>`).join('');
 }
-function clearIntruders(){localStorage.removeItem('intruders');renderIntruders();showToast('Cleared');}
+window.clearIntruders = function(){localStorage.removeItem('intruders');renderIntruders();showToast('Cleared');}
 
 // ============================================================
 //  SETTINGS
@@ -415,15 +415,15 @@ setTimeout(()=>{
 // ============================================================
 //  AUTH
 // ============================================================
-function switchAuthTab(tab){
+window.switchAuthTab = function(tab){
   document.getElementById('loginForm').style.display=tab==='login'?'block':'none';
   document.getElementById('registerForm').style.display=tab==='register'?'block':'none';
   document.getElementById('tabLogin').classList.toggle('active',tab==='login');
   document.getElementById('tabRegister').classList.toggle('active',tab==='register');
   playClick();
 }
-function togglePw(id,btn){const el=document.getElementById(id);if(el.type==='password'){el.type='text';btn.style.opacity='1';}else{el.type='password';btn.style.opacity='0.5';}}
-function checkStrength(inp){
+window.togglePw = function(id,btn){const el=document.getElementById(id);if(el.type==='password'){el.type='text';btn.style.opacity='1';}else{el.type='password';btn.style.opacity='0.5';}}
+window.checkStrength = function(inp){
   const v=inp.value;let s=0;
   if(v.length>=6)s++;if(/[A-Z]/.test(v))s++;if(/[0-9]/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;
   const colors=['#ff4444','#ff8800','#ffcc00','#00ff88'],widths=['25%','50%','75%','100%'];
@@ -690,7 +690,7 @@ document.addEventListener('keydown',e=>{if(document.getElementById('viewer').cla
 // ============================================================
 //  NOTES — Firestore
 // ============================================================
-async function renderNotes(){
+window.renderNotes = async function(){
   if(!currentUser||currentUser.isGuest){document.getElementById('notesList').innerHTML='<div style="text-align:center;opacity:.4;padding:20px">Login to save notes</div>';return;}
   try{
     const q=query(collection(db,'notes'),where('uid','==',currentUser.uid));
