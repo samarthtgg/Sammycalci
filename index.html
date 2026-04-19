@@ -140,6 +140,10 @@ textarea:focus{border-color:var(--primary)}
       </div>
       <button class="btn btn-primary" onclick="window.login()">🔑 SIGN IN</button>
       <button class="btn btn-ghost" onclick="window.guestLogin()">👤 Guest Mode</button>
+      <div style="display:flex;align-items:center;gap:8px;margin:5px 0"><div style="flex:1;height:1px;background:var(--glass-border)"></div><span style="font-size:11px;opacity:0.5;letter-spacing:2px">OR</span><div style="flex:1;height:1px;background:var(--glass-border)"></div></div>
+      <button class="btn" onclick="window.googleLogin()" style="background:#fff;color:#333;font-family:'Rajdhani',sans-serif;font-size:14px;letter-spacing:1px;border:1px solid #ddd">
+        <img src="https://www.google.com/favicon.ico" style="width:18px;height:18px"> Sign in with Google
+      </button>
     </div>
     <div id="registerForm" style="display:none">
       <h2>✨ Register</h2>
@@ -297,7 +301,7 @@ textarea:focus{border-color:var(--primary)}
 <!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, deleteDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -469,6 +473,27 @@ window.login = async function(){
   }
 }
 
+window.googleLogin = async function(){
+  try {
+    const provider = new GoogleAuthProvider();
+    const cred = await signInWithPopup(auth, provider);
+    currentUser = cred.user;
+    calcHistory = JSON.parse(localStorage.getItem('svault_history_'+currentUser.uid)||'[]');
+    // Save user info to Firestore
+    await setDoc(doc(db,'users',currentUser.uid), {
+      username: currentUser.displayName || currentUser.email,
+      email: currentUser.email,
+      createdAt: new Date().toISOString()
+    }, {merge: true});
+    playSuccess(); vibrate(30);
+    showPage('calcPage');
+    showToast('Welcome, ' + (currentUser.displayName || currentUser.email) + ' ✅');
+  } catch(e) {
+    if(e.code !== 'auth/popup-closed-by-user') {
+      showToast(e.message, true);
+    }
+  }
+}
 window.guestLogin = function(){
   resumeAudio();
   currentUser={uid:'guest',isGuest:true};
