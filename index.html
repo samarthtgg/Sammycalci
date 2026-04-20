@@ -41,7 +41,7 @@ input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(0,198,255,.1)}
 .calc-card{width:100%;max-width:340px;background:var(--glass);border:1px solid var(--glass-border);backdrop-filter:blur(24px);padding:20px;border-radius:28px;box-shadow:0 8px 60px rgba(0,0,0,.6)}
 .calc-topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .calc-topbar span{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:3px;color:var(--primary)}
-.calc-topbar-actions{display:flex;gap:6px}
+.calc-topbar-actions{display:flex;gap:6px;align-items:center;position:relative}
 .icon-btn{background:var(--glass);border:1px solid var(--glass-border);color:var(--text);border-radius:10px;padding:6px 10px;cursor:pointer;font-size:14px;transition:background .2s}
 .icon-btn:hover{background:rgba(0,198,255,.15)}
 .calc-display{background:rgba(0,0,0,.5);border:1px solid var(--glass-border);border-radius:14px;padding:12px 16px;text-align:right;margin-bottom:14px}
@@ -116,6 +116,139 @@ textarea:focus{border-color:var(--primary)}
 .history-item{background:var(--glass);border:1px solid var(--glass-border);border-radius:12px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;font-size:14px}
 .history-item .expr{opacity:.6}
 .history-item .result{font-family:'Orbitron';color:var(--primary);font-size:16px}
+
+/* ═══════════════════════════════════════
+   SKAI STYLES
+═══════════════════════════════════════ */
+.skai-trigger{
+  position:relative;
+  width:34px;height:34px;
+  border-radius:10px;
+  background:linear-gradient(135deg,#6366f1,#8b5cf6);
+  border:none;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 3px 14px rgba(99,102,241,0.45);
+  transition:transform .2s,box-shadow .2s;
+  flex-shrink:0;
+}
+.skai-trigger:hover{transform:scale(1.1);box-shadow:0 5px 18px rgba(99,102,241,0.6);}
+.skai-trigger svg{width:17px;height:17px;}
+.skai-unread{
+  position:absolute;top:-3px;right:-3px;
+  width:9px;height:9px;
+  background:#f97316;border-radius:50%;
+  border:2px solid var(--bg1);
+  display:none;
+}
+.skai-trigger.has-unread .skai-unread{display:block;}
+
+/* Panel */
+.skai-panel{
+  position:absolute;
+  top:calc(100% + 10px);
+  right:0;
+  width:300px;
+  background:#12141f;
+  border:1px solid rgba(99,102,241,0.25);
+  border-radius:18px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.7);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  transform-origin:top right;
+  transform:scale(0.85) translateY(-8px);
+  opacity:0;
+  pointer-events:none;
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),opacity .2s ease;
+  z-index:9000;
+  max-height:420px;
+}
+.skai-panel.open{
+  transform:scale(1) translateY(0);
+  opacity:1;
+  pointer-events:all;
+}
+.skai-head{
+  background:linear-gradient(135deg,#4f46e5,#7c3aed);
+  padding:12px 14px;
+  display:flex;align-items:center;gap:9px;
+  flex-shrink:0;
+}
+.skai-ava{
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(255,255,255,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;flex-shrink:0;
+}
+.skai-name{font-family:'Orbitron',monospace;font-size:12px;letter-spacing:2px;color:#fff;}
+.skai-status{font-size:10px;color:rgba(255,255,255,.65);margin-top:1px;display:flex;align-items:center;gap:4px;}
+.skai-dot{width:5px;height:5px;background:#4ade80;border-radius:50%;display:inline-block;}
+.skai-x{background:rgba(255,255,255,.15);border:none;color:#fff;width:26px;height:26px;border-radius:8px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;margin-left:auto;transition:background .15s;}
+.skai-x:hover{background:rgba(255,255,255,.28);}
+
+.skai-msgs{
+  flex:1;overflow-y:auto;
+  padding:12px;
+  display:flex;flex-direction:column;gap:9px;
+  min-height:180px;max-height:240px;
+  scrollbar-width:thin;scrollbar-color:#2a2a4a transparent;
+}
+.skai-msg{max-width:86%;font-size:12.5px;line-height:1.5;animation:skaiPop .18s ease;}
+@keyframes skaiPop{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.skai-msg.bot{align-self:flex-start;}
+.skai-msg.bot .bbl{background:#1e2035;color:#c5cee0;border-radius:14px 14px 14px 3px;padding:9px 12px;}
+.skai-msg.usr{align-self:flex-end;}
+.skai-msg.usr .bbl{background:linear-gradient(135deg,#4f46e5,#6d28d9);color:#fff;border-radius:14px 14px 3px 14px;padding:9px 12px;}
+.skai-lbl{font-size:9px;color:#3a4060;margin-bottom:3px;font-family:'Orbitron',monospace;letter-spacing:.05em;}
+.skai-msg.usr .skai-lbl{text-align:right;}
+
+.skai-typing{
+  background:#1e2035;border-radius:14px 14px 14px 3px;
+  padding:11px 14px;display:flex;gap:4px;align-items:center;
+  align-self:flex-start;animation:skaiPop .18s ease;
+}
+.skai-typing span{width:6px;height:6px;background:#6366f1;border-radius:50%;animation:skaiB 1.1s infinite;}
+.skai-typing span:nth-child(2){animation-delay:.18s;}
+.skai-typing span:nth-child(3){animation-delay:.36s;}
+@keyframes skaiB{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-4px);opacity:1}}
+
+.skai-chips{
+  display:flex;gap:5px;padding:6px 12px 0;flex-wrap:wrap;
+  background:#0e1020;border-top:1px solid rgba(255,255,255,.04);
+  flex-shrink:0;
+}
+.skai-chip{
+  background:#1e2035;border:1px solid rgba(99,102,241,.25);border-radius:20px;
+  color:#a5b4fc;font-size:10.5px;padding:4px 9px;cursor:pointer;
+  transition:background .15s;white-space:nowrap;font-family:'Rajdhani',sans-serif;
+}
+.skai-chip:hover{background:rgba(99,102,241,.18);}
+
+.skai-foot{
+  padding:8px 10px;background:#0e1020;
+  display:flex;gap:7px;align-items:flex-end;
+  border-top:1px solid rgba(255,255,255,.04);
+  flex-shrink:0;
+}
+.skai-inp{
+  flex:1;background:#1e2035;
+  border:1px solid rgba(99,102,241,.2);border-radius:10px;
+  color:#e2e8f0;font-size:12.5px;font-family:'Rajdhani',sans-serif;
+  padding:8px 11px;resize:none;outline:none;line-height:1.4;
+  max-height:70px;transition:border-color .15s;
+}
+.skai-inp:focus{border-color:rgba(99,102,241,.55);}
+.skai-inp::placeholder{color:#3a4060;}
+.skai-send{
+  width:33px;height:33px;
+  background:linear-gradient(135deg,#4f46e5,#7c3aed);
+  border:none;border-radius:9px;color:#fff;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:transform .15s,opacity .15s;
+}
+.skai-send:hover{transform:scale(1.08);}
+.skai-send:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.skai-send svg{width:14px;height:14px;}
 </style>
 </head>
 <body>
@@ -176,12 +309,56 @@ textarea:focus{border-color:var(--primary)}
     <div id="lockCountdown" style="text-align:center;color:var(--danger);font-size:12px;margin-top:8px;min-height:16px"></div>
   </div>
 </div>
+
+<!-- ═══════════════════════════════════════
+     CALCULATOR PAGE
+═══════════════════════════════════════ -->
 <div class="page" id="calcPage">
   <div class="calc-card">
     <div class="calc-topbar">
       <span>CALC-X</span>
       <div class="calc-topbar-actions">
+        <!-- History button -->
         <button class="icon-btn" onclick="window.showHistory()">📋</button>
+
+        <!-- ✨ SKAI TRIGGER — sits right next to history -->
+        <button class="skai-trigger" id="skaiTrigger" onclick="window.toggleSkai()" title="Ask Skai">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            <circle cx="9" cy="10" r="1" fill="#fff" stroke="none"/>
+            <circle cx="12" cy="10" r="1" fill="#fff" stroke="none"/>
+            <circle cx="15" cy="10" r="1" fill="#fff" stroke="none"/>
+          </svg>
+          <div class="skai-unread"></div>
+        </button>
+
+        <!-- ✨ SKAI PANEL -->
+        <div class="skai-panel" id="skaiPanel">
+          <div class="skai-head">
+            <div class="skai-ava">✨</div>
+            <div>
+              <div class="skai-name">SKAI</div>
+              <div class="skai-status"><span class="skai-dot"></span> Online · here to help</div>
+            </div>
+            <button class="skai-x" onclick="window.toggleSkai()">✕</button>
+          </div>
+          <div class="skai-msgs" id="skaiMsgs"></div>
+          <div class="skai-chips" id="skaiChips">
+            <span class="skai-chip" onclick="window.skaiChip(this)">What can you do?</span>
+            <span class="skai-chip" onclick="window.skaiChip(this)">Calculator tips</span>
+            <span class="skai-chip" onclick="window.skaiChip(this)">Vault help</span>
+          </div>
+          <div class="skai-foot">
+            <textarea class="skai-inp" id="skaiInp" placeholder="Ask Skai anything…" rows="1"
+              onkeydown="window.skaiKey(event)" oninput="window.skaiResize(this)"></textarea>
+            <button class="skai-send" id="skaiSend" onclick="window.skaiSend()" title="Send">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
         <button class="icon-btn" onclick="window.toggleTheme()">🎨</button>
         <button class="icon-btn" onclick="window.showSettings()">⚙️</button>
         <button class="icon-btn" onclick="window.doLogout()">🚪</button>
@@ -207,6 +384,7 @@ textarea:focus{border-color:var(--primary)}
     </div>
   </div>
 </div>
+
 <div class="page-full" id="vaultPage">
   <div style="max-width:600px;width:100%;margin:auto;height:100%;display:flex;flex-direction:column">
     <div class="vault-header">
@@ -283,6 +461,7 @@ textarea:focus{border-color:var(--primary)}
     </div>
   </div>
 </div>
+
 <div id="viewer">
   <button class="viewer-close" onclick="window.closeViewer()">✕</button>
   <button class="viewer-nav left" onclick="window.navPhoto(-1)">‹</button>
@@ -344,6 +523,8 @@ function showPage(id){
   document.getElementById(id).classList.add('active');
   if(id!=='pinPage') stopCamera();
   if(id==='intruderPage') renderIntruders();
+  // Close Skai when navigating away
+  if(id!=='calcPage') closeSkai();
 }
 function vibrate(ms){if(settings.vibrate&&navigator.vibrate)navigator.vibrate(ms);}
 function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
@@ -479,7 +660,6 @@ window.googleLogin = async function(){
     const cred = await signInWithPopup(auth, provider);
     currentUser = cred.user;
     calcHistory = JSON.parse(localStorage.getItem('svault_history_'+currentUser.uid)||'[]');
-    // Save user info to Firestore
     await setDoc(doc(db,'users',currentUser.uid), {
       username: currentUser.displayName || currentUser.email,
       email: currentUser.email,
@@ -763,11 +943,138 @@ setInterval(()=>{
   if(Date.now()-lastActivity>120000){showToast('Auto-logged out');doLogout();}
 },5000);
 
-// Unregister old service workers
 if('serviceWorker' in navigator){
   navigator.serviceWorker.getRegistrations().then(regs=>regs.forEach(r=>r.unregister()));
   caches.keys().then(keys=>keys.forEach(k=>caches.delete(k)));
 }
+
+// ============================================================
+//  ✨ SKAI — AI ASSISTANT
+// ============================================================
+let skaiOpen = false;
+let skaiLoading = false;
+const skaiHistory = [];
+const SKAI_SYSTEM = `You are Skai, a friendly and casual AI assistant built into Sammycalci — a calculator app with a hidden photo and notes vault. You help users with general questions, calculator tips (like using M+/MR/MC for memory, √ for square root, x² for squaring, typing 777 to access the secret vault), and vault help. Keep replies short, warm, and conversational. Use occasional light emojis. Never be robotic or overly formal.`;
+
+function skaiAddMsg(role, text) {
+  const box = document.getElementById('skaiMsgs');
+  const wrap = document.createElement('div');
+  wrap.className = 'skai-msg ' + (role === 'bot' ? 'bot' : 'usr');
+  const lbl = document.createElement('div');
+  lbl.className = 'skai-lbl';
+  lbl.textContent = role === 'bot' ? 'SKAI' : 'YOU';
+  const bbl = document.createElement('div');
+  bbl.className = 'bbl';
+  bbl.innerHTML = text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+  wrap.appendChild(lbl);
+  wrap.appendChild(bbl);
+  box.appendChild(wrap);
+  box.scrollTop = box.scrollHeight;
+}
+
+function skaiShowTyping() {
+  const box = document.getElementById('skaiMsgs');
+  const el = document.createElement('div');
+  el.id = 'skaiTyping';
+  el.className = 'skai-typing';
+  el.innerHTML = '<span></span><span></span><span></span>';
+  box.appendChild(el);
+  box.scrollTop = box.scrollHeight;
+}
+function skaiHideTyping() {
+  const el = document.getElementById('skaiTyping');
+  if (el) el.remove();
+}
+
+window.toggleSkai = function() {
+  skaiOpen = !skaiOpen;
+  const panel = document.getElementById('skaiPanel');
+  const trigger = document.getElementById('skaiTrigger');
+  panel.classList.toggle('open', skaiOpen);
+  trigger.classList.remove('has-unread');
+  if (skaiOpen) {
+    // First open: show greeting
+    if (!skaiHistory.length) {
+      skaiAddMsg('bot', "Hey! 👋 I'm **Skai**, your built-in assistant. Ask me anything — general questions, calc tips, vault help, you name it!");
+    }
+    setTimeout(() => document.getElementById('skaiInp').focus(), 260);
+  }
+};
+
+function closeSkai() {
+  skaiOpen = false;
+  document.getElementById('skaiPanel').classList.remove('open');
+}
+
+// Close on outside click
+document.addEventListener('click', e => {
+  if (!skaiOpen) return;
+  const panel = document.getElementById('skaiPanel');
+  const trigger = document.getElementById('skaiTrigger');
+  if (!panel.contains(e.target) && !trigger.contains(e.target)) closeSkai();
+});
+
+window.skaiSend = async function(text) {
+  const inp = document.getElementById('skaiInp');
+  const msg = (text || inp.value).trim();
+  if (!msg || skaiLoading) return;
+  inp.value = '';
+  window.skaiResize(inp);
+  // hide chips after first send
+  const chips = document.getElementById('skaiChips');
+  if (chips) chips.style.display = 'none';
+
+  skaiAddMsg('usr', msg);
+  skaiHistory.push({ role: 'user', content: msg });
+
+  skaiLoading = true;
+  document.getElementById('skaiSend').disabled = true;
+  skaiShowTyping();
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: SKAI_SYSTEM,
+        messages: skaiHistory
+      })
+    });
+    const data = await res.json();
+    const reply = data?.content?.[0]?.text || "Hmm, something went wrong 😅 Try again!";
+    skaiHideTyping();
+    skaiAddMsg('bot', reply);
+    skaiHistory.push({ role: 'assistant', content: reply });
+  } catch (e) {
+    skaiHideTyping();
+    skaiAddMsg('bot', "Oops! Couldn't connect 😅 Check your internet and try again.");
+  }
+
+  skaiLoading = false;
+  document.getElementById('skaiSend').disabled = false;
+  document.getElementById('skaiInp').focus();
+};
+
+window.skaiChip = function(el) {
+  window.skaiSend(el.textContent);
+};
+
+window.skaiKey = function(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); window.skaiSend(); }
+};
+
+window.skaiResize = function(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 70) + 'px';
+};
+
+// Show unread dot on load (after calc page appears)
+setTimeout(() => {
+  const trigger = document.getElementById('skaiTrigger');
+  if (trigger) trigger.classList.add('has-unread');
+}, 3200);
 
 </script>
 </body>
