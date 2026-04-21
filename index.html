@@ -776,11 +776,15 @@ window.pinPress=function(n){
   if(pinInput.length===4)setTimeout(checkPin,120);
 }
 window.pinDelete=function(){if(!pinInput.length)return;playKey();pinInput=pinInput.slice(0,-1);updatePinDots();}
-function updatePinDots(){document.querySelectorAll('.pin-dot').forEach((d,i)=>d.classList.toggle('filled',i<pinInput.length));}
+function updatePinDots(){document.querySelectorAll('.pin-dot').forEach((d,i)=>d.classList.toggle('filled',i<pinInput.async function hashPin(pin){
+  const buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(pin));
+  return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
 async function checkPin(){
   const uid=currentUser?.uid||'guest';
-  const saved=localStorage.getItem('svault_pin_'+uid)||'1234';
-  if(pinInput===saved){
+  const saved=localStorage.getItem('svault_pin_'+uid)||'03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4';
+  const hashed=await hashPin(pinInput);
+  if(hashed===saved){
     playVault();vibrate(60);showPage('vaultPage');loadVault();switchVaultTab('photos');pinInput='';updatePinDots();wrongPin=0;return;
   }
   playError();wrongPin++;vibrate([100,50,100]);
