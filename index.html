@@ -1014,50 +1014,29 @@ document.addEventListener('click', e => {
   if (!panel.contains(e.target) && !trigger.contains(e.target)) closeSkai();
 });
 
-window.skaiSend = async function(text) {
+window.skaiSend = function(text) {
   const inp = document.getElementById('skaiInp');
   const msg = (text || inp.value).trim();
-  if (!msg || skaiLoading) return;
+  if (!msg) return;
   inp.value = '';
   window.skaiResize(inp);
-  // hide chips after first send
   const chips = document.getElementById('skaiChips');
   if (chips) chips.style.display = 'none';
 
   skaiAddMsg('usr', msg);
-  skaiHistory.push({ role: 'user', content: msg });
 
-  skaiLoading = true;
-  document.getElementById('skaiSend').disabled = true;
-  skaiShowTyping();
+  const q = msg.toLowerCase();
+  let reply = "Sorry, I can only help with vault questions! 😊";
 
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-  'Content-Type': 'application/json',
-  'anthropic-dangerous-direct-browser-access': 'true'
-},
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: SKAI_SYSTEM,
-        messages: skaiHistory
-      })
-    });
-    const data = await res.json();
-    const reply = data?.content?.[0]?.text || "Hmm, something went wrong 😅 Try again!";
-    skaiHideTyping();
-    skaiAddMsg('bot', reply);
-    skaiHistory.push({ role: 'assistant', content: reply });
-  } catch (e) {
-    skaiHideTyping();
-    skaiAddMsg('bot', "Oops! Couldn't connect 😅 Check your internet and try again.");
+  if (q.includes('number') || q.includes('open') || q.includes('enter') || q.includes('776') || q.includes('vault')) {
+    reply = "Type **776** on the calculator to open the vault! 🔐";
+  } else if (q.includes('change') || q.includes('how') || q.includes('update')) {
+    reply = "To change your PIN:\n1. Tap ⚙️ Settings\n2. Scroll to **Vault PIN**\n3. Enter new 4-digit PIN\n4. Confirm it\n5. Tap **CHANGE PIN** ✅";
+  } else if (q.includes('pin') || q.includes('password') || q.includes('default')) {
+    reply = "The default PIN is **1234** 🔑";
   }
 
-  skaiLoading = false;
-  document.getElementById('skaiSend').disabled = false;
-  document.getElementById('skaiInp').focus();
+  setTimeout(() => skaiAddMsg('bot', reply), 400);
 };
 
 window.skaiChip = function(el) {
