@@ -756,12 +756,12 @@ window.clearHistory=function(){calcHistory=[];if(currentUser)localStorage.remove
 //  SETTINGS PAGE
 // ============================================================
 window.showSettings=function(){playClick();if(currentUser)document.getElementById('settingsUsername').textContent=currentUser.isGuest?'Guest':currentUser.email?.split('@')[0];loadSettings();showPage('settingsPage');}
-window.changePin=function(){
+window.changePin=async function(){
   const p1=document.getElementById('newPin').value,p2=document.getElementById('confirmPin').value;
   if(p1.length!==4||p2.length!==4)return showToast('PIN must be 4 digits',true);
   if(p1!==p2)return showToast('PINs do not match',true);
   if(!/^\d{4}$/.test(p1))return showToast('Only numbers',true);
-  if(currentUser)localStorage.setItem('svault_pin_'+currentUser.uid,p1);
+  if(currentUser){const h=await hashPin(p1);localStorage.setItem('svault_pin_'+currentUser.uid,h);}
   playSuccess();showToast('PIN changed!');
   document.getElementById('newPin').value='';document.getElementById('confirmPin').value='';
 }
