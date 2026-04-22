@@ -709,17 +709,22 @@ window.cPress = function(v){
   if(v==='MC'){memory=0;document.getElementById('calcMem').textContent='';return;}
   if(v==='x²'){const n=parseFloat(calcBuffer||0);calcExpr=calcBuffer+'²';calcBuffer=String(n*n);calcNewNum=true;updateDisp(calcBuffer);return;}
   if(v==='√'){const n=parseFloat(calcBuffer||0);calcExpr='√'+calcBuffer;calcBuffer=String(Math.sqrt(n));calcNewNum=true;updateDisp(calcBuffer);return;}
-  if (v === '%') {
-  calcBuffer = String(parseFloat(calcBuffer) / 100);
+if(v==='%'){
+  calcBuffer += '%';
   updateDisp(calcBuffer);
   return;
-  }
+}
   if(v==='±'){calcBuffer=String(-parseFloat(calcBuffer||0));updateDisp(calcBuffer);return;}
   if(v==='='){
     if(!calcExpr)return;
     try{
       const expr=calcExpr+calcBuffer;
-      const res=Function('"use strict";return('+expr.replace(/×/g,'*').replace(/÷/g,'/')+')')();
+      const res = Function('"use strict";return(' +
+  expr
+    .replace(/×/g,'*')
+    .replace(/÷/g,'/')
+    .replace(/(\d+(\.\d+)?)%/g,'($1/100)')
++ ')')();
       const clean=parseFloat(res.toFixed(10));
       calcHistory.unshift({expr:expr+' =',result:clean,time:new Date().toLocaleTimeString()});
       if(calcHistory.length>50)calcHistory.pop();
