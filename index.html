@@ -780,9 +780,10 @@ window.pinPress=function(n){
   if(pinInput.length===4)setTimeout(checkPin,120);
 }
 window.pinDelete=function(){if(!pinInput.length)return;playKey();pinInput=pinInput.slice(0,-1);updatePinDots();}
-function updatePinDots(){document.querySelectorAll('.pin-dot').forEach((d,i)=>d.classList.toggle('filled',i<pinInput.async function hashPin(pin){
-  const buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(pin));
-  return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+function updatePinDots(){
+  document.querySelectorAll('.pin-dot').forEach((d,i)=>{
+    d.classList.toggle('filled', i < pinInput.length);
+  });
 }
 async function checkPin(){
   const uid=currentUser?.uid||'guest';
