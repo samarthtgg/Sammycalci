@@ -709,12 +709,12 @@ window.cPress = function(v){
   if(v==='MC'){memory=0;document.getElementById('calcMem').textContent='';return;}
   if(v==='x²'){const n=parseFloat(calcBuffer||0);calcExpr=calcBuffer+'²';calcBuffer=String(n*n);calcNewNum=true;updateDisp(calcBuffer);return;}
   if(v==='√'){const n=parseFloat(calcBuffer||0);calcExpr='√'+calcBuffer;calcBuffer=String(Math.sqrt(n));calcNewNum=true;updateDisp(calcBuffer);return;}
-  if(v==='%'){
+  if(v === '%'){
   if(calcExpr){
-    const base = parseFloat(calcExpr.replace(/[^\d.]/g, ''));
-    calcBuffer = String(base * parseFloat(calcBuffer || 0) / 100);
+    const base = parseFloat(calcExpr);
+    calcBuffer = String(base * parseFloat(calcBuffer) / 100);
   } else {
-    calcBuffer = String(parseFloat(calcBuffer || 0) / 100);
+    calcBuffer = String(parseFloat(calcBuffer) / 100);
   }
   updateDisp(calcBuffer);
   return;
