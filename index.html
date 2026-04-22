@@ -75,7 +75,7 @@ input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(0,198,255,.1)}
 .photo-thumb:hover .del-btn{display:flex}
 #viewer{position:fixed;inset:0;background:rgba(0,0,0,.96);display:none;flex-direction:column;justify-content:center;align-items:center;z-index:1000}
 #viewer.active{display:flex}
-#viewer img{max-width:92vw;max-height:80vh;border-radius:16px;transition:opacity .25s}
+#viewer img{max-width:92vw;max-height:80vh;border-radius:16px;transition:transform .25s ease,opacity .25s;touch-action:manipulation}
 .viewer-controls{position:absolute;bottom:60px;display:flex;gap:12px;align-items:center}
 .viewer-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:50%;width:46px;height:46px;font-size:20px;cursor:pointer;color:#fff;display:flex;align-items:center;justify-content:center}
 .viewer-nav.left{left:16px}
@@ -255,6 +255,18 @@ textarea:focus{border-color:var(--primary)}
 .skai-send:hover{transform:scale(1.08);}
 .skai-send:disabled{opacity:.4;cursor:not-allowed;transform:none;}
 .skai-send svg{width:14px;height:14px;}
+   /* ===== VIEWER TOUCH OPTIMIZATION ===== */
+#viewer {
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+}
+
+#viewer img {
+  user-select: none;
+  -webkit-user-drag: none;
+  touch-action: none;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
 </style>
 </head>
 <body>
@@ -918,9 +930,37 @@ window.downloadPhoto=function(){
   const src=allPhotos[viewerIndex].data||allPhotos[viewerIndex];
   if(!src)return;const a=document.createElement('a');a.href=src;a.download='Vault_'+Date.now()+'.jpg';a.click();showToast('Downloaded');
 }
-let startX=0;
-document.getElementById('viewer').addEventListener('touchstart',e=>startX=e.touches[0].clientX);
-document.getElementById('viewer').addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-startX;if(Math.abs(d)>50)navPhoto(d<0?1:-1);});
+// ===== TOUCH SWIPE (PRO STABLE) =====
+let startX = 0;
+let startY = 0;
+let endX = 0;
+
+const SWIPE_THRESHOLD = 50;
+const viewerEl = document.getElementById('viewer');
+
+viewerEl.addEventListener('touchstart', (e) => {
+  startX = e.touches[0].clientX;
+  startY = e.touches[0].clientY;
+});
+
+viewerEl.addEventListener('touchend', (e) => {
+  endX = e.changedTouches[0].clientX;
+
+  const diffX = endX - startX;
+  const diffY = e.changedTouches[0].clientY - startY;
+
+  // ignore vertical scroll gestures
+  if (Math.abs(diffY) > Math.abs(diffX)) return;
+
+  if (Math.abs(diffX) > SWIPE_THRESHOLD) {
+    if (diffX < 0) navPhoto(1);     // next
+    else navPhoto(-1);              // previous
+  }
+
+  startX = 0;
+  startY = 0;
+  endX = 0;
+});
 document.addEventListener('keydown',e=>{if(document.getElementById('viewer').classList.contains('active')){if(e.key==='ArrowRight')navPhoto(1);if(e.key==='ArrowLeft')navPhoto(-1);if(e.key==='Escape')closeViewer();}});
 
 // ============================================================
