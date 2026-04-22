@@ -756,6 +756,10 @@ window.clearHistory=function(){calcHistory=[];if(currentUser)localStorage.remove
 //  SETTINGS PAGE
 // ============================================================
 window.showSettings=function(){playClick();if(currentUser)document.getElementById('settingsUsername').textContent=currentUser.isGuest?'Guest':currentUser.email?.split('@')[0];loadSettings();showPage('settingsPage');}
+   async function hashPin(pin){
+  const buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(pin));
+  return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+   }
 window.changePin=async function(){
   const p1=document.getElementById('newPin').value,p2=document.getElementById('confirmPin').value;
   if(p1.length!==4||p2.length!==4)return showToast('PIN must be 4 digits',true);
