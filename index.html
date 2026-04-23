@@ -1063,25 +1063,27 @@ if('serviceWorker' in navigator){
   navigator.serviceWorker.getRegistrations().then(regs=>regs.forEach(r=>r.unregister()));
   caches.keys().then(keys=>keys.forEach(k=>caches.delete(k)));
    }
-
-function showSkaiArrow(){
+function showSkaiArrow() {
   const btn = document.getElementById('skaiTrigger');
-  if(!btn) return;
+  if (!btn) return;
 
-  // ❌ remove old if exists
-  const old = document.querySelector('.skai-hint');
-  if(old) old.remove();
+  const rect = btn.getBoundingClientRect();
 
-  // ✅ create hint
   const hint = document.createElement('div');
   hint.className = 'skai-hint';
-  hint.innerText = 'Tap Skai!';
+  hint.textContent = 'Tap Skai';
 
-  // 🔥 attach INSIDE button container (perfect alignment)
-  btn.parentElement.appendChild(hint);
+  hint.style.position = 'fixed';
+  hint.style.left = (rect.left + rect.width / 2) + 'px';
 
-  // auto remove
-  setTimeout(()=>hint.remove(), 3000);
+  const offset = window.scrollY || window.pageYOffset; // 🔥 ADD HERE
+  hint.style.top = (rect.top + offset - 60) + 'px';    // 🔥 UPDATED LINE
+
+  hint.style.transform = 'translateX(-50%)';
+
+  document.body.appendChild(hint);
+
+  setTimeout(() => hint.remove(), 2500);
 }
 // ============================================================
 //  ✨ SKAI — AI ASSISTANT
