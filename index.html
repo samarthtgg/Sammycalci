@@ -1021,13 +1021,34 @@ if('serviceWorker' in navigator){
    }
 
 function showSkaiArrow(){
-  const arr=document.createElement('div');
-  arr.innerHTML='👆 Tap Skai!';
-  arr.style.cssText='position:fixed;top:52px;right:52px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;padding:6px 14px;border-radius:20px;font-size:12px;font-family:Orbitron,monospace;letter-spacing:1px;z-index:99999;animation:arrowPulse 0.6s infinite alternate;pointer-events:none;box-shadow:0 4px 16px rgba(99,102,241,0.5);';
+  const btn = document.getElementById('skaiTrigger');
+  if(!btn) return;
+
+  const rect = btn.getBoundingClientRect();
+
+  const arr = document.createElement('div');
+  arr.innerHTML = '👆 Tap Skai!';
+
+  arr.style.position = 'fixed';
+  arr.style.left = (rect.left - 20) + 'px';
+  arr.style.top = (rect.top - 40) + 'px';
+
+  arr.style.background = 'linear-gradient(135deg,#6366f1,#8b5cf6)';
+  arr.style.color = '#fff';
+  arr.style.padding = '6px 14px';
+  arr.style.borderRadius = '20px';
+  arr.style.fontSize = '12px';
+  arr.style.fontFamily = 'Orbitron, monospace';
+  arr.style.letterSpacing = '1px';
+  arr.style.zIndex = '99999';
+  arr.style.animation = 'arrowPulse 0.6s infinite alternate';
+  arr.style.pointerEvents = 'none';
+  arr.style.boxShadow = '0 4px 16px rgba(99,102,241,0.5)';
+
   document.body.appendChild(arr);
+
   setTimeout(()=>arr.remove(),2500);
 }
-
 // ============================================================
 //  ✨ SKAI — AI ASSISTANT
 // ============================================================
