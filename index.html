@@ -1029,9 +1029,14 @@ function showSkaiArrow(){
   const arr = document.createElement('div');
   arr.innerHTML = '👆 Tap Skai!';
 
+  // 👉 CENTER ALIGNMENT (THIS IS THE FIX)
+  const centerX = rect.left + rect.width / 2;
+  const topY = rect.top;
+
   arr.style.position = 'fixed';
-  arr.style.left = (rect.left - 20) + 'px';
-  arr.style.top = (rect.top - 40) + 'px';
+  arr.style.left = centerX + 'px';
+  arr.style.top = (topY - 50) + 'px';
+  arr.style.transform = 'translateX(-50%)'; // 🔥 key for perfect centering
 
   arr.style.background = 'linear-gradient(135deg,#6366f1,#8b5cf6)';
   arr.style.color = '#fff';
@@ -1048,7 +1053,7 @@ function showSkaiArrow(){
   document.body.appendChild(arr);
 
   setTimeout(()=>arr.remove(),2500);
-}
+   }
 // ============================================================
 //  ✨ SKAI — AI ASSISTANT
 // ============================================================
