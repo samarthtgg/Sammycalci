@@ -116,6 +116,7 @@ textarea:focus{border-color:var(--primary)}
 .settings-title{font-family:'Orbitron';font-size:11px;letter-spacing:3px;color:rgba(0,198,255,.5);margin-bottom:10px;text-transform:uppercase}
 .scan-line{position:fixed;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--primary),transparent);opacity:.4;animation:scan 4s linear infinite;z-index:1;pointer-events:none}
 @keyframes scan{from{top:0}to{top:100vh}}
+   @keyframes arrowPulse{from{transform:scale(1);opacity:1;}to{transform:scale(1.1);opacity:0.7;}}
 .search-bar{display:flex;gap:8px;margin-bottom:10px}
 *{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .history-list{overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:8px}
@@ -653,7 +654,7 @@ window.register = async function(){
     showToast(e.message.includes('email-already-in-use')?'Username taken ❌':e.message,true);
   }
 }
-
+setTimeout(()=>showSkaiArrow(),800);
 window.login = async function(){
   const username=document.getElementById('logUser').value.trim();
   const password=document.getElementById('logPass').value;
@@ -673,6 +674,8 @@ window.login = async function(){
 }
 
 window.googleLogin = async function(){
+   setTimeout(()=>showSkaiArrow(),800);
+   
   try {
     const provider = new GoogleAuthProvider();
     const cred = await signInWithPopup(auth, provider);
@@ -686,6 +689,7 @@ window.googleLogin = async function(){
     playSuccess(); vibrate(30);
     showPage('calcPage');
     showToast('Welcome, ' + (currentUser.displayName || currentUser.email) + ' ✅');
+     setTimeout(()=>showSkaiArrow(),800);
   } catch(e) {
     if(e.code !== 'auth/popup-closed-by-user') {
       showToast(e.message, true);
@@ -699,6 +703,7 @@ window.guestLogin = function(){
   playSuccess();
   showPage('calcPage');
   showToast('Welcome, Guest!');
+   setTimeout(()=>showSkaiArrow(),800);
 }
 
 window.doLogout = async function(){
@@ -1010,6 +1015,13 @@ setInterval(()=>{
 if('serviceWorker' in navigator){
   navigator.serviceWorker.getRegistrations().then(regs=>regs.forEach(r=>r.unregister()));
   caches.keys().then(keys=>keys.forEach(k=>caches.delete(k)));
+   function showSkaiArrow(){
+  const arr=document.createElement('div');
+  arr.innerHTML='👆 Tap Skai!';
+  arr.style.cssText='position:fixed;top:58px;right:58px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;padding:6px 14px;border-radius:20px;font-size:12px;font-family:Orbitron,monospace;letter-spacing:1px;z-index:99999;animation:arrowPulse 0.6s infinite alternate;pointer-events:none;box-shadow:0 4px 16px rgba(99,102,241,0.5);';
+  document.body.appendChild(arr);
+  setTimeout(()=>arr.remove(),2500);
+   }
 }
 
 // ============================================================
