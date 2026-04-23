@@ -261,13 +261,57 @@ textarea:focus{border-color:var(--primary)}
   touch-action: pan-y;
   overscroll-behavior: contain;
 }
-
 #viewer img {
   user-select: none;
   -webkit-user-drag: none;
   touch-action: none;
   transition: transform 0.25s ease, opacity 0.25s ease;
 }
+
+/* 🔥 YOUR CODE STARTS HERE */
+.skai-hint {
+  position: absolute;
+  top: -55px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg,#6366f1,#8b5cf6);
+  color: #fff;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-family: 'Orbitron', monospace;
+  white-space: nowrap;
+  box-shadow: 0 6px 18px rgba(99,102,241,0.5);
+  animation: hintFade 0.4s ease, hintFloat 1s infinite alternate;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.skai-hint::after {
+  content: "👇";
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 18px;
+  animation: bounce 0.8s infinite;
+}
+
+/* animations */
+@keyframes hintFloat {
+  from { transform: translateX(-50%) translateY(0); }
+  to   { transform: translateX(-50%) translateY(-4px); }
+}
+
+@keyframes bounce {
+  0%,100% { transform: translateX(-50%) translateY(0); }
+  50%     { transform: translateX(-50%) translateY(6px); }
+}
+
+@keyframes hintFade {
+  from { opacity:0; transform: translateX(-50%) translateY(10px); }
+  to   { opacity:1; transform: translateX(-50%) translateY(0); }
+                                                                    }
 </style>
 </head>
 <body>
@@ -1024,36 +1068,21 @@ function showSkaiArrow(){
   const btn = document.getElementById('skaiTrigger');
   if(!btn) return;
 
-  const rect = btn.getBoundingClientRect();
+  // ❌ remove old if exists
+  const old = document.querySelector('.skai-hint');
+  if(old) old.remove();
 
-  const arr = document.createElement('div');
-  arr.innerHTML = '👇 Tap Skai!';
+  // ✅ create hint
+  const hint = document.createElement('div');
+  hint.className = 'skai-hint';
+  hint.innerText = 'Tap Skai!';
 
-  // 👉 CENTER ALIGNMENT (THIS IS THE FIX)
-  const centerX = rect.left + rect.width / 2;
-  const topY = rect.top;
+  // 🔥 attach INSIDE button container (perfect alignment)
+  btn.parentElement.appendChild(hint);
 
-  arr.style.position = 'fixed';
-  arr.style.left = centerX + 'px';
-  arr.style.top = (topY - 50) + 'px';
-  arr.style.transform = 'translateX(-50%)'; // 🔥 key for perfect centering
-
-  arr.style.background = 'linear-gradient(135deg,#6366f1,#8b5cf6)';
-  arr.style.color = '#fff';
-  arr.style.padding = '6px 14px';
-  arr.style.borderRadius = '20px';
-  arr.style.fontSize = '12px';
-  arr.style.fontFamily = 'Orbitron, monospace';
-  arr.style.letterSpacing = '1px';
-  arr.style.zIndex = '99999';
-  arr.style.animation = 'arrowPulse 0.6s infinite alternate';
-  arr.style.pointerEvents = 'none';
-  arr.style.boxShadow = '0 4px 16px rgba(99,102,241,0.5)';
-
-  document.body.appendChild(arr);
-
-  setTimeout(()=>arr.remove(),2500);
-   }
+  // auto remove
+  setTimeout(()=>hint.remove(), 3000);
+}
 // ============================================================
 //  ✨ SKAI — AI ASSISTANT
 // ============================================================
