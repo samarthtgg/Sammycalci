@@ -938,8 +938,14 @@ window.uploadPhotos=function(event){
           const MAX=500,scale=Math.min(1,MAX/Math.max(img.width,img.height));
           canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);
           canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
-          const base64=canvas.toDataURL('image/jpeg',0.5);
-          await addDoc(collection(db,'photos'),{uid:currentUser.uid,data:base64,createdAt:Date.now()});
+          const blob=await new Promise(res=>canvas.toBlob(res,'image/jpeg',0.8));
+const formData=new FormData();
+formData.append('file',blob);
+formData.append('upload_preset','sammycalci_vault');
+formData.append('folder','vault/'+currentUser.uid);
+const res=await fetch('https://api.cloudinary.com/v1_1/dmcm5mqbj/image/upload',{method:'POST',body:formData});
+const data=await res.json();
+await addDoc(collection(db,'photos'),{uid:currentUser.uid,data:data.secure_url,publicId:data.public_id,createdAt:Date.now()});
           done++;
           if(done===fileArr.length){await loadVault();showToast('Photos added ✅');}
         }catch(err){showToast('Error: '+err.message,true);}
