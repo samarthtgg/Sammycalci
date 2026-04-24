@@ -956,13 +956,34 @@ await addDoc(collection(db,'photos'),{uid:currentUser.uid,data:data.secure_url,p
   });
   event.target.value='';
 }
-
 window.deletePhoto=async function(i){
   if(!currentUser||currentUser.isGuest)return;
+
   try{
-    await deleteDoc(doc(db,'photos',allPhotos[i].id));
-    await loadVault();playClick();showToast('Photo deleted');
-  }catch(e){showToast('Delete failed',true);}
+    const photo = allPhotos[i];
+
+    // 🔥 DELETE FROM CLOUDINARY FIRST
+    if(photo.publicId){
+      await fetch(`https://api.cloudinary.com/v1_1/dmcm5mqbj/image/destroy`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          public_id: photo.publicId,
+          upload_preset: "sammycalci_vault"
+        })
+      });
+    }
+
+    // 🔥 THEN DELETE FROM FIRESTORE
+    await deleteDoc(doc(db,'photos',photo.id));
+
+    await loadVault();
+    playClick();
+    showToast('Photo deleted');
+
+  }catch(e){
+    showToast('Delete failed',true);
+  }
 }
 
 window.clearAllPhotos=async function(){
