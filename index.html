@@ -327,7 +327,8 @@ textarea:focus{border-color:var(--primary)}
   <div class="card">
     <div class="tab-bar">
       <button class="tab active" id="tabLogin" onclick="window.switchAuthTab('login')">LOGIN</button>
-       <button class="icon-btn" id="micBtn" onclick="window.startVoice()" title="Voice Calculator">🎤</button>
+       
+
       <button class="tab" id="tabRegister" onclick="window.switchAuthTab('register')">REGISTER</button>
     </div>
     <div id="loginForm">
@@ -385,7 +386,8 @@ textarea:focus{border-color:var(--primary)}
       <span>CALC-X</span>
       <div class="calc-topbar-actions">
         <!-- History button -->
-        <button class="icon-btn" onclick="window.showHistory()">📋</button>
+        <button class="icon-btn" id="micBtn" onclick="window.startVoice()" title="Voice Calculator">🎤</button>
+<button class="icon-btn" onclick="window.showHistory()">📋</button>
 
         <!-- ✨ SKAI TRIGGER — sits right next to history -->
         <button class="skai-trigger" id="skaiTrigger" onclick="window.toggleSkai()" title="Ask Skai">
