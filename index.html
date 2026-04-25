@@ -116,6 +116,8 @@ textarea:focus{border-color:var(--primary)}
 .settings-title{font-family:'Orbitron';font-size:11px;letter-spacing:3px;color:rgba(0,198,255,.5);margin-bottom:10px;text-transform:uppercase}
 .scan-line{position:fixed;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--primary),transparent);opacity:.4;animation:scan 4s linear infinite;z-index:1;pointer-events:none}
 @keyframes scan{from{top:0}to{top:100vh}}
+   .mic-listening{animation:micPulse 0.6s infinite alternate;}
+@keyframes micPulse{from{box-shadow:0 0 0 0 rgba(0,198,255,0.4);}to{box-shadow:0 0 0 8px rgba(0,198,255,0);}}
    @keyframes arrowPulse{from{transform:scale(1);opacity:1;}to{transform:scale(1.1);opacity:0.7;}}
 .search-bar{display:flex;gap:8px;margin-bottom:10px}
 *{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
@@ -325,6 +327,7 @@ textarea:focus{border-color:var(--primary)}
   <div class="card">
     <div class="tab-bar">
       <button class="tab active" id="tabLogin" onclick="window.switchAuthTab('login')">LOGIN</button>
+       <button class="icon-btn" id="micBtn" onclick="window.startVoice()" title="Voice Calculator">🎤</button>
       <button class="tab" id="tabRegister" onclick="window.switchAuthTab('register')">REGISTER</button>
     </div>
     <div id="loginForm">
@@ -1084,6 +1087,53 @@ window.deleteNote=async function(id){
 // ============================================================
 //  MISC
 // ============================================================
+   window.startVoice = function(){
+  if(!('webkitSpeechRecognition' in window||'SpeechRecognition' in window)){
+    return showToast('Voice not supported on this browser',true);
+  }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const rec = new SR();
+  rec.lang = 'en-US';
+  rec.interimResults = false;
+  rec.maxAlternatives = 1;
+  const btn = document.getElementById('micBtn');
+  btn.classList.add('mic-listening');
+  btn.textContent = '🔴';
+  showToast('Listening... speak your calculation');
+  rec.start();
+  rec.onresult = function(e){
+    const speech = e.results[0][0].transcript.toLowerCase();
+    let expr = speech
+      .replace(/plus/g,'+').replace(/minus/g,'-')
+      .replace(/times|multiplied by|into/g,'*')
+      .replace(/divided by|by/g,'/')
+      .replace(/percent/g,'%').replace(/point/g,'.')
+      .replace(/zero/g,'0').replace(/one/g,'1').replace(/two/g,'2')
+      .replace(/three/g,'3').replace(/four/g,'4').replace(/five/g,'5')
+      .replace(/six/g,'6').replace(/seven/g,'7').replace(/eight/g,'8')
+      .replace(/nine/g,'9').replace(/ten/g,'10')
+      .replace(/hundred/g,'00').replace(/thousand/g,'000')
+      .replace(/[^0-9+\-*/.%]/g,'');
+    try{
+      const res=Function('"use strict";return('+expr+')')();
+      const clean=parseFloat(res.toFixed(10));
+      calcBuffer=String(clean);
+      calcExpr=speech+' =';
+      updateDisp(String(clean));
+      document.getElementById('calcExpr').textContent=speech+' = '+clean;
+      playSuccess();
+      showToast('✅ '+speech+' = '+clean);
+    }catch(e){
+      showToast('Could not understand. Try again!',true);
+      playError();
+    }
+  };
+  rec.onerror=function(){showToast('Mic error. Try again!',true);};
+  rec.onend=function(){
+    btn.classList.remove('mic-listening');
+    btn.textContent='🎤';
+  };
+};
 window.toggleTheme=function(){document.body.classList.toggle('light-theme');playClick();}
 window.backToCalc=function(){playClick();showPage('calcPage');}
 
