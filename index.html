@@ -929,6 +929,8 @@ function renderGallery(){
 window.uploadPhotos=function(event){
   const files=event.target.files;
   if(!files||!files.length)return;
+if(allPhotos.length>=50)return showToast('Max 50 photos reached! Contact @itz_samarth17 on Instagram for more 📸',true);
+if(allPhotos.length+files.length>50)return showToast('Exceeds 50 limit! Contact @itz_samarth17 on Instagram 📸',true);
   if(!currentUser||currentUser.isGuest)return showToast('Login required',true);
   showToast('Adding photos...');
   const fileArr=Array.from(files);
