@@ -118,6 +118,9 @@ textarea:focus{border-color:var(--primary)}
 @keyframes scan{from{top:0}to{top:100vh}}
    .mic-listening{animation:micPulse 0.6s infinite alternate;}
 @keyframes micPulse{from{box-shadow:0 0 0 0 rgba(0,198,255,0.4);}to{box-shadow:0 0 0 8px rgba(0,198,255,0);}}
+   .note-mic-active{
+ animation:micPulse .7s infinite alternate;
+   }
    @keyframes arrowPulse{from{transform:scale(1);opacity:1;}to{transform:scale(1.1);opacity:0.7;}}
 .search-bar{display:flex;gap:8px;margin-bottom:10px}
 *{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
@@ -478,7 +481,23 @@ textarea:focus{border-color:var(--primary)}
     </div>
     <div id="noteVault" style="display:none;flex-direction:column;flex:1;min-height:0">
       <input id="noteTitle" placeholder="Note title..." style="margin-bottom:6px">
-      <textarea id="noteBody" rows="3" placeholder="Write your secret note..."></textarea>
+      <div style="display:flex;gap:8px;align-items:flex-start">
+  <textarea
+    id="noteBody"
+    rows="3"
+    placeholder="Write your secret note..."
+    style="flex:1"
+  ></textarea>
+
+  <button
+    id="noteMicBtn"
+    onclick="startNoteVoice()"
+    class="btn btn-primary"
+    style="width:55px;padding:10px"
+  >
+    🎤
+  </button>
+      </div>
       <button class="btn btn-primary" onclick="window.saveNote()">💾 SAVE NOTE</button>
       <div style="overflow-y:auto;flex:1" id="notesList"></div>
     </div>
@@ -1059,6 +1078,78 @@ document.addEventListener('keydown',e=>{if(document.getElementById('viewer').cla
 // ============================================================
 //  NOTES — Firestore
 // ============================================================
+   window.startNoteVoice=function(){
+
+ if(!('webkitSpeechRecognition' in window ||
+      'SpeechRecognition' in window)){
+   return showToast(
+     'Speech recognition not supported',
+     true
+   );
+ }
+
+ const SR=
+   window.SpeechRecognition ||
+   window.webkitSpeechRecognition;
+
+ const rec=new SR();
+
+ rec.lang='en-US';
+ rec.continuous=true;
+ rec.interimResults=true;
+
+ const btn=document.getElementById('noteMicBtn');
+
+ btn.classList.add('note-mic-active');
+ btn.innerHTML='🔴';
+
+ showToast('Speak now...');
+
+ rec.start();
+
+ rec.onresult=function(event){
+
+   let text='';
+
+   for(
+     let i=event.resultIndex;
+     i<event.results.length;
+     i++
+   ){
+     text+=event.results[i][0].transcript+' ';
+   }
+
+   const note=
+   document.getElementById('noteBody');
+
+   note.value=
+   note.value+' '+text;
+
+ };
+
+ rec.onerror=function(){
+
+   showToast('Mic error',true);
+
+   btn.classList.remove(
+     'note-mic-active'
+   );
+
+   btn.innerHTML='🎤';
+
+ };
+
+ rec.onend=function(){
+
+   btn.classList.remove(
+     'note-mic-active'
+   );
+
+   btn.innerHTML='🎤';
+
+ };
+
+};
 window.renderNotes = async function(){
   if(!currentUser||currentUser.isGuest){document.getElementById('notesList').innerHTML='<div style="text-align:center;opacity:.4;padding:20px">Login to save notes</div>';return;}
   try{
