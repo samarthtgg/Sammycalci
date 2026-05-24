@@ -1310,249 +1310,106 @@ window.deleteNote=async function(id){
   };
 };
    window.downloadVaultPDF = async function(){
-      await loadVault();
-let unlockPass = "guest";
 
-if(currentUser?.email){
-  const username =
-    currentUser.email.split("@")[0];
+ await loadVault();
 
-  unlockPass =
-    username +
-    (
-      localStorage.getItem(
-        "user_password"
-      ) ||
-      currentUser.email
-    );
+ let unlockPass="guest";
+
+ if(currentUser?.email){
+
+   const username=
+   currentUser.email.split("@")[0];
+
+   unlockPass=
+   username+
+   (
+    localStorage.getItem(
+      "user_password"
+    )||
+    currentUser.email
+   );
+
+ }
+
+ const { jsPDF }=window.jspdf;
+
+ const pdf=new jsPDF({
+   encryption:{
+    userPassword:unlockPass,
+    ownerPassword:"sammy_admin",
+    userPermissions:["print"]
    }
-const { jsPDF } = window.jspdf;
-const pdf = new jsPDF();
-let y = 20;
+ });
 
-pdf.setFontSize(18);
-pdf.text("SAMMYCALCI REPORT",20,y);
+ let y=20;
 
-y += 15;
+ pdf.setFontSize(18);
+ pdf.text("SAMMYCALCI REPORT",20,y);
 
-pdf.setFontSize(12);
+ y+=15;
 
-pdf.text(
-"User : " +
-(currentUser?.email || "Guest"),
-20,
-y
-);
+ pdf.setFontSize(12);
 
-y += 15;
+ pdf.text(
+ "User : "+
+ (currentUser?.email||"Guest"),
+ 20,
+ y
+ );
 
-pdf.text("Calculation History",20,y);
+ y+=15;
 
-y += 10;
+ pdf.text(
+ "Photos Stored : "+
+ allPhotos.length,
+ 20,
+ y
+ );
 
-if(calcHistory.length===0){
+ y+=10;
 
-pdf.text("No calculations",20,y);
+ if(calcHistory.length){
 
-y+=10;
+  pdf.text(
+   "Calculation History",
+   20,
+   y
+  );
 
-}else{
+  y+=10;
 
-calcHistory.forEach(item=>{
+  calcHistory.forEach(item=>{
 
-if(y>270){
+   if(y>270){
 
-pdf.addPage();
-y=20;
-
-}
-
-pdf.text(
-item.expr+" "+item.result,
-20,
-y
-);
-
-y+=8;
-
-});
-
-}
-
-y+=10;
-
-pdf.text("Notes",20,y);
-
-y+=10;
-
-try{
-
-if(
-currentUser &&
-!currentUser.isGuest
-){
-
-const q=query(
-collection(db,'notes'),
-where('uid','==',currentUser.uid)
-);
-
-const snap=
-await getDocs(q);
-
-snap.forEach(doc=>{
-
-const n=doc.data();
-
-if(y>270){
-
-pdf.addPage();
-y=20;
-
-}
-
-pdf.text(
-(n.title||"")+" : "+
-(n.body||""),
-20,
-y
-);
-
-y+=10;
-
-});
-
-}
-
-}catch(e){
-
-console.log(e);
-
-}
-
-y+=10;
-
-const photoCount =
-allPhotos.filter(
-p => p.data || p
-).length;
-
-pdf.text(
-"Photos Stored : " +
-photoCount,
-20,
-y
-);
-y+=10;
-
-for(let i=0;i<allPhotos.length;i++){
-
-try{
-
-const img =
-allPhotos[i].data ||
-allPhotos[i];
-
-if(y>220){
-
-pdf.addPage();
-y=20;
-
-}
-
-const image = new Image();
-
-image.crossOrigin = "Anonymous";
-
-image.src = img;
-   await new Promise(resolve=>{
-
-image.onload=resolve;
-
-image.onerror=()=>{
-
-console.log(
-"Failed image",
-img
-);
-
-resolve();
-
-};
-
-});
-const canvas =
-document.createElement("canvas");
-
-canvas.width =
-image.width;
-
-canvas.height =
-image.height;
-
-const ctx =
-canvas.getContext("2d");
-
-ctx.drawImage(
-image,
-0,
-0
-);
-
-const base64 =
-canvas.toDataURL(
-"image/jpeg",
-0.9
-);
-
-pdf.addImage(
-base64,
-"JPEG",
-20,
-y,
-60,
-60
-);
-y+=70;
-
-}catch(e){
-
-console.log(
-"Image Error",
-e
-);
-
-}
-
-}
-      console.log(pdf.setEncryption);
-pdf.setEncryption({
- userPassword: unlockPass,
- ownerPassword: "sammy_admin",
- userPermissions:["print"]
-});
-
-const blob = pdf.output("blob");
-
-const link =
-document.createElement("a");
-
-link.href =
-URL.createObjectURL(blob);
-
-link.download =
-"SammyVaultReport.pdf";
-
-document.body.appendChild(link);
-
-link.click();
-
-setTimeout(()=>{
- URL.revokeObjectURL(link.href);
- link.remove();
-},1000);
+    pdf.addPage();
+    y=20;
 
    }
+
+   pdf.text(
+    item.expr+
+    " "+
+    item.result,
+    20,
+    y
+   );
+
+   y+=8;
+
+  });
+
+ }
+
+ pdf.save(
+ "SammyVaultReport.pdf"
+ );
+
+ showToast(
+ "PDF Downloaded ✅"
+ );
+
+}
 window.toggleTheme=function(){document.body.classList.toggle('light-theme');playClick();}
 window.backToCalc=function(){playClick();showPage('calcPage');}
 
