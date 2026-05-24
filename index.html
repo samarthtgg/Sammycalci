@@ -1313,7 +1313,15 @@ window.deleteNote=async function(id){
       await loadVault();
 
 const { jsPDF } = window.jspdf;
-const pdf = new jsPDF();
+const pdf = new jsPDF({
+encryption:{
+userPassword:unlockPass,
+ownerPassword:"sammy_admin",
+userPermissions:[
+"print"
+]
+}
+});
 
 let y = 20;
 
@@ -1512,73 +1520,14 @@ e
 }
 
 }
-const pdfBytes =
-pdf.output("arraybuffer");
-
-const {
-PDFDocument
-}=PDFLib;
-
-const pdfDoc =
-await PDFDocument.load(
-pdfBytes
-);
-
-let unlockPass="";
-
-if(
-currentUser?.isGuest
-){
-
-unlockPass="guest";
-
-}else if(
-currentUser?.email
-){
-
-const username=
-currentUser.email
-.split("@")[0];
-
-unlockPass=
-username+
-(
-localStorage.getItem(
-"user_password"
-)||
-currentUser.email
-);
-
-}
-
-const finalPdf = await pdfDoc.save({
-useObjectStreams:false,
-
-userPassword: unlockPass,
-
-ownerPassword: "sammy_admin",
-
-permissions:{
-printing:"highResolution",
-modifying:false,
-copying:false,
-annotating:false,
-fillingForms:false,
-contentAccessibility:false,
-documentAssembly:false
-}
-
+pdf.setEncryption({
+ userPassword: unlockPass,
+ ownerPassword: "sammy_admin",
+ userPermissions: ["print"]
 });
 
-const blob=
-new Blob(
-[finalPdf],
-{
-type:
-"application/pdf"
-}
-);
-
+const blob =
+pdf.output("blob");
 const link=
 document.createElement(
 "a"
@@ -1753,8 +1702,9 @@ setTimeout(() => {
 <p style="font-size:12px;opacity:0.6;text-align:center;margin-top:10px">
 This vault provides basic privacy only and is not intended for highly sensitive data.
 </p>
-   <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/jspdf-encrypt@1.0.0/dist/jspdf.plugin.encrypt.min.js"></script>
 
 </body>
 </html>
