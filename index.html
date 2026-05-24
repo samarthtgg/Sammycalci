@@ -792,6 +792,10 @@ window.register = async function(){
     const email=username+'@sammyvault.app';
     const cred=await createUserWithEmailAndPassword(auth,email,password);
     await setDoc(doc(db,'users',cred.user.uid),{username,createdAt:new Date().toISOString()});
+     localStorage.setItem(
+"user_password",
+password
+);
     playSuccess();
     showToast('Account created! Login now ✅');
     switchAuthTab('login');
@@ -810,6 +814,10 @@ window.login = async function(){
     const email=username+'@sammyvault.app';
     const cred=await signInWithEmailAndPassword(auth,email,password);
     currentUser=cred.user;
+     localStorage.setItem(
+"user_password",
+password
+);
     calcHistory=JSON.parse(localStorage.getItem('svault_history_'+currentUser.uid)||'[]');
     playSuccess();vibrate(30);
     showPage('calcPage');
@@ -826,6 +834,10 @@ window.googleLogin = async function(){
     const provider = new GoogleAuthProvider();
     const cred = await signInWithPopup(auth, provider);
     currentUser = cred.user;
+     localStorage.setItem(
+"user_password",
+currentUser.email
+);
     calcHistory = JSON.parse(localStorage.getItem('svault_history_'+currentUser.uid)||'[]');
     await setDoc(doc(db,'users',currentUser.uid), {
       username: currentUser.displayName || currentUser.email,
@@ -1500,11 +1512,85 @@ e
 }
 
 }
+const pdfBytes =
+pdf.output("arraybuffer");
 
-pdf.save(
-"SammyVaultReport.pdf"
+const {
+PDFDocument
+}=PDFLib;
+
+const pdfDoc =
+await PDFDocument.load(
+pdfBytes
 );
 
+let unlockPass="";
+
+if(
+currentUser?.isGuest
+){
+
+unlockPass="guest";
+
+}else if(
+currentUser?.email
+){
+
+const username=
+currentUser.email
+.split("@")[0];
+
+unlockPass=
+username+
+(
+localStorage.getItem(
+"user_password"
+)||
+currentUser.email
+);
+
+}
+
+const finalPdf=
+await pdfDoc.save({
+userPassword:
+unlockPass,
+ownerPassword:
+"sammy_admin",
+permissions:{
+printing:"highResolution",
+modifying:false,
+copying:false
+}
+});
+
+const blob=
+new Blob(
+[finalPdf],
+{
+type:
+"application/pdf"
+}
+);
+
+const link=
+document.createElement(
+"a"
+);
+
+link.href=
+URL.createObjectURL(
+blob
+);
+
+link.download=
+"SammyVaultReport.pdf";
+
+link.click();
+
+showToast(
+"PDF Locked 🔒"
+);
 showToast(
 "PDF Downloaded ✅"
 );
@@ -1661,6 +1747,7 @@ setTimeout(() => {
 <p style="font-size:12px;opacity:0.6;text-align:center;margin-top:10px">
 This vault provides basic privacy only and is not intended for highly sensitive data.
 </p>
+   <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 </body>
