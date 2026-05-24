@@ -1551,17 +1551,23 @@ currentUser.email
 
 }
 
-const finalPdf=
-await pdfDoc.save({
-userPassword:
-unlockPass,
-ownerPassword:
-"sammy_admin",
+const finalPdf = await pdfDoc.save({
+useObjectStreams:false,
+
+userPassword: unlockPass,
+
+ownerPassword: "sammy_admin",
+
 permissions:{
 printing:"highResolution",
 modifying:false,
-copying:false
+copying:false,
+annotating:false,
+fillingForms:false,
+contentAccessibility:false,
+documentAssembly:false
 }
+
 });
 
 const blob=
