@@ -1298,6 +1298,7 @@ window.deleteNote=async function(id){
   };
 };
    window.downloadVaultPDF = async function(){
+      await loadVault();
 
 const { jsPDF } = window.jspdf;
 const pdf = new jsPDF();
@@ -1406,13 +1407,17 @@ console.log(e);
 
 y+=10;
 
+const photoCount =
+allPhotos.filter(
+p => p.data || p
+).length;
+
 pdf.text(
-"Photos Stored : "+
-allPhotos.length,
+"Photos Stored : " +
+photoCount,
 20,
 y
 );
-
 y+=10;
 
 for(let i=0;i<allPhotos.length;i++){
