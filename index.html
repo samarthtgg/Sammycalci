@@ -1311,18 +1311,23 @@ window.deleteNote=async function(id){
 };
    window.downloadVaultPDF = async function(){
       await loadVault();
+let unlockPass = "guest";
 
+if(currentUser?.email){
+  const username =
+    currentUser.email.split("@")[0];
+
+  unlockPass =
+    username +
+    (
+      localStorage.getItem(
+        "user_password"
+      ) ||
+      currentUser.email
+    );
+   }
 const { jsPDF } = window.jspdf;
-const pdf = new jsPDF({
-encryption:{
-userPassword:unlockPass,
-ownerPassword:"sammy_admin",
-userPermissions:[
-"print"
-]
-}
-});
-
+const pdf = new jsPDF();
 let y = 20;
 
 pdf.setFontSize(18);
