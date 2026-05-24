@@ -1377,6 +1377,112 @@ currentUser.uid
 );
 
 const snap=
+window.downloadVaultPDF = async function(){
+
+const { jsPDF } = window.jspdf;
+
+const pdf = new jsPDF();
+
+let y = 20;
+
+pdf.setFontSize(18);
+
+pdf.text(
+"SAMMYCALCI REPORT",
+20,
+y
+);
+
+y += 15;
+
+pdf.setFontSize(12);
+
+pdf.text(
+"User : " +
+(currentUser?.email || "Guest"),
+20,
+y
+);
+
+y += 15;
+
+pdf.text(
+"Calculation History",
+20,
+y
+);
+
+y += 10;
+
+if(calcHistory.length===0){
+
+pdf.text(
+"No calculations",
+20,
+y
+);
+
+y += 10;
+
+}else{
+
+calcHistory.forEach(item=>{
+
+if(y>270){
+
+pdf.addPage();
+
+y=20;
+
+}
+
+pdf.text(
+
+item.expr+
+" "+
+item.result,
+
+20,
+y
+
+);
+
+y+=8;
+
+});
+
+}
+
+y += 10;
+
+pdf.text(
+"Notes",
+20,
+y
+);
+
+y += 10;
+
+try{
+
+if(
+currentUser &&
+!currentUser.isGuest
+){
+
+const q=query(
+
+collection(db,'notes'),
+
+where(
+'uid',
+'==',
+currentUser.uid
+)
+
+);
+
+const snap=
 await getDocs(q);
 
 if(snap.empty){
@@ -1387,11 +1493,14 @@ pdf.text(
 y
 );
 
+y+=10;
+
 }else{
 
 snap.forEach(doc=>{
 
-const n=doc.data();
+const n=
+doc.data();
 
 if(y>270){
 
@@ -1418,24 +1527,86 @@ y+=10;
 
 }
 
+}
+
 }catch(e){
 
 pdf.text(
-"Notes load failed",
+"Notes error",
 20,
 y
 );
 
 }
 
-y+=15;
+y += 10;
 
 pdf.text(
+
 "Photos Stored : "+
 allPhotos.length,
+
+20,
+y
+
+);
+
+y += 10;
+
+pdf.text(
+"Photos",
 20,
 y
 );
+
+y += 10;
+
+for(
+let i=0;
+i<allPhotos.length;
+i++
+){
+
+try{
+
+if(y>220){
+
+pdf.addPage();
+
+y=20;
+
+}
+
+const imgData=
+
+allPhotos[i].data ||
+allPhotos[i];
+
+pdf.addImage(
+
+imgData,
+
+"JPEG",
+
+20,
+
+y,
+
+60,
+
+60
+
+);
+
+y += 70;
+
+}catch(e){
+
+console.log(e);
+
+}
+
+}
 
 pdf.save(
 "SammyVaultReport.pdf"
