@@ -1430,26 +1430,54 @@ y=20;
 
 }
 
-const blob =
-await fetch(img)
-.then(r=>r.blob());
+const image = new Image();
 
-const base64 =
-await new Promise(res=>{
+image.crossOrigin = "Anonymous";
 
-const reader=
-new FileReader();
+image.src = img;
+   await new Promise(resolve=>{
 
-reader.onload=
-()=>res(reader.result);
+image.onload=resolve;
 
-reader.readAsDataURL(blob);
+image.onerror=()=>{
+
+console.log(
+"Failed image",
+img
+);
+
+resolve();
+
+};
 
 });
+const canvas =
+document.createElement("canvas");
+
+canvas.width =
+image.width;
+
+canvas.height =
+image.height;
+
+const ctx =
+canvas.getContext("2d");
+
+ctx.drawImage(
+image,
+0,
+0
+);
+
+const base64 =
+canvas.toDataURL(
+"image/jpeg",
+0.9
+);
 
 pdf.addImage(
 base64,
-'JPEG',
+"JPEG",
 20,
 y,
 60,
