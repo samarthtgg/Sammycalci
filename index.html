@@ -1520,35 +1520,32 @@ e
 }
 
 }
+      console.log(pdf.setEncryption);
 pdf.setEncryption({
  userPassword: unlockPass,
  ownerPassword: "sammy_admin",
- userPermissions: ["print"]
+ userPermissions:["print"]
 });
 
-const blob =
-pdf.output("blob");
-const link=
-document.createElement(
-"a"
-);
+const blob = pdf.output("blob");
 
-link.href=
-URL.createObjectURL(
-blob
-);
+const link =
+document.createElement("a");
 
-link.download=
+link.href =
+URL.createObjectURL(blob);
+
+link.download =
 "SammyVaultReport.pdf";
+
+document.body.appendChild(link);
 
 link.click();
 
-showToast(
-"PDF Locked 🔒"
-);
-showToast(
-"PDF Downloaded ✅"
-);
+setTimeout(()=>{
+ URL.revokeObjectURL(link.href);
+ link.remove();
+},1000);
 
    }
 window.toggleTheme=function(){document.body.classList.toggle('light-theme');playClick();}
