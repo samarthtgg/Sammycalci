@@ -418,6 +418,10 @@ textarea:focus{border-color:var(--primary)}
            <span class="skai-chip" onclick="window.skaiChip(this)">Which number to go vault?</span>
 <span class="skai-chip" onclick="window.skaiChip(this)">What is the PIN?</span>
 <span class="skai-chip" onclick="window.skaiChip(this)">How to change PIN?</span>
+             <span class="skai-chip"
+onclick="window.skaiChip(this)">
+pdf password.
+             </span>
           </div>
           <div class="skai-foot">
             <textarea class="skai-inp" id="skaiInp" placeholder="Ask Skai anything…" rows="1"
@@ -1765,13 +1769,46 @@ window.skaiSend = function(text) {
   const q = msg.toLowerCase();
   let reply = "Sorry, I can only help with vault questions! 😊";
 
-  if (q.includes('number') || q.includes('open') || q.includes('enter') || q.includes('777') || q.includes('vault')) {
-    reply = "Type **777** on the calculator to open the vault! 🔐";
-  } else if (q.includes('change') || q.includes('how') || q.includes('update')) {
-    reply = "To change your PIN:\n1. Tap ⚙️ Settings\n2. Scroll to **Vault PIN**\n3. Enter new 4-digit PIN\n4. Confirm it\n5. Tap **CHANGE PIN** ✅";
-  } else if (q.includes('pin') || q.includes('password') || q.includes('default')) {
-    reply = "The default PIN is **1234** 🔑";
-  }
+  if (
+  q.includes('number') ||
+  q.includes('open') ||
+  q.includes('enter') ||
+  q.includes('777') ||
+  q.includes('vault')
+) {
+
+  reply =
+  "Type **777** on calculator to open vault 🔐";
+
+}
+else if (
+  q.includes('pdf') &&
+  q.includes('password')
+) {
+
+  reply =
+  "PDF password = Username + Account Password 📄🔑";
+
+}
+else if (
+  q.includes('change') ||
+  q.includes('how') ||
+  q.includes('update')
+) {
+
+  reply =
+  "To change PIN:\n1. Tap ⚙️ Settings\n2. Open Vault PIN\n3. Enter new PIN\n4. Confirm PIN\n5. Tap CHANGE PIN ✅";
+
+}
+else if (
+  q.includes('pin') ||
+  q.includes('default')
+) {
+
+  reply =
+  "Default PIN is **1234** 🔑";
+
+}
 
   setTimeout(() => skaiAddMsg('bot', reply), 400);
 };
