@@ -316,15 +316,521 @@ textarea:focus{border-color:var(--primary)}
 @keyframes hintFade {
   from { opacity:0; transform: translateX(-50%) translateY(10px); }
   to   { opacity:1; transform: translateX(-50%) translateY(0); }
-                                                                    }
+   .scene{
+position:relative;
+width:100%;
+height:400px;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+#jug-container{
+position:absolute;
+bottom:50px;
+width:100px;
+height:130px;
+z-index:10;
+animation:jugEntrance .8s cubic-bezier(.175,.885,.32,1.275) forwards;
+transition:all .5s cubic-bezier(.68,-.55,.265,1.55);
+}
+
+@keyframes jugEntrance{
+
+from{
+transform:translateY(200px) scale(0);
+opacity:0;
+}
+
+to{
+transform:translateY(0) scale(1);
+opacity:1;
+}
+
+}
+
+.jug-svg{
+width:100%;
+height:100%;
+filter:drop-shadow(0 0 10px #00c6ff);
+}
+
+.word-container{
+display:flex;
+gap:15px;
+position:absolute;
+top:120px;
+}
+
+.letter{
+
+font-size:50px;
+font-weight:900;
+
+opacity:0;
+
+transform:scale(0);
+
+position:relative;
+
+z-index:5;
+
+}
+
+.letter:nth-child(1){
+color:#FF0000;
+text-shadow:0 0 15px #FF0000;
+}
+
+.letter:nth-child(2){
+color:#FF7F00;
+text-shadow:0 0 15px #FF7F00;
+}
+
+.letter:nth-child(3){
+color:#FFFF00;
+text-shadow:0 0 15px #FFFF00;
+}
+
+.letter:nth-child(4){
+color:#00FF00;
+text-shadow:0 0 15px #00FF00;
+}
+
+.letter:nth-child(5){
+color:#0000FF;
+text-shadow:0 0 15px #0000FF;
+}
+
+.letter:nth-child(6){
+color:#4B0082;
+text-shadow:0 0 15px #4B0082;
+}
+
+.letter:nth-child(7){
+color:#8B00FF;
+text-shadow:0 0 15px #8B00FF;
+}
+
+.jumping{
+
+animation:
+jumpOut .8s cubic-bezier(.25,.46,.45,.94)
+forwards;
+
+}
+
+@keyframes jumpOut{
+
+0%{
+
+opacity:0;
+
+transform:
+translate(
+var(--startX),
+var(--startY)
+)
+scale(.2)
+rotate(0deg);
+
+}
+
+50%{
+
+opacity:1;
+
+transform:
+translate(
+var(--midX),
+var(--midY)
+)
+scale(1.4)
+rotate(180deg);
+
+}
+
+100%{
+
+opacity:1;
+
+transform:
+translate(0,0)
+scale(1)
+rotate(360deg);
+
+}
+
+}
+
+.rainbow-container{
+
+position:absolute;
+
+top:40px;
+
+width:350px;
+
+height:150px;
+
+overflow:hidden;
+
+opacity:0;
+
+z-index:2;
+
+}
+
+.rainbow-arc{
+
+position:absolute;
+
+top:0;
+
+left:50%;
+
+transform:
+translateX(-50%);
+
+width:100%;
+
+height:200%;
+
+border-radius:50%;
+
+border:6px solid transparent;
+
+background:
+
+linear-gradient(
+#060b18,
+#060b18
+)
+
+padding-box,
+
+linear-gradient(
+
+90deg,
+
+#FF0000,
+
+#FF7F00,
+
+#FFFF00,
+
+#00FF00,
+
+#0000FF,
+
+#4B0082,
+
+#8B00FF
+
+)
+
+border-box;
+
+filter:
+blur(1px)
+drop-shadow(
+0 0 10px
+rgba(
+255,
+255,
+255,
+.5
+)
+);
+
+animation:
+rainbowLoad 2s ease infinite;
+
+}
+
+@keyframes rainbowLoad{
+
+0%{
+clip-path:
+inset(
+0 100% 0 0
+);
+}
+
+50%{
+clip-path:
+inset(
+0 0 0 0
+);
+}
+
+100%{
+clip-path:
+inset(
+0 0 0 100%
+);
+}
+
+}
+
+.show-rainbow{
+
+opacity:1;
+
+transition:
+opacity 1s;
+
+}
+
+.water-drop{
+
+position:absolute;
+
+width:4px;
+
+height:15px;
+
+background:#00ffcc;
+
+border-radius:2px;
+
+z-index:9;
+
+filter:blur(1px);
+
+}
+
+.rocket-speed{
+
+animation:
+
+rocketBlast
+
+.6s
+
+cubic-bezier(
+.6,
+-.28,
+.735,
+.045
+)
+
+forwards
+
+!important;
+
+}
+
+@keyframes rocketBlast{
+
+0%{
+
+transform:
+
+rotate(180deg)
+
+translateY(0)
+
+scale(1);
+
+}
+
+20%{
+
+transform:
+
+rotate(180deg)
+
+translateY(30px)
+
+scale(1.2);
+
+}
+
+100%{
+
+transform:
+
+rotate(180deg)
+
+translateY(-1200px)
+
+scale(.3);
+
+opacity:0;
+
+}
+
+}
+
+.exhaust{
+
+position:absolute;
+
+bottom:-20px;
+
+left:50%;
+
+transform:
+
+translateX(-50%);
+
+width:30px;
+
+height:0;
+
+background:
+
+linear-gradient(
+
+to bottom,
+
+#00ffcc,
+
+#00c6ff,
+
+transparent
+
+);
+
+filter:blur(8px);
+
+}
+
+.blast-exhaust{
+
+animation:
+
+exhaustGrow
+
+.4s
+
+ease-out
+
+forwards;
+
+}
+
+@keyframes exhaustGrow{
+
+from{
+
+height:0;
+
+opacity:1;
+
+}
+
+to{
+
+height:200px;
+
+opacity:0;
+
+}
+
+   }         }
+   #splash{
+
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+
+height:100vh;
+
+background:#060b18;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+overflow:hidden;
+
+z-index:99999;
+
+transition:
+opacity .8s ease;
+
+   }
 </style>
 </head>
 <body>
 <div class="scan-line"></div>
 <div id="splash">
-  <div class="splash-logo">SAMARTH</div>
-  <div class="splash-sub">Ultra Vault · Secure · Private</div>
-  <div class="splash-bar"><div class="splash-bar-fill"></div></div>
+
+<div class="scene">
+
+<div class="rainbow-container" id="rainbow">
+<div class="rainbow-arc"></div>
+</div>
+
+<div class="word-container" id="word">
+
+<span class="letter">S</span>
+<span class="letter">A</span>
+<span class="letter">M</span>
+<span class="letter">A</span>
+<span class="letter">R</span>
+<span class="letter">T</span>
+<span class="letter">H</span>
+
+</div>
+
+<div id="jug-container">
+
+<div
+id="exhaust-pipe"
+class="exhaust">
+</div>
+
+<svg
+class="jug-svg"
+viewBox="0 0 100 120">
+
+<path
+d="M30 20 L70 20 L80 100 L20 100 Z"
+fill="none"
+stroke="#00c6ff"
+stroke-width="3"/>
+
+<path
+d="M30 20 C 30 10, 70 10, 70 20"
+fill="none"
+stroke="#00c6ff"
+stroke-width="3"/>
+
+<path
+d="M70 40 C 90 40, 90 70, 70 70"
+fill="none"
+stroke="#00c6ff"
+stroke-width="3"/>
+
+<rect
+x="25"
+y="60"
+width="50"
+height="35"
+fill="rgba(0,255,204,0.2)">
+
+<animate
+attributeName="height"
+values="35;40;35"
+dur="2s"
+repeatCount="indefinite"/>
+
+</rect>
+
+</svg>
+
+</div>
+
+</div>
+
 </div>
 <div class="page" id="authPage">
   <div class="card">
@@ -757,15 +1263,7 @@ function saveSetting(key,val){settings[key]=val;localStorage.setItem(SETTINGS_KE
 // ============================================================
 //  SPLASH
 // ============================================================
-setTimeout(()=>{
-  document.getElementById('splash').style.opacity='0';
-  document.getElementById('splash').style.transition='opacity 0.5s';
-  setTimeout(()=>{
-    document.getElementById('splash').style.display='none';
-    loadSettings();
-    showPage('authPage');
-  },500);
-},2500);
+
 
 // ============================================================
 //  AUTH
@@ -1662,7 +2160,199 @@ setInterval(()=>{
   if(!settings.autoLogout||!currentUser)return;
   if(Date.now()-lastActivity>120000){showToast('Auto-logged out');doLogout();}
 },5000);
+let audioCtx;
 
+function playSound(type){
+
+ if(!audioCtx){
+
+  try{
+
+   audioCtx=
+   new(
+   window.AudioContext||
+   window.webkitAudioContext
+   )();
+
+  }catch(e){
+
+   return;
+
+  }
+
+ }
+
+ if(
+ audioCtx.state==='suspended'
+ ){
+
+ audioCtx.resume();
+
+ }
+
+ const osc=
+ audioCtx.createOscillator();
+
+ const gain=
+ audioCtx.createGain();
+
+ osc.connect(gain);
+
+ gain.connect(
+ audioCtx.destination
+ );
+
+ const now=
+ audioCtx.currentTime;
+
+ osc.type='sine';
+
+ if(type==="jump"){
+
+ osc.frequency.setValueAtTime(
+ 440,
+ now
+ );
+
+ osc.frequency.exponentialRampToValueAtTime(
+ 880,
+ now+.1
+ );
+
+ }
+
+ gain.gain.setValueAtTime(
+ .1,
+ now
+ );
+
+ gain.gain.exponentialRampToValueAtTime(
+ .01,
+ now+.15
+ );
+
+ osc.start();
+
+ osc.stop(
+ now+.15
+ );
+
+}
+
+function startSplash(){
+
+ const letters=
+ document.querySelectorAll(
+ '.letter'
+ );
+
+ const jug=
+ document.getElementById(
+ 'jug-container'
+ );
+
+ const rainbow=
+ document.getElementById(
+ 'rainbow'
+ );
+
+ letters.forEach(
+ (letter,index)=>{
+
+ setTimeout(()=>{
+
+ const jugRect=
+ jug.getBoundingClientRect();
+
+ const rect=
+ letter.getBoundingClientRect();
+
+ const sx=
+ jugRect.left-
+ rect.left;
+
+ const sy=
+ jugRect.top-
+ rect.top;
+
+ letter.style.setProperty(
+ '--startX',
+ sx+'px'
+ );
+
+ letter.style.setProperty(
+ '--startY',
+ sy+'px'
+ );
+
+ letter.style.setProperty(
+ '--midX',
+ sx/2+'px'
+ );
+
+ letter.style.setProperty(
+ '--midY',
+ sy-120+'px'
+ );
+
+ letter.classList.add(
+ 'jumping'
+ );
+
+ playSound(
+ 'jump'
+ );
+
+ },index*300);
+
+ }
+
+ );
+
+ setTimeout(()=>{
+
+ rainbow.classList.add(
+ 'show-rainbow'
+ );
+
+ },3000);
+
+}
+
+window.onload=()=>{
+
+ setTimeout(
+ startSplash,
+ 800
+ );
+
+ setTimeout(()=>{
+
+ const splash=
+ document.getElementById(
+ 'splash'
+ );
+
+ splash.style.transition=
+ 'opacity .8s';
+
+ splash.style.opacity='0';
+
+ setTimeout(()=>{
+
+ splash.remove();
+
+ loadSettings();
+
+ showPage(
+ 'authPage'
+ );
+
+ },800);
+
+ },6500);
+
+}
 if('serviceWorker' in navigator){
   navigator.serviceWorker.getRegistrations().then(regs=>regs.forEach(r=>r.unregister()));
   caches.keys().then(keys=>keys.forEach(k=>caches.delete(k)));
