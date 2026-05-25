@@ -1812,23 +1812,58 @@ else if (
 
 setTimeout(() => {
 
- skaiAddMsg('bot', reply);
+ skaiAddMsg(
+  'bot',
+  reply +
+  ' <span id="skaiTimer">⌛3</span>'
+ );
 
- setTimeout(() => {
+ let t=3;
 
-  const chips =
+ const timer=
+ setInterval(()=>{
+
+  t--;
+
+  const el=
   document.getElementById(
-   'skaiChips'
+   'skaiTimer'
   );
 
-  if(chips){
+  if(el){
 
-   chips.style.display =
-   'flex';
+   el.innerHTML=
+   '⌛'+t;
 
   }
 
- },3000);
+  if(t<=0){
+
+   clearInterval(
+    timer
+   );
+
+   const chips=
+   document.getElementById(
+    'skaiChips'
+   );
+
+   if(chips){
+
+    chips.style.display=
+    'flex';
+
+   }
+
+   if(el){
+
+    el.remove();
+
+   }
+
+  }
+
+ },1000);
 
 },400);
 };
