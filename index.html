@@ -18,8 +18,7 @@
 .light-theme{--bg1:#e8f4f8;--glass:rgba(0,100,180,0.07);--glass-border:rgba(0,100,180,0.25);--text:#0a1a2e;--primary:#0077aa}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Rajdhani',sans-serif;background:var(--bg1);color:var(--text);height:100vh;overflow:hidden;transition:background .5s,color .5s}
-body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,198,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,198,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
-#splash{position:fixed;inset:0;background:#000;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999;gap:20px}
+body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,198,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,198,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:
 .splash-logo{font-family:'Orbitron',monospace;font-size:clamp(36px,8vw,72px);font-weight:900;letter-spacing:16px;color:var(--primary);animation:pulseGlow 1.5s infinite alternate}
 .splash-sub{font-size:14px;letter-spacing:6px;color:rgba(0,198,255,.5);text-transform:uppercase}
 .splash-bar{width:200px;height:3px;background:rgba(0,198,255,.15);border-radius:99px;overflow:hidden;margin-top:10px}
@@ -741,7 +740,7 @@ width:100%;
 
 height:100vh;
 
-background:#060b18;
+background:#000;
 
 display:flex;
 
