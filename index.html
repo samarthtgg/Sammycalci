@@ -1810,7 +1810,27 @@ else if (
 
 }
 
-  setTimeout(() => skaiAddMsg('bot', reply), 400);
+setTimeout(() => {
+
+ skaiAddMsg('bot', reply);
+
+ setTimeout(() => {
+
+  const chips =
+  document.getElementById(
+   'skaiChips'
+  );
+
+  if(chips){
+
+   chips.style.display =
+   'flex';
+
+  }
+
+ },3000);
+
+},400);
 };
 
 window.skaiChip = function(el) {
