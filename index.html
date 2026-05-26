@@ -1886,7 +1886,71 @@ setTimeout(() => {
   const trigger = document.getElementById('skaiTrigger');
   if (trigger) trigger.classList.add('has-unread');
 }, 3200);
+// ===== PANIC SHAKE FEATURE =====
 
+let lastShake = 0;
+
+window.addEventListener("devicemotion", (event) => {
+
+ if(
+ !document
+ .getElementById("vaultPage")
+ .classList.contains("active")
+ ) return;
+
+ const x =
+ event.accelerationIncludingGravity?.x || 0;
+
+ const y =
+ event.accelerationIncludingGravity?.y || 0;
+
+ const z =
+ event.accelerationIncludingGravity?.z || 0;
+
+ const force =
+ Math.abs(x)+
+ Math.abs(y)+
+ Math.abs(z);
+
+ const now =
+ Date.now();
+
+ if(
+ force > 45 &&
+ now-lastShake > 1500
+ ){
+
+  lastShake=now;
+
+  closeViewer();
+
+  showPage(
+   "calcPage"
+  );
+
+  calcBuffer='';
+
+  calcExpr='';
+
+  updateDisp('0');
+
+  document
+  .getElementById(
+   'calcExpr'
+  )
+  .textContent='';
+
+  vibrate(80);
+
+  playClick();
+
+  showToast(
+   "Calculator Opened"
+  );
+
+ }
+
+});
 </script>
    
 
