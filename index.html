@@ -19,13 +19,30 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Rajdhani',sans-serif;background:var(--bg1);color:var(--text);height:100vh;overflow:hidden;transition:background .5s,color .5s}
 body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,198,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,198,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
-#splash{position:fixed;inset:0;background:#000;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999;gap:20px}
-.splash-logo{font-family:'Orbitron',monospace;font-size:clamp(36px,8vw,72px);font-weight:900;letter-spacing:16px;color:var(--primary);animation:pulseGlow 1.5s infinite alternate}
-.splash-sub{font-size:14px;letter-spacing:6px;color:rgba(0,198,255,.5);text-transform:uppercase}
-.splash-bar{width:200px;height:3px;background:rgba(0,198,255,.15);border-radius:99px;overflow:hidden;margin-top:10px}
-.splash-bar-fill{height:100%;background:linear-gradient(90deg,var(--primary),#7fff00);border-radius:99px;animation:fillBar 2.3s ease forwards}
-@keyframes fillBar{from{width:0}to{width:100%}}
-@keyframes pulseGlow{from{text-shadow:0 0 10px var(--primary),0 0 30px rgba(0,198,255,.3)}to{text-shadow:0 0 30px var(--primary),0 0 80px rgba(0,198,255,.5)}}
+#splash{position:fixed;inset:0;background:#000;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999;overflow:hidden;}
+#splash-stars{position:absolute;inset:0;pointer-events:none;}
+.sstar{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;animation:starTwinkle var(--d,2s) var(--del,0s) infinite alternate;opacity:0.3;}
+@keyframes starTwinkle{to{opacity:1;transform:scale(1.8);}}
+.splash-ring{position:relative;width:180px;height:180px;display:flex;align-items:center;justify-content:center;margin-bottom:32px;}
+.splash-ring::before,.splash-ring::after{content:'';position:absolute;border-radius:50%;border:2px solid transparent;animation:ringRotate 3s linear infinite;}
+.splash-ring::before{inset:0;border-top-color:#00c6ff;border-right-color:rgba(0,198,255,0.3);animation-duration:2.4s;}
+.splash-ring::after{inset:14px;border-bottom-color:#7c3aed;border-left-color:rgba(124,58,237,0.3);animation-direction:reverse;animation-duration:1.8s;}
+@keyframes ringRotate{to{transform:rotate(360deg);}}
+.splash-glyph{font-family:'Orbitron',monospace;font-size:52px;font-weight:900;background:linear-gradient(135deg,#00c6ff,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 18px rgba(0,198,255,0.6));animation:glyphPop 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.3s both;}
+@keyframes glyphPop{from{transform:scale(0) rotate(-30deg);opacity:0;}to{transform:scale(1) rotate(0deg);opacity:1;}}
+.splash-orbit-dot{position:absolute;width:10px;height:10px;background:#00ffcc;border-radius:50%;box-shadow:0 0 10px #00ffcc;top:0;left:50%;transform-origin:0 90px;animation:dotOrbit 2.4s linear infinite;}
+@keyframes dotOrbit{to{transform:rotate(360deg);}}
+.splash-letters{display:flex;gap:6px;margin-bottom:14px;}
+.s-letter{font-family:'Orbitron',monospace;font-size:clamp(22px,6vw,36px);font-weight:900;letter-spacing:2px;opacity:0;transform:translateY(24px);animation:letterRise 0.5s cubic-bezier(0.34,1.56,0.64,1) var(--ld,0s) forwards;}
+@keyframes letterRise{to{opacity:1;transform:translateY(0);}}
+.s-letter:nth-child(1){color:#ff6b6b;--ld:0.7s;}.s-letter:nth-child(2){color:#ffa94d;--ld:0.85s;}.s-letter:nth-child(3){color:#ffd43b;--ld:1.0s;}.s-letter:nth-child(4){color:#69db7c;--ld:1.15s;}.s-letter:nth-child(5){color:#4dabf7;--ld:1.3s;}.s-letter:nth-child(6){color:#9775fa;--ld:1.45s;}.s-letter:nth-child(7){color:#f783ac;--ld:1.6s;}
+.splash-tag{font-size:11px;letter-spacing:5px;color:rgba(0,198,255,0.55);text-transform:uppercase;opacity:0;animation:fadeSlideUp 0.6s ease 2.0s forwards;}
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.splash-prog{width:160px;height:2px;background:rgba(255,255,255,0.08);border-radius:99px;overflow:hidden;margin-top:18px;opacity:0;animation:fadeSlideUp 0.4s ease 2.1s forwards;}
+.splash-prog-fill{height:100%;background:linear-gradient(90deg,#00c6ff,#7c3aed,#00ffcc);border-radius:99px;width:0;animation:progFill 1.8s cubic-bezier(0.4,0,0.2,1) 2.2s forwards;}
+@keyframes progFill{to{width:100%;}}
+.splash-particle{position:absolute;width:4px;height:4px;border-radius:50%;pointer-events:none;animation:partBurst var(--pd,1s) var(--pdel,0s) ease-out forwards;}
+@keyframes partBurst{0%{opacity:1;transform:translate(0,0) scale(1);}100%{opacity:0;transform:translate(var(--px,40px),var(--py,-80px)) scale(0);}}
 .page{position:fixed;inset:0;display:none;justify-content:center;align-items:center;z-index:10;padding:16px}
 .page.active{display:flex}
 .page-full{position:fixed;inset:0;display:none;z-index:10;padding:16px;flex-direction:column}
@@ -322,9 +339,22 @@ textarea:focus{border-color:var(--primary)}
 <body>
 <div class="scan-line"></div>
 <div id="splash">
-  <div class="splash-logo">SAMARTH</div>
-  <div class="splash-sub">Ultra Vault · Secure · Private</div>
-  <div class="splash-bar"><div class="splash-bar-fill"></div></div>
+  <div id="splash-stars"></div>
+  <div class="splash-ring">
+    <div class="splash-orbit-dot"></div>
+    <div class="splash-glyph">S</div>
+  </div>
+  <div class="splash-letters">
+    <span class="s-letter">S</span>
+    <span class="s-letter">A</span>
+    <span class="s-letter">M</span>
+    <span class="s-letter">A</span>
+    <span class="s-letter">R</span>
+    <span class="s-letter">T</span>
+    <span class="s-letter">H</span>
+  </div>
+  <div class="splash-tag">Ultra Vault · Secure · Private</div>
+  <div class="splash-prog"><div class="splash-prog-fill"></div></div>
 </div>
 <div class="page" id="authPage">
   <div class="card">
@@ -666,6 +696,41 @@ const db = getFirestore(app);
 //  STATE
 // ============================================================
 let currentUser = null;
+   // ── Splash starfield ──
+(function(){
+  const c=document.getElementById('splash-stars');
+  if(!c)return;
+  for(let i=0;i<80;i++){
+    const s=document.createElement('div');
+    s.className='sstar';
+    s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${1.5+Math.random()*3}s;--del:${Math.random()*2}s`;
+    c.appendChild(s);
+  }
+})();
+// ── Splash particle burst ──
+setTimeout(function(){
+  const splash=document.getElementById('splash');
+  if(!splash)return;
+  const colors=['#00c6ff','#7c3aed','#00ffcc','#ffd43b','#ff6b6b','#f783ac'];
+  for(let i=0;i<28;i++){
+    const p=document.createElement('div');
+    p.className='splash-particle';
+    const ang=(i/28)*Math.PI*2,dist=60+Math.random()*80;
+    p.style.cssText=`left:50%;top:50%;background:${colors[i%colors.length]};--px:${Math.cos(ang)*dist}px;--py:${Math.sin(ang)*dist}px;--pd:${0.6+Math.random()*0.5}s;--pdel:${Math.random()*0.15}s;box-shadow:0 0 6px ${colors[i%colors.length]};`;
+    splash.appendChild(p);
+    setTimeout(()=>p.remove(),1400);
+  }
+},600);
+// ── Splash sounds ──
+(function(){
+  let _sctx=null;
+  function getCtx(){if(!_sctx)try{_sctx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}if(_sctx&&_sctx.state==='suspended')_sctx.resume();return _sctx;}
+  function tone(freq,start,dur,type,vol){const ctx=getCtx();if(!ctx)return;const o=ctx.createOscillator(),g=ctx.createGain();o.type=type||'sine';o.frequency.setValueAtTime(freq,ctx.currentTime+start);g.gain.setValueAtTime(0.001,ctx.currentTime+start);g.gain.linearRampToValueAtTime(vol||0.15,ctx.currentTime+start+0.03);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+start+dur);o.connect(g);g.connect(ctx.destination);o.start(ctx.currentTime+start);o.stop(ctx.currentTime+start+dur+0.05);}
+  setTimeout(()=>{tone(200,0,0.4,'sine',0.08);tone(400,0.05,0.3,'sine',0.12);tone(800,0.1,0.25,'sine',0.1);},300);
+  [523,587,659,698,784,880,988].forEach((f,i)=>setTimeout(()=>tone(f,0,0.18,'triangle',0.1),700+i*150));
+  setTimeout(()=>{tone(300,0,0.6,'sine',0.06);tone(600,0.3,0.5,'sine',0.08);tone(900,0.6,0.4,'sine',0.1);tone(1200,0.9,0.3,'sine',0.08);},2200);
+  document.addEventListener('touchstart',()=>getCtx(),{once:true,passive:true});
+})();
 let calcBuffer='', calcExpr='', calcNewNum=true, memory=0;
 let wrongPin=0, pinLocked=false, pinInput='';
 let viewerIndex=0, lastActivity=Date.now();
