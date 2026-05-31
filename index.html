@@ -2112,7 +2112,60 @@ window.addEventListener("devicemotion", (event) => {
 });
 </script>
    
+<script>
+window.startVoice = function(){
+  const btn = document.getElementById('micBtn');
+  if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)){
+    btn.textContent = '❌';
+    setTimeout(()=>btn.textContent='🎤', 2000);
+    return;
+  }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const rec = new SR();
+  rec.lang = 'en-US';
+  rec.continuous = false;
+  rec.interimResults = false;
 
+  btn.textContent = '🔴';
+  btn.classList.add('mic-listening');
+  rec.start();
+
+  rec.onresult = function(event){
+    const transcript = event.results[0][0].transcript.toLowerCase().trim();
+    const words = transcript
+      .replace(/plus/g,'+').replace(/minus/g,'-')
+      .replace(/times/g,'*').replace(/multiplied by/g,'*')
+      .replace(/divided by/g,'/').replace(/equals/g,'=')
+      .replace(/equal/g,'=').replace(/percent/g,'%')
+      .replace(/point/g,'.').replace(/zero/g,'0')
+      .replace(/one/g,'1').replace(/two/g,'2')
+      .replace(/three/g,'3').replace(/four/g,'4')
+      .replace(/five/g,'5').replace(/six/g,'6')
+      .replace(/seven/g,'7').replace(/eight/g,'8')
+      .replace(/nine/g,'9').replace(/clear/g,'C')
+      .replace(/\s+/g,'');
+    for(const ch of words){
+      if('0123456789.'.includes(ch)) window.cPress(ch);
+      else if(ch==='+') window.cPress('+');
+      else if(ch==='-') window.cPress('-');
+      else if(ch==='*') window.cPress('*');
+      else if(ch==='/') window.cPress('/');
+      else if(ch==='%') window.cPress('%');
+      else if(ch==='=') window.cPress('=');
+      else if(ch==='C'||ch==='c') window.cPress('C');
+    }
+  };
+
+  rec.onerror = function(){
+    btn.textContent = '🎤';
+    btn.classList.remove('mic-listening');
+  };
+  rec.onend = function(){
+    btn.textContent = '🎤';
+    btn.classList.remove('mic-listening');
+  };
+};
+</script>
 <p style="font-size:12px;opacity:0.6;text-align:center;margin-top:10px">
 This vault provides basic privacy only and is not intended for highly sensitive data.
 </p>
