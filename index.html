@@ -809,6 +809,8 @@ const auth = getAuth(app);
    let recaptchaVerifier;
 let confirmationResult;
 let phoneVerified = false;
+   let recoveryRecaptcha;
+let recoveryConfirmation;
 const db = getFirestore(app);
 
 // ============================================================
@@ -2346,6 +2348,45 @@ window.startVoice = function(){
    window.showForgotPassword = function () {
     alert("Button works");
     showPage("forgotPage");
+};
+   window.sendRecoveryOTP = async function () {
+
+    const phone = document.getElementById("recoverPhone").value.trim();
+
+    if (!phone) {
+        return showToast("Enter registered mobile number", true);
+    }
+
+    try {
+
+        if (!recoveryRecaptcha) {
+            recoveryRecaptcha = new RecaptchaVerifier(
+                auth,
+                "recoverRecaptcha",
+                {
+                    size: "normal"
+                }
+            );
+        }
+
+        recoveryConfirmation =
+            await signInWithPhoneNumber(
+                auth,
+                phone,
+                recoveryRecaptcha
+            );
+
+        showToast("OTP Sent ✅");
+
+        document.getElementById("recoverOTP").style.display = "block";
+        document.getElementById("newPassword").style.display = "block";
+        document.getElementById("resetPasswordBtn").style.display = "block";
+
+    } catch (e) {
+
+        showToast(e.message, true);
+
+    }
 };
 window.startRecovery = async function () {
 
