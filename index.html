@@ -952,9 +952,35 @@ window.sendOTP = async function () {
         showToast(e.message, true);
     }
 };
+   window.verifyOTP = async function () {
+
+    const otp = document.getElementById("otpCode").value.trim();
+
+    if (!otp) {
+        return showToast("Enter OTP", true);
+    }
+
+    try {
+        await confirmationResult.confirm(otp);
+
+        phoneVerified = true;
+
+        showToast("Phone verified ✅");
+
+        document.getElementById("verifyOtpBtn").innerText = "Verified ✓";
+        document.getElementById("verifyOtpBtn").disabled = true;
+        document.getElementById("sendOtpBtn").disabled = true;
+
+    } catch (e) {
+        showToast("Invalid OTP", true);
+    }
+};
 window.register = async function(){
-  const username=document.getElementById('regUser').value.trim();
-  const password=document.getElementById('regPass').value;
+  const phone = document.getElementById("regPhone").value.trim();
+
+if (!phoneVerified) {
+    return showToast("Verify your mobile number first", true);
+}
   if(!username||!password)return showToast('Fill all fields',true);
   if(password.length<6)return showToast('Password min 6 chars',true);
   showToast('Creating account...');
