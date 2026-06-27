@@ -372,6 +372,9 @@ textarea:focus{border-color:var(--primary)}
         <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;opacity:.5" onclick="window.togglePw('logPass',this)">👁</span>
       </div>
       <button class="btn btn-primary" onclick="window.login()">🔑 SIGN IN</button>
+       <button class="btn btn-ghost" onclick="window.showForgotPassword()">
+🔓 Forgot Password?
+       </button>
       <button class="btn btn-ghost" onclick="window.guestLogin()">👤 Guest Mode</button>
       <div style="display:flex;align-items:center;gap:8px;margin:5px 0"><div style="flex:1;height:1px;background:var(--glass-border)"></div><span style="font-size:11px;opacity:0.5;letter-spacing:2px">OR</span><div style="flex:1;height:1px;background:var(--glass-border)"></div></div>
       <button class="btn" onclick="window.googleLogin()" style="background:#fff;color:#333;font-family:'Rajdhani',sans-serif;font-size:14px;letter-spacing:1px;border:1px solid #ddd">
@@ -2165,6 +2168,22 @@ window.startVoice = function(){
     btn.classList.remove('mic-listening');
   };
 };
+   window.showForgotPassword = function () {
+    showPage("forgotPage");
+};
+
+window.startRecovery = function () {
+    const username = document.getElementById("recoverUsername").value.trim();
+
+    if (!username) {
+        showToast("Enter username", true);
+        return;
+    }
+
+    localStorage.setItem("recover_username", username);
+
+    showToast("Recovery started");
+};
 </script>
 <p style="font-size:12px;opacity:0.6;text-align:center;margin-top:10px">
 This vault provides basic privacy only and is not intended for highly sensitive data.
@@ -2172,6 +2191,29 @@ This vault provides basic privacy only and is not intended for highly sensitive 
    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf-encrypt@1.0.0/dist/jspdf.plugin.encrypt.min.js"></script>
+   <div class="page" id="forgotPage">
+  <div class="card">
+    <h2>Recover Account</h2>
+
+    <input
+      type="text"
+      id="recoverUsername"
+      placeholder="Enter Username"
+    >
+
+    <button
+      class="btn btn-primary"
+      onclick="window.startRecovery()">
+      Continue
+    </button>
+
+    <button
+      class="btn btn-ghost"
+      onclick="showPage('authPage')">
+      Back
+    </button>
+  </div>
+   </div>
 
 </body>
 </html>
