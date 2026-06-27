@@ -381,11 +381,47 @@ textarea:focus{border-color:var(--primary)}
         <img src="https://www.google.com/favicon.ico" style="width:18px;height:18px"> Sign in with Google
       </button>
     </div>
-    <div id="registerForm" style="display:none">
-      <h2>✨ Register</h2>
-      <input type="text" id="regUser" placeholder="Choose username" autocomplete="off">
-      <div style="position:relative">
-        <input type="password" id="regPass" placeholder="Password (min 6 chars)" oninput="checkStrength(this)" style="padding-right:44px">
+<div id="registerForm" style="display:none">
+  <h2>✨ Register</h2>
+
+  <input type="text"
+         id="regUser"
+         placeholder="Choose username"
+         autocomplete="off">
+
+  <input
+      type="tel"
+      id="regPhone"
+      placeholder="Mobile Number (+91XXXXXXXXXX)"
+      autocomplete="off">
+<div id="recaptcha-container"></div>
+
+<input
+    type="text"
+    id="otpCode"
+    placeholder="Enter OTP"
+    style="display:none">
+
+<button
+    class="btn btn-primary"
+    id="sendOtpBtn"
+    onclick="sendOTP()">
+    Send OTP
+</button>
+
+<button
+    class="btn btn-success"
+    id="verifyOtpBtn"
+    onclick="verifyOTP()"
+    style="display:none">
+    Verify OTP
+</button>
+  <div style="position:relative">
+    <input type="password"
+           id="regPass"
+           placeholder="Password (min 6 chars)"
+           oninput="checkStrength(this)"
+           style="padding-right:44px">
         <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;opacity:.5" onclick="window.togglePw('regPass',this)">👁</span>
       </div>
       <div class="strength-bar"><div class="strength-fill" id="strengthFill" style="width:0;background:#ff4444"></div></div>
@@ -701,9 +737,18 @@ width:100%;">
 <!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, deleteDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  GoogleAuthProvider,
+  signInWithPopup,
+  RecaptchaVerifier,
+  signInWithPhoneNumber
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 const firebaseConfig = {
   apiKey: "AIzaSyAyFrv3NTQHtKU0No2Qtjn1sBwaFGAPmuM",
   authDomain: "sammycalci.firebaseapp.com",
