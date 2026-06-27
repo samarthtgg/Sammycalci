@@ -372,56 +372,17 @@ textarea:focus{border-color:var(--primary)}
         <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;opacity:.5" onclick="window.togglePw('logPass',this)">👁</span>
       </div>
       <button class="btn btn-primary" onclick="window.login()">🔑 SIGN IN</button>
-       <button class="btn btn-ghost" onclick="window.showForgotPassword()">
-🔓 Forgot Password?
-       </button>
       <button class="btn btn-ghost" onclick="window.guestLogin()">👤 Guest Mode</button>
       <div style="display:flex;align-items:center;gap:8px;margin:5px 0"><div style="flex:1;height:1px;background:var(--glass-border)"></div><span style="font-size:11px;opacity:0.5;letter-spacing:2px">OR</span><div style="flex:1;height:1px;background:var(--glass-border)"></div></div>
       <button class="btn" onclick="window.googleLogin()" style="background:#fff;color:#333;font-family:'Rajdhani',sans-serif;font-size:14px;letter-spacing:1px;border:1px solid #ddd">
         <img src="https://www.google.com/favicon.ico" style="width:18px;height:18px"> Sign in with Google
       </button>
     </div>
-<div id="registerForm" style="display:none">
-  <h2>✨ Register</h2>
-
-  <input type="text"
-         id="regUser"
-         placeholder="Choose username"
-         autocomplete="off">
-
-  <input
-      type="tel"
-      id="regPhone"
-      placeholder="Mobile Number (+91XXXXXXXXXX)"
-      autocomplete="off">
-<div id="recaptcha-container"></div>
-
-<input
-    type="text"
-    id="otpCode"
-    placeholder="Enter OTP"
-    style="display:none">
-
-<button
-    class="btn btn-primary"
-    id="sendOtpBtn"
-    onclick="sendOTP()">
-    Send OTP
-</button>
-
-<button
-    class="btn btn-success"
-    id="verifyOtpBtn"
-    onclick="verifyOTP()"
-    style="display:none">
-    Verify OTP
-</button>
-  <div style="position:relative">
-    <input type="password"
-           id="regPass"
-           placeholder="Password (min 6 chars)"
-           oninput="checkStrength(this)"
-           style="padding-right:44px">
+    <div id="registerForm" style="display:none">
+      <h2>✨ Register</h2>
+      <input type="text" id="regUser" placeholder="Choose username" autocomplete="off">
+      <div style="position:relative">
+        <input type="password" id="regPass" placeholder="Password (min 6 chars)" oninput="checkStrength(this)" style="padding-right:44px">
         <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;opacity:.5" onclick="window.togglePw('regPass',this)">👁</span>
       </div>
       <div class="strength-bar"><div class="strength-fill" id="strengthFill" style="width:0;background:#ff4444"></div></div>
@@ -429,74 +390,6 @@ textarea:focus{border-color:var(--primary)}
     </div>
   </div>
 </div>
-   <div class="page" id="forgotPage">
-  <div class="card">
-    <h2>Recover Account</h2>
-
-    <input
-      type="text"
-      id="recoverUsername"
-      placeholder="Enter Username">
-
-    <button
-      class="btn btn-primary"
-      onclick="window.startRecovery()">
-      Continue
-    </button>
-
-    <button
-      class="btn btn-ghost"
-      onclick="showPage('authPage')">
-      Back
-    </button>
-  </div>
-</div>
-   <div class="page" id="otpRecoveryPage">
-  <div class="card">
-
-    <h2>Reset Password</h2>
-
-    <input
-      type="tel"
-      id="recoverPhone"
-      placeholder="Registered Mobile Number">
-
-    <div id="recoverRecaptcha"></div>
-
-    <button
-      class="btn btn-primary"
-      onclick="sendRecoveryOTP()">
-      Send OTP
-    </button>
-
-    <input
-      type="text"
-      id="recoverOTP"
-      placeholder="Enter OTP"
-      style="display:none">
-
-    <input
-      type="password"
-      id="newPassword"
-      placeholder="New Password"
-      style="display:none">
-
-    <button
-      class="btn btn-success"
-      id="resetPasswordBtn"
-      onclick="resetPassword()"
-      style="display:none">
-      Reset Password
-    </button>
-
-    <button
-      class="btn btn-ghost"
-      onclick="showPage('forgotPage')">
-      Back
-    </button>
-
-  </div>
-   </div>
 <div class="page" id="pinPage">
   <div class="card">
     <div style="text-align:center">
@@ -783,18 +676,9 @@ width:100%;">
 <!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  GoogleAuthProvider,
-  signInWithPopup,
-  RecaptchaVerifier,
-  signInWithPhoneNumber
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, deleteDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyAyFrv3NTQHtKU0No2Qtjn1sBwaFGAPmuM",
   authDomain: "sammycalci.firebaseapp.com",
@@ -806,11 +690,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-   let recaptchaVerifier;
-let confirmationResult;
-let phoneVerified = false;
-   let recoveryRecaptcha;
-let recoveryConfirmation;
 const db = getFirestore(app);
 
 // ============================================================
@@ -971,77 +850,17 @@ window.checkStrength = function(inp){
   const fill=document.getElementById('strengthFill');
   fill.style.width=s>0?widths[s-1]:'0';fill.style.background=s>0?colors[s-1]:'#ff4444';
 }
-window.sendOTP = async function () {
-    const phone = document.getElementById("regPhone").value.trim();
 
-    if (!phone) {
-        return showToast("Enter mobile number", true);
-    }
-
-    if (!recaptchaVerifier) {
-        recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
-            size: "normal"
-        });
-    }
-
-    try {
-        confirmationResult = await signInWithPhoneNumber(
-            auth,
-            phone,
-            recaptchaVerifier
-        );
-
-        showToast("OTP Sent ✅");
-
-        document.getElementById("otpCode").style.display = "block";
-        document.getElementById("verifyOtpBtn").style.display = "block";
-
-    } catch (e) {
-        showToast(e.message, true);
-    }
-};
-   window.verifyOTP = async function () {
-
-    const otp = document.getElementById("otpCode").value.trim();
-
-    if (!otp) {
-        return showToast("Enter OTP", true);
-    }
-
-    try {
-        await confirmationResult.confirm(otp);
-
-        phoneVerified = true;
-
-        showToast("Phone verified ✅");
-
-        document.getElementById("verifyOtpBtn").innerText = "Verified ✓";
-        document.getElementById("verifyOtpBtn").disabled = true;
-        document.getElementById("sendOtpBtn").disabled = true;
-
-    } catch (e) {
-        showToast("Invalid OTP", true);
-    }
-};
 window.register = async function(){
-  const phone = document.getElementById("regPhone").value.trim();
-
-if (!phoneVerified) {
-    return showToast("Verify your mobile number first", true);
-}
+  const username=document.getElementById('regUser').value.trim();
+  const password=document.getElementById('regPass').value;
   if(!username||!password)return showToast('Fill all fields',true);
   if(password.length<6)return showToast('Password min 6 chars',true);
   showToast('Creating account...');
   try{
     const email=username+'@sammyvault.app';
     const cred=await createUserWithEmailAndPassword(auth,email,password);
-    await setDoc(doc(db,'users',cred.user.uid),{
-    username,
-    phone,
-    phoneVerified: true,
-    password,   // Stored for recovery
-    createdAt: new Date().toISOString()
-});
+    await setDoc(doc(db,'users',cred.user.uid),{username,createdAt:new Date().toISOString()});
      localStorage.setItem(
 "user_password",
 password
@@ -2346,73 +2165,6 @@ window.startVoice = function(){
     btn.classList.remove('mic-listening');
   };
 };
-   window.showForgotPassword = function () {
-    alert("Button works");
-    showPage("forgotPage");
-};
-   window.sendRecoveryOTP = async function () {
-
-    const phone = document.getElementById("recoverPhone").value.trim();
-
-    if (!phone) {
-        return showToast("Enter registered mobile number", true);
-    }
-
-    try {
-
-        if (!recoveryRecaptcha) {
-            recoveryRecaptcha = new RecaptchaVerifier(
-                auth,
-                "recoverRecaptcha",
-                {
-                    size: "normal"
-                }
-            );
-        }
-
-        recoveryConfirmation =
-            await signInWithPhoneNumber(
-                auth,
-                phone,
-                recoveryRecaptcha
-            );
-
-        showToast("OTP Sent ✅");
-
-        document.getElementById("recoverOTP").style.display = "block";
-        document.getElementById("newPassword").style.display = "block";
-        document.getElementById("resetPasswordBtn").style.display = "block";
-
-    } catch (e) {
-
-        showToast(e.message, true);
-
-    }
-};
-window.startRecovery = async function () {
-
-    const username =
-        document.getElementById("recoverUsername").value.trim();
-
-    if (!username) {
-        return showToast("Enter username", true);
-    }
-
-    try {
-
-        const email = username + "@sammyvault.app";
-
-        // Store username temporarily
-        localStorage.setItem("recover_username", username);
-
-        // Go to OTP verification page
-        showPage("otpRecoveryPage");
-
-    } catch (e) {
-        showToast(e.message, true);
-    }
-
-};
 </script>
 <p style="font-size:12px;opacity:0.6;text-align:center;margin-top:10px">
 This vault provides basic privacy only and is not intended for highly sensitive data.
@@ -2420,7 +2172,6 @@ This vault provides basic privacy only and is not intended for highly sensitive 
    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf-encrypt@1.0.0/dist/jspdf.plugin.encrypt.min.js"></script>
-
 
 </body>
 </html>
