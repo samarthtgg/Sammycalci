@@ -393,6 +393,28 @@ textarea:focus{border-color:var(--primary)}
     </div>
   </div>
 </div>
+   <div class="page" id="forgotPage">
+  <div class="card">
+    <h2>Recover Account</h2>
+
+    <input
+      type="text"
+      id="recoverUsername"
+      placeholder="Enter Username">
+
+    <button
+      class="btn btn-primary"
+      onclick="window.startRecovery()">
+      Continue
+    </button>
+
+    <button
+      class="btn btn-ghost"
+      onclick="showPage('authPage')">
+      Back
+    </button>
+  </div>
+</div>
 <div class="page" id="pinPage">
   <div class="card">
     <div style="text-align:center">
@@ -2192,29 +2214,7 @@ This vault provides basic privacy only and is not intended for highly sensitive 
    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf-encrypt@1.0.0/dist/jspdf.plugin.encrypt.min.js"></script>
-   <div class="page" id="forgotPage">
-  <div class="card">
-    <h2>Recover Account</h2>
 
-    <input
-      type="text"
-      id="recoverUsername"
-      placeholder="Enter Username"
-    >
-
-    <button
-      class="btn btn-primary"
-      onclick="window.startRecovery()">
-      Continue
-    </button>
-
-    <button
-      class="btn btn-ghost"
-      onclick="showPage('authPage')">
-      Back
-    </button>
-  </div>
-   </div>
 
 </body>
 </html>
