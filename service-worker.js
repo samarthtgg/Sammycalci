@@ -1,18 +1,21 @@
-const CACHE_NAME = "sammycalci-v99";
+const CACHE = "sammycalci-v1";
 
 self.addEventListener("install", event => {
-  self.skipWaiting();
-});
-
-self.addEventListener("activate", event => {
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.map(key => caches.delete(key)))
-    )
-  );
-  self.clients.claim();
+    event.waitUntil(
+        caches.open(CACHE).then(cache => {
+            return cache.addAll([
+                "./",
+                "./index.html",
+                "./manifest.json"
+            ]);
+        })
+    );
 });
 
 self.addEventListener("fetch", event => {
-  event.respondWith(fetch(event.request));
+    event.respondWith(
+        caches.match(event.request).then(response => {
+            return response || fetch(event.request);
+        })
+    );
 });
