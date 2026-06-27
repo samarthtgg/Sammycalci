@@ -1,25 +1,23 @@
 {
-  "name": "SammyCalci - Smart Calculator",
+  "name": "SammyCalci",
   "short_name": "SammyCalci",
-  "start_url": "/Sammycalci/index.html",
-  "scope": "/Sammycalci/",
+  "description": "Smart Calculator Vault",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#00ffcc",
+  "background_color": "#060b18",
+  "theme_color": "#00c6ff",
   "orientation": "portrait",
-  "description": "Smart Calculator with Vault, Notes and Advanced Features",
   "icons": [
     {
-      "src": "/Sammycalci/icon-192.png",
+      "src": "icon-192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
-      "src": "/Sammycalci/icon-512.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
   ]
 }
