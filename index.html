@@ -451,6 +451,52 @@ textarea:focus{border-color:var(--primary)}
     </button>
   </div>
 </div>
+   <div class="page" id="otpRecoveryPage">
+  <div class="card">
+
+    <h2>Reset Password</h2>
+
+    <input
+      type="tel"
+      id="recoverPhone"
+      placeholder="Registered Mobile Number">
+
+    <div id="recoverRecaptcha"></div>
+
+    <button
+      class="btn btn-primary"
+      onclick="sendRecoveryOTP()">
+      Send OTP
+    </button>
+
+    <input
+      type="text"
+      id="recoverOTP"
+      placeholder="Enter OTP"
+      style="display:none">
+
+    <input
+      type="password"
+      id="newPassword"
+      placeholder="New Password"
+      style="display:none">
+
+    <button
+      class="btn btn-success"
+      id="resetPasswordBtn"
+      onclick="resetPassword()"
+      style="display:none">
+      Reset Password
+    </button>
+
+    <button
+      class="btn btn-ghost"
+      onclick="showPage('forgotPage')">
+      Back
+    </button>
+
+  </div>
+   </div>
 <div class="page" id="pinPage">
   <div class="card">
     <div style="text-align:center">
