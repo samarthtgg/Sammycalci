@@ -760,6 +760,9 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+   let recaptchaVerifier;
+let confirmationResult;
+let phoneVerified = false;
 const db = getFirestore(app);
 
 // ============================================================
@@ -920,7 +923,35 @@ window.checkStrength = function(inp){
   const fill=document.getElementById('strengthFill');
   fill.style.width=s>0?widths[s-1]:'0';fill.style.background=s>0?colors[s-1]:'#ff4444';
 }
+window.sendOTP = async function () {
+    const phone = document.getElementById("regPhone").value.trim();
 
+    if (!phone) {
+        return showToast("Enter mobile number", true);
+    }
+
+    if (!recaptchaVerifier) {
+        recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+            size: "normal"
+        });
+    }
+
+    try {
+        confirmationResult = await signInWithPhoneNumber(
+            auth,
+            phone,
+            recaptchaVerifier
+        );
+
+        showToast("OTP Sent ✅");
+
+        document.getElementById("otpCode").style.display = "block";
+        document.getElementById("verifyOtpBtn").style.display = "block";
+
+    } catch (e) {
+        showToast(e.message, true);
+    }
+};
 window.register = async function(){
   const username=document.getElementById('regUser').value.trim();
   const password=document.getElementById('regPass').value;
