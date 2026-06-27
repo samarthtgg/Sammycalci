@@ -987,7 +987,12 @@ if (!phoneVerified) {
   try{
     const email=username+'@sammyvault.app';
     const cred=await createUserWithEmailAndPassword(auth,email,password);
-    await setDoc(doc(db,'users',cred.user.uid),{username,createdAt:new Date().toISOString()});
+    await setDoc(doc(db,'users',cred.user.uid),{
+    username,
+    phone,
+    phoneVerified: true,
+    createdAt: new Date().toISOString()
+});
      localStorage.setItem(
 "user_password",
 password
@@ -2296,18 +2301,29 @@ window.startVoice = function(){
     alert("Button works");
     showPage("forgotPage");
 };
+window.startRecovery = async function () {
 
-window.startRecovery = function () {
-    const username = document.getElementById("recoverUsername").value.trim();
+    const username =
+        document.getElementById("recoverUsername").value.trim();
 
     if (!username) {
-        showToast("Enter username", true);
-        return;
+        return showToast("Enter username", true);
     }
 
-    localStorage.setItem("recover_username", username);
+    try {
 
-    showToast("Recovery started");
+        const email = username + "@sammyvault.app";
+
+        // Store username temporarily
+        localStorage.setItem("recover_username", username);
+
+        // Go to OTP verification page
+        showPage("otpRecoveryPage");
+
+    } catch (e) {
+        showToast(e.message, true);
+    }
+
 };
 </script>
 <p style="font-size:12px;opacity:0.6;text-align:center;margin-top:10px">
