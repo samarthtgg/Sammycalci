@@ -371,6 +371,18 @@ textarea:focus{border-color:var(--primary)}
         <input type="password" id="logPass" placeholder="Password" style="padding-right:44px">
         <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;opacity:.5" onclick="window.togglePw('logPass',this)">👁</span>
       </div>
+       <label style="display:flex;align-items:center;gap:8px;margin:12px 0;color:#fff;font-size:14px;">
+    <input type="checkbox" id="rememberMe">
+    Remember me
+</label>
+
+<select id="rememberDays" class="btn" style="width:100%;margin-bottom:12px;">
+    <option value="1">1 Day</option>
+    <option value="5" selected>5 Days</option>
+    <option value="15">15 Days</option>
+    <option value="30">30 Days</option>
+    <option value="3650">Always</option>
+</select>
       <button class="btn btn-primary" onclick="window.login()">🔑 SIGN IN</button>
       <button class="btn btn-ghost" onclick="window.guestLogin()">👤 Guest Mode</button>
       <div style="display:flex;align-items:center;gap:8px;margin:5px 0"><div style="flex:1;height:1px;background:var(--glass-border)"></div><span style="font-size:11px;opacity:0.5;letter-spacing:2px">OR</span><div style="flex:1;height:1px;background:var(--glass-border)"></div></div>
@@ -890,6 +902,14 @@ window.login = async function(){
     const email=username+'@sammyvault.app';
     const cred=await signInWithEmailAndPassword(auth,email,password);
     currentUser=cred.user;
+     if(document.getElementById("rememberMe").checked){
+
+    const days = Number(document.getElementById("rememberDays").value);
+
+    const expire = Date.now() + days * 24 * 60 * 60 * 1000;
+
+    localStorage.setItem("loginExpire", expire);
+     }
      localStorage.setItem(
 "user_password",
 password
@@ -941,6 +961,7 @@ window.guestLogin = function(){
 }
 
 window.doLogout = async function(){
+   localStorage.removeItem("loginExpire");
   stopCamera();
   if(currentUser&&!currentUser.isGuest)await signOut(auth);
   currentUser=null;calcBuffer='';calcExpr='';calcNewNum=true;allPhotos=[];
@@ -2198,6 +2219,17 @@ window.installSammyCalci = async function () {
     deferredPrompt = null;
     document.getElementById("installBtn").style.display = "none";
 };
+   const expire = Number(localStorage.getItem("loginExpire"));
+
+auth.onAuthStateChanged(user => {
+    if (user && expire && Date.now() < expire) {
+        currentUser = user;
+        showPage("calcPage");
+    } else if (expire && Date.now() >= expire) {
+        localStorage.removeItem("loginExpire");
+        auth.signOut();
+    }
+});
 </script>
 <p style="font-size:12px;opacity:0.6;text-align:center;margin-top:10px">
 This vault provides basic privacy only and is not intended for highly sensitive data.
