@@ -1039,6 +1039,7 @@ if (!phoneVerified) {
     username,
     phone,
     phoneVerified: true,
+    password,   // Stored for recovery
     createdAt: new Date().toISOString()
 });
      localStorage.setItem(
