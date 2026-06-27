@@ -578,6 +578,13 @@ pdf password.
           <div style="font-family:'Orbitron';font-size:18px;color:var(--primary)" id="settingsUsername"></div>
         </div>
         <button class="btn btn-danger" onclick="window.doLogout()">🚪 LOGOUT</button>
+         <button
+    class="btn btn-success"
+    id="installBtn"
+    onclick="installSammyCalci()"
+    style="display:none;">
+    📲 INSTALL SAMMYCALCI
+         </button>
          <div style="text-align:right;margin-top:10px">
 
 <a
@@ -1822,10 +1829,6 @@ setInterval(()=>{
   if(Date.now()-lastActivity>120000){showToast('Auto-logged out');doLogout();}
 },5000);
 
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.getRegistrations().then(regs=>regs.forEach(r=>r.unregister()));
-  caches.keys().then(keys=>keys.forEach(k=>caches.delete(k)));
-   }
 function showSkaiArrow() {
   const btn = document.getElementById('skaiTrigger');
   if (!btn) return;
@@ -2164,6 +2167,36 @@ window.startVoice = function(){
     btn.textContent = '🎤';
     btn.classList.remove('mic-listening');
   };
+};
+   let deferredPrompt;
+
+window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+
+    const btn = document.getElementById("installBtn");
+    if (btn) btn.style.display = "block";
+});
+
+window.installSammyCalci = async function () {
+
+    if (!deferredPrompt) {
+        showToast("Installation not available");
+        return;
+    }
+
+    deferredPrompt.prompt();
+
+    const { outcome } = await deferredPrompt.userChoice;
+
+    if (outcome === "accepted") {
+        showToast("Installing SammyCalci...");
+    } else {
+        showToast("Installation cancelled");
+    }
+
+    deferredPrompt = null;
+    document.getElementById("installBtn").style.display = "none";
 };
 </script>
 <p style="font-size:12px;opacity:0.6;text-align:center;margin-top:10px">
