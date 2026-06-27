@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#00ffcc">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<link rel="manifest" href="manifest.json">
+
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
 :root{--primary:#00c6ff;--gold:#ffd700;--bg1:#060b18;--glass:rgba(0,198,255,0.07);--glass-border:rgba(0,198,255,0.2);--success:#00ff88;--danger:#ff4444;--text:#e0f0ff}
@@ -371,18 +371,6 @@ textarea:focus{border-color:var(--primary)}
         <input type="password" id="logPass" placeholder="Password" style="padding-right:44px">
         <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;opacity:.5" onclick="window.togglePw('logPass',this)">👁</span>
       </div>
-       <label style="display:flex;align-items:center;gap:8px;margin:12px 0;color:#fff;font-size:14px;">
-    <input type="checkbox" id="rememberMe">
-    Remember me
-</label>
-
-<select id="rememberDays" class="btn" style="width:100%;margin-bottom:12px;">
-    <option value="1">1 Day</option>
-    <option value="5" selected>5 Days</option>
-    <option value="15">15 Days</option>
-    <option value="30">30 Days</option>
-    <option value="3650">Always</option>
-</select>
       <button class="btn btn-primary" onclick="window.login()">🔑 SIGN IN</button>
       <button class="btn btn-ghost" onclick="window.guestLogin()">👤 Guest Mode</button>
       <div style="display:flex;align-items:center;gap:8px;margin:5px 0"><div style="flex:1;height:1px;background:var(--glass-border)"></div><span style="font-size:11px;opacity:0.5;letter-spacing:2px">OR</span><div style="flex:1;height:1px;background:var(--glass-border)"></div></div>
@@ -590,13 +578,6 @@ pdf password.
           <div style="font-family:'Orbitron';font-size:18px;color:var(--primary)" id="settingsUsername"></div>
         </div>
         <button class="btn btn-danger" onclick="window.doLogout()">🚪 LOGOUT</button>
-         <button
-    class="btn btn-success"
-    id="installBtn"
-    onclick="installSammyCalci()"
-    style="display:none;">
-    📲 INSTALL SAMMYCALCI
-         </button>
          <div style="text-align:right;margin-top:10px">
 
 <a
@@ -695,17 +676,7 @@ width:100%;">
 <!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  GoogleAuthProvider,
-  signInWithPopup,
-  browserLocalPersistence,
-  setPersistence
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, deleteDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -719,9 +690,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-
-await setPersistence(auth, browserLocalPersistence);
-
 const db = getFirestore(app);
 
 // ============================================================
@@ -860,7 +828,7 @@ setTimeout(()=>{
   setTimeout(()=>{
     document.getElementById('splash').style.display='none';
     loadSettings();
-    
+    showPage('authPage');
   },500);
 },2500);
 
@@ -915,14 +883,6 @@ window.login = async function(){
     const email=username+'@sammyvault.app';
     const cred=await signInWithEmailAndPassword(auth,email,password);
     currentUser=cred.user;
-     if(document.getElementById("rememberMe").checked){
-
-    const days = Number(document.getElementById("rememberDays").value);
-
-    const expire = Date.now() + days * 24 * 60 * 60 * 1000;
-
-    localStorage.setItem("loginExpire", expire);
-     }
      localStorage.setItem(
 "user_password",
 password
@@ -974,7 +934,6 @@ window.guestLogin = function(){
 }
 
 window.doLogout = async function(){
-   localStorage.removeItem("loginExpire");
   stopCamera();
   if(currentUser&&!currentUser.isGuest)await signOut(auth);
   currentUser=null;calcBuffer='';calcExpr='';calcNewNum=true;allPhotos=[];
@@ -1863,6 +1822,10 @@ setInterval(()=>{
   if(Date.now()-lastActivity>120000){showToast('Auto-logged out');doLogout();}
 },5000);
 
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.getRegistrations().then(regs=>regs.forEach(r=>r.unregister()));
+  caches.keys().then(keys=>keys.forEach(k=>caches.delete(k)));
+   }
 function showSkaiArrow() {
   const btn = document.getElementById('skaiTrigger');
   if (!btn) return;
@@ -2202,49 +2165,6 @@ window.startVoice = function(){
     btn.classList.remove('mic-listening');
   };
 };
-   let deferredPrompt;
-
-window.addEventListener("beforeinstallprompt", (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-
-    const btn = document.getElementById("installBtn");
-    if (btn) btn.style.display = "block";
-});
-
-window.installSammyCalci = async function () {
-
-    if (!deferredPrompt) {
-        showToast("Installation not available");
-        return;
-    }
-
-    deferredPrompt.prompt();
-
-    const { outcome } = await deferredPrompt.userChoice;
-
-    if (outcome === "accepted") {
-        showToast("Installing SammyCalci...");
-    } else {
-        showToast("Installation cancelled");
-    }
-
-    deferredPrompt = null;
-    document.getElementById("installBtn").style.display = "none";
-};
-   onAuthStateChanged(auth, (user) => {
-    const expire = Number(localStorage.getItem("loginExpire"));
-
-    if (user && expire && Date.now() < expire) {
-        currentUser = user;
-        showPage("calcPage");
-    } else if (expire && Date.now() >= expire) {
-        localStorage.removeItem("loginExpire");
-        signOut(auth);
-    } else {
-        showPage("authPage");
-    }
-});
 </script>
 <p style="font-size:12px;opacity:0.6;text-align:center;margin-top:10px">
 This vault provides basic privacy only and is not intended for highly sensitive data.
