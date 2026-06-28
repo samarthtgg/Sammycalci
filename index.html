@@ -858,12 +858,15 @@ function saveSetting(key,val){settings[key]=val;localStorage.setItem(SETTINGS_KE
 let splashDone = false;
 let authChecked = false;
 let authedUser = null;
+let autoRouteDone = false; // ensures the startup auto-login check only ever runs ONCE
 
 function tryAutoRoute(){
   // Only proceed once BOTH the splash animation has finished AND
   // Firebase has told us whether a session exists. Otherwise we risk
   // routing too early (frozen splash text) or too late (flash of login page).
   if(!splashDone || !authChecked) return;
+  if(autoRouteDone) return; // never run this again after the initial app-load check
+  autoRouteDone = true;
   if(authedUser && rememberStillValid()){
     currentUser = authedUser;
     calcHistory = JSON.parse(localStorage.getItem('svault_history_'+currentUser.uid)||'[]');
