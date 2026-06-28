@@ -371,6 +371,18 @@ textarea:focus{border-color:var(--primary)}
         <input type="password" id="logPass" placeholder="Password" style="padding-right:44px">
         <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;opacity:.5" onclick="window.togglePw('logPass',this)">👁</span>
       </div>
+      <div style="display:flex;align-items:center;gap:8px;margin:8px 0 2px">
+        <label class="switch" style="width:38px;height:21px">
+          <input type="checkbox" id="rememberToggle" onchange="window.toggleRememberDays()">
+          <div class="switch-slider"></div>
+        </label>
+        <span style="font-size:13px;letter-spacing:1px">Remember me</span>
+      </div>
+      <div id="rememberDaysRow" style="display:none;align-items:center;gap:8px;margin:4px 0 8px">
+        <span style="font-size:12px;opacity:.7;white-space:nowrap">Stay logged in for</span>
+        <input type="text" id="rememberDays" value="7" inputmode="numeric" oninput="this.value=this.value.replace(/\D/g,'').slice(0,3)" style="margin:0;padding:8px 10px;text-align:center;width:60px">
+        <span style="font-size:12px;opacity:.7">days</span>
+      </div>
       <button class="btn btn-primary" onclick="window.login()">🔑 SIGN IN</button>
       <button class="btn btn-ghost" onclick="window.guestLogin()">👤 Guest Mode</button>
       <div style="display:flex;align-items:center;gap:8px;margin:5px 0"><div style="flex:1;height:1px;background:var(--glass-border)"></div><span style="font-size:11px;opacity:0.5;letter-spacing:2px">OR</span><div style="flex:1;height:1px;background:var(--glass-border)"></div></div>
@@ -676,7 +688,7 @@ width:100%;">
 <!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, deleteDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -691,11 +703,32 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+setPersistence(auth, browserLocalPersistence).catch(()=>{});
 
 // ============================================================
 //  STATE
 // ============================================================
 let currentUser = null;
+const REMEMBER_KEY = 'svault_remember_until';
+
+// ── Remember-me helpers ──
+window.toggleRememberDays = function(){
+  const on = document.getElementById('rememberToggle').checked;
+  document.getElementById('rememberDaysRow').style.display = on ? 'flex' : 'none';
+}
+function setRememberWindow(){
+  const on = document.getElementById('rememberToggle')?.checked;
+  if(!on){ localStorage.removeItem(REMEMBER_KEY); return; }
+  let days = parseInt(document.getElementById('rememberDays')?.value || '7', 10);
+  if(!days || days < 1) days = 1;
+  if(days > 365) days = 365;
+  const until = Date.now() + days * 24 * 60 * 60 * 1000;
+  localStorage.setItem(REMEMBER_KEY, String(until));
+}
+function rememberStillValid(){
+  const until = parseInt(localStorage.getItem(REMEMBER_KEY) || '0', 10);
+  return until > Date.now();
+}
    // ── Splash starfield ──
 (function(){
   const c=document.getElementById('splash-stars');
@@ -828,9 +861,32 @@ setTimeout(()=>{
   setTimeout(()=>{
     document.getElementById('splash').style.display='none';
     loadSettings();
-    showPage('authPage');
+    // If a remembered session is still valid, Firebase's onAuthStateChanged
+    // (registered below) will route the user straight to the calculator.
+    // Otherwise fall back to the auth page.
+    if(!rememberStillValid()){
+      showPage('authPage');
+    } else {
+      showToast('Checking saved session...');
+    }
   },500);
 },2500);
+
+// Auto-login on app start if a valid "remember me" window exists
+onAuthStateChanged(auth, (user) => {
+  if (document.getElementById('splash').style.display !== 'none') return; // wait till splash done
+  if (user && rememberStillValid()) {
+    currentUser = user;
+    calcHistory = JSON.parse(localStorage.getItem('svault_history_'+currentUser.uid)||'[]');
+    if(!document.getElementById('calcPage').classList.contains('active') &&
+       !document.getElementById('vaultPage').classList.contains('active')){
+      showPage('calcPage');
+      showToast('Auto-logged in ✅');
+    }
+  } else if (!user) {
+    localStorage.removeItem(REMEMBER_KEY);
+  }
+});
 
 // ============================================================
 //  AUTH
@@ -887,6 +943,7 @@ window.login = async function(){
 "user_password",
 password
 );
+    setRememberWindow();
     calcHistory=JSON.parse(localStorage.getItem('svault_history_'+currentUser.uid)||'[]');
     playSuccess();vibrate(30);
     showPage('calcPage');
@@ -907,6 +964,7 @@ window.googleLogin = async function(){
 "user_password",
 currentUser.email
 );
+    setRememberWindow();
     calcHistory = JSON.parse(localStorage.getItem('svault_history_'+currentUser.uid)||'[]');
     await setDoc(doc(db,'users',currentUser.uid), {
       username: currentUser.displayName || currentUser.email,
@@ -935,6 +993,7 @@ window.guestLogin = function(){
 
 window.doLogout = async function(){
   stopCamera();
+  localStorage.removeItem(REMEMBER_KEY);
   if(currentUser&&!currentUser.isGuest)await signOut(auth);
   currentUser=null;calcBuffer='';calcExpr='';calcNewNum=true;allPhotos=[];
   document.getElementById('calcMain').textContent='0';
@@ -1819,6 +1878,7 @@ window.backToCalc=function(){playClick();showPage('calcPage');}
 document.addEventListener('click',()=>{lastActivity=Date.now();resumeAudio();});
 setInterval(()=>{
   if(!settings.autoLogout||!currentUser)return;
+  if(rememberStillValid())return; // remembered sessions skip the idle auto-logout timer
   if(Date.now()-lastActivity>120000){showToast('Auto-logged out');doLogout();}
 },5000);
 
@@ -2175,6 +2235,3 @@ This vault provides basic privacy only and is not intended for highly sensitive 
 
 </body>
 </html>
-   
-   
-   
