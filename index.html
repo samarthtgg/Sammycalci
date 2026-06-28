@@ -853,40 +853,49 @@ function loadSettings(){
 function saveSetting(key,val){settings[key]=val;localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));}
 
 // ============================================================
-//  SPLASH
+//  SPLASH + AUTO-LOGIN (remember-me)
 // ============================================================
+let splashDone = false;
+let authChecked = false;
+let authedUser = null;
+
+function tryAutoRoute(){
+  // Only proceed once BOTH the splash animation has finished AND
+  // Firebase has told us whether a session exists. Otherwise we risk
+  // routing too early (frozen splash text) or too late (flash of login page).
+  if(!splashDone || !authChecked) return;
+  if(authedUser && rememberStillValid()){
+    currentUser = authedUser;
+    calcHistory = JSON.parse(localStorage.getItem('svault_history_'+currentUser.uid)||'[]');
+    showPage('calcPage');
+    showToast('Auto-logged in ✅');
+  } else {
+    if(authedUser && !rememberStillValid()){
+      // session exists in Firebase but the remembered window expired
+      signOut(auth).catch(()=>{});
+    }
+    localStorage.removeItem(REMEMBER_KEY);
+    showPage('authPage');
+  }
+}
+
+onAuthStateChanged(auth, (user) => {
+  authedUser = user;
+  authChecked = true;
+  tryAutoRoute();
+});
+
 setTimeout(()=>{
   document.getElementById('splash').style.opacity='0';
   document.getElementById('splash').style.transition='opacity 0.5s';
   setTimeout(()=>{
     document.getElementById('splash').style.display='none';
     loadSettings();
-    // If a remembered session is still valid, Firebase's onAuthStateChanged
-    // (registered below) will route the user straight to the calculator.
-    // Otherwise fall back to the auth page.
-    if(!rememberStillValid()){
-      showPage('authPage');
-    } else {
-      showToast('Checking saved session...');
-    }
+    splashDone = true;
+    if(rememberStillValid()) showToast('Checking saved session...');
+    tryAutoRoute();
   },500);
 },2500);
-
-// Auto-login on app start if a valid "remember me" window exists
-onAuthStateChanged(auth, (user) => {
-  if (document.getElementById('splash').style.display !== 'none') return; // wait till splash done
-  if (user && rememberStillValid()) {
-    currentUser = user;
-    calcHistory = JSON.parse(localStorage.getItem('svault_history_'+currentUser.uid)||'[]');
-    if(!document.getElementById('calcPage').classList.contains('active') &&
-       !document.getElementById('vaultPage').classList.contains('active')){
-      showPage('calcPage');
-      showToast('Auto-logged in ✅');
-    }
-  } else if (!user) {
-    localStorage.removeItem(REMEMBER_KEY);
-  }
-});
 
 // ============================================================
 //  AUTH
