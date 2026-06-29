@@ -334,50 +334,6 @@ textarea:focus{border-color:var(--primary)}
   from { opacity:0; transform: translateX(-50%) translateY(10px); }
   to   { opacity:1; transform: translateX(-50%) translateY(0); }
                                                                     }
-
-/* ═══════════════════════════════════════
-   LEADERBOARD STYLES
-═══════════════════════════════════════ */
-#leaderboardTab{position:fixed;left:0;top:50%;transform:translateY(-50%);width:26px;height:60px;background:linear-gradient(135deg,var(--primary),#0077b6);border-radius:0 14px 14px 0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;cursor:pointer;z-index:500;box-shadow:2px 0 14px rgba(0,198,255,.35);animation:lbPulse 2s infinite}
-@keyframes lbPulse{0%,100%{opacity:.85}50%{opacity:1}}
-#leaderboardOverlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:998;display:none}
-#leaderboardOverlay.open{display:block}
-#leaderboardPanel{position:fixed;top:0;left:0;bottom:0;width:300px;max-width:85vw;background:#0c1020;border-right:1px solid var(--glass-border);z-index:999;transform:translateX(-100%);transition:transform .3s cubic-bezier(.34,1.56,.64,1);display:flex;flex-direction:column;padding-top:14px;box-shadow:8px 0 40px rgba(0,0,0,.5)}
-#leaderboardPanel.open{transform:translateX(0)}
-.lb-head{display:flex;justify-content:space-between;align-items:center;padding:0 14px 12px}
-.lb-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.05)}
-.lb-rank{font-family:'Orbitron';font-size:14px;width:24px;text-align:center;color:var(--gold)}
-.lb-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;background:var(--glass);border:1px solid var(--glass-border);flex-shrink:0}
-.lb-name{flex:1;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.lb-points{font-family:'Orbitron';font-size:13px;color:var(--primary)}
-.lb-list{overflow-y:auto;flex:1}
-.lb-you{background:rgba(0,198,255,.08)}
-
-/* PROFILE PHOTO */
-.profile-row{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding:0 4px}
-.profile-avatar-wrap{position:relative;width:64px;height:64px;flex-shrink:0}
-#profilePic{width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--primary);background:var(--glass);display:none}
-#profilePicPlaceholder{width:64px;height:64px;border-radius:50%;background:var(--glass);border:2px solid var(--glass-border);display:flex;align-items:center;justify-content:center;font-size:24px}
-.profile-edit-btn{position:absolute;bottom:-2px;right:-2px;width:24px;height:24px;border-radius:50%;background:var(--primary);border:2px solid var(--bg1);color:#fff;font-size:11px;cursor:pointer}
-
-/* BADGES */
-.badges-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
-.badge-item{background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;padding:10px 6px;text-align:center;opacity:.3;transition:opacity .3s,transform .2s}
-.badge-item.unlocked{opacity:1;border-color:var(--gold);box-shadow:0 0 14px rgba(255,215,0,.25)}
-.badge-item:active{transform:scale(.93)}
-.badge-icon{font-size:22px;margin-bottom:4px}
-.badge-name{font-size:9px;letter-spacing:.5px;text-transform:uppercase;opacity:.85;line-height:1.3}
-.hattrick-tag{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--gold),#ff8c00);color:#000;font-size:15px;font-weight:900;margin-right:6px;box-shadow:0 0 10px rgba(255,215,0,.4)}
-
-/* FIREWORKS */
-#fireworksOverlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9998;display:none;justify-content:center;align-items:center;flex-direction:column}
-#fireworksOverlay.show{display:flex}
-#fireworksCanvas{position:fixed;inset:0;z-index:9997;pointer-events:none;display:none}
-#fireworksCanvas.show{display:block}
-.fw-banner{font-family:'Orbitron',monospace;font-size:22px;letter-spacing:3px;color:var(--gold);text-shadow:0 0 20px rgba(255,215,0,.7);text-align:center;animation:fwPop .5s cubic-bezier(.34,1.56,.64,1);margin-bottom:10px}
-@keyframes fwPop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
-.fw-sub{font-size:13px;opacity:.8;text-align:center;letter-spacing:1px}
-.fw-close{margin-top:24px;background:var(--glass);border:1px solid var(--glass-border);color:#fff;padding:10px 28px;border-radius:99px;font-family:'Orbitron';font-size:11px;letter-spacing:2px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -400,33 +356,6 @@ textarea:focus{border-color:var(--primary)}
   <div class="splash-tag">Ultra Vault · Secure · Private</div>
   <div class="splash-prog"><div class="splash-prog-fill"></div></div>
 </div>
-
-<!-- SAFETY NET: guarantees the app escapes the splash screen even if Firebase
-     fails to load (blocked domain, ad-blocker, offline, slow network, etc).
-     This is a plain script, NOT type="module", so it always runs independently. -->
-<script>
-window.__fbReady = false;
-setTimeout(function(){
-  var splash = document.getElementById('splash');
-  if(splash && splash.style.display !== 'none'){
-    splash.style.opacity = '0';
-    splash.style.transition = 'opacity 0.5s';
-    setTimeout(function(){ splash.style.display = 'none'; }, 500);
-  }
-  // Give the real Firebase-powered router a few extra seconds to take over.
-  // If it hasn't (meaning Firebase never loaded), force-show the login page
-  // so the user is never stuck on a blank/frozen screen.
-  setTimeout(function(){
-    if(!window.__fbReady){
-      console.warn('SammyCalci: Firebase did not initialize in time — showing login page without auto-login.');
-      document.querySelectorAll('.page,.page-full').forEach(function(p){ p.classList.remove('active'); });
-      var authPage = document.getElementById('authPage');
-      if(authPage) authPage.classList.add('active');
-    }
-  }, 4000);
-},2500);
-</script>
-
 <div class="page" id="authPage">
   <div class="card">
     <div class="tab-bar">
@@ -641,25 +570,6 @@ pdf password.
       <button class="icon-btn" onclick="window.backToCalc()">←</button>
       <h2 style="margin:0">⚙️ SETTINGS</h2>
     </div>
-
-    <div class="profile-row">
-      <div class="profile-avatar-wrap">
-        <img id="profilePic" src="" alt="">
-        <div id="profilePicPlaceholder">👤</div>
-        <button class="profile-edit-btn" onclick="document.getElementById('profilePicInput').click()">✎</button>
-        <input type="file" id="profilePicInput" accept="image/*" style="display:none" onchange="uploadProfilePic(event)">
-      </div>
-      <div style="flex:1">
-        <input type="text" id="displayNameInput" placeholder="Display name" maxlength="20" style="margin:0">
-        <button class="btn btn-primary btn-sm" style="margin-top:6px;width:auto" onclick="saveDisplayName()">💾 SAVE NAME</button>
-      </div>
-    </div>
-
-    <div class="card" style="margin-bottom:16px">
-      <div class="settings-title">🏅 Badges & Tags</div>
-      <div class="badges-grid" id="badgesGrid"></div>
-    </div>
-
     <div class="card">
       <div class="settings-section">
         <div class="settings-title">Preferences</div>
@@ -772,42 +682,14 @@ width:100%;">
   </div>
 </div>
 <div class="toast" id="toast"></div>
-
-<!-- LEADERBOARD -->
-<div id="leaderboardTab" onclick="window.toggleLeaderboard()">›</div>
-<div id="leaderboardOverlay" onclick="window.toggleLeaderboard()"></div>
-<div id="leaderboardPanel">
-  <div class="lb-head">
-    <h2 style="margin:0">🏆 LEADERBOARD</h2>
-    <button class="icon-btn" onclick="window.toggleLeaderboard()">✕</button>
-  </div>
-  <div class="tab-bar" style="margin:0 14px 10px">
-    <button class="tab active" id="lbTabDaily" onclick="window.switchLbTab('daily')">DAILY</button>
-    <button class="tab" id="lbTabWeekly" onclick="window.switchLbTab('weekly')">WEEKLY</button>
-    <button class="tab" id="lbTabMonthly" onclick="window.switchLbTab('monthly')">MONTHLY</button>
-    <button class="tab" id="lbTabAllTime" onclick="window.switchLbTab('allTime')">ALL-TIME</button>
-  </div>
-  <div id="leaderboardList" class="lb-list"></div>
-</div>
-
-<!-- FIREWORKS CELEBRATION -->
-<canvas id="fireworksCanvas"></canvas>
-<div id="fireworksOverlay">
-  <div class="fw-banner" id="fwBanner">🏆 YOU'RE #1!</div>
-  <div class="fw-sub" id="fwSub"></div>
-  <button class="fw-close" onclick="window.closeFireworks()">AWESOME ✕</button>
-</div>
-
 <video id="camera" autoplay playsinline style="display:none"></video>
 <canvas id="snapCanvas" style="display:none"></canvas>
 
-<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-<script>eruda.init();</script>
 <!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, deleteDoc, query, where, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, deleteDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAyFrv3NTQHtKU0No2Qtjn1sBwaFGAPmuM",
@@ -822,7 +704,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 setPersistence(auth, browserLocalPersistence).catch(()=>{});
-window.__fbReady = true; // tells the safety-net script Firebase loaded fine
 
 // ============================================================
 //  STATE
@@ -991,7 +872,6 @@ function tryAutoRoute(){
     calcHistory = JSON.parse(localStorage.getItem('svault_history_'+currentUser.uid)||'[]');
     showPage('calcPage');
     showToast('Auto-logged in ✅');
-    setTimeout(()=>checkDailyWinAndCelebrate(),1200);
   } else {
     if(authedUser && !rememberStillValid()){
       // session exists in Firebase but the remembered window expired
@@ -1080,7 +960,6 @@ password
     playSuccess();vibrate(30);
     showPage('calcPage');
     showToast('Welcome back, '+username+' ✅');
-    setTimeout(()=>checkDailyWinAndCelebrate(),1200);
   }catch(e){
     showToast(e.message.includes('invalid-credential')?'Wrong username or password ❌':e.message,true);
   }
@@ -1108,7 +987,6 @@ currentUser.email
     showPage('calcPage');
     showToast('Welcome, ' + (currentUser.displayName || currentUser.email) + ' ✅');
      setTimeout(()=>showSkaiArrow(),800);
-     setTimeout(()=>checkDailyWinAndCelebrate(),1200);
   } catch(e) {
     if(e.code !== 'auth/popup-closed-by-user') {
       showToast(e.message, true);
@@ -1169,7 +1047,6 @@ if(v==='%'){
       calcExpr='';calcBuffer=String(clean);calcNewNum=true;
       updateDisp(String(clean));document.getElementById('calcExpr').textContent=expr+' =';
       playSuccess();
-      addLeaderboardPoint();
     }catch(e){showToast('Error',true);playError();calcBuffer='';calcExpr='';updateDisp('Err');calcNewNum=true;}
     return;
   }
@@ -1202,7 +1079,7 @@ window.clearHistory=function(){calcHistory=[];if(currentUser)localStorage.remove
 // ============================================================
 //  SETTINGS PAGE
 // ============================================================
-window.showSettings=function(){playClick();if(currentUser)document.getElementById('settingsUsername').textContent=currentUser.isGuest?'Guest':currentUser.email?.split('@')[0];loadSettings();loadProfile();showPage('settingsPage');}
+window.showSettings=function(){playClick();if(currentUser)document.getElementById('settingsUsername').textContent=currentUser.isGuest?'Guest':currentUser.email?.split('@')[0];loadSettings();showPage('settingsPage');}
    async function hashPin(pin){
   const buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(pin));
   return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
@@ -1215,327 +1092,6 @@ window.changePin=async function(){
   if(currentUser){const h=await hashPin(p1);localStorage.setItem('svault_pin_'+currentUser.uid,h);}
   playSuccess();showToast('PIN changed!');
   document.getElementById('newPin').value='';document.getElementById('confirmPin').value='';
-}
-
-// ============================================================
-//  PROFILE PHOTO & DISPLAY NAME
-// ============================================================
-async function loadProfile(){
-  if(!currentUser||currentUser.isGuest)return;
-  try{
-    const snap=await getDoc(doc(db,'users',currentUser.uid));
-    const data=snap.exists()?snap.data():{};
-    const pic=document.getElementById('profilePic');
-    const placeholder=document.getElementById('profilePicPlaceholder');
-    if(data.photoURL){pic.src=data.photoURL;pic.style.display='block';placeholder.style.display='none';}
-    else{pic.style.display='none';placeholder.style.display='flex';}
-    document.getElementById('displayNameInput').value=data.displayName||currentUser.email?.split('@')[0]||'';
-    const lbSnap=await getDoc(doc(db,'leaderboard',currentUser.uid));
-    renderBadges(lbSnap.exists()?lbSnap.data():{});
-  }catch(e){}
-}
-
-window.uploadProfilePic=async function(event){
-  const file=event.target.files[0];
-  if(!file||!currentUser||currentUser.isGuest)return showToast('Login required',true);
-  showToast('Uploading photo...');
-  const reader=new FileReader();
-  reader.onload=function(e){
-    const img=new Image();
-    img.onload=async function(){
-      const canvas=document.createElement('canvas');
-      const SIZE=300,scale=Math.min(1,SIZE/Math.max(img.width,img.height));
-      canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);
-      canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
-      const blob=await new Promise(res=>canvas.toBlob(res,'image/jpeg',0.85));
-      try{
-        const formData=new FormData();
-        formData.append('file',blob);
-        formData.append('upload_preset','sammycalci_vault');
-        formData.append('folder','profile/'+currentUser.uid);
-        const res=await fetch('https://api.cloudinary.com/v1_1/dmcm5mqbj/image/upload',{method:'POST',body:formData});
-        const data=await res.json();
-        await setDoc(doc(db,'users',currentUser.uid),{photoURL:data.secure_url},{merge:true});
-        await setDoc(doc(db,'leaderboard',currentUser.uid),{photoURL:data.secure_url},{merge:true});
-        document.getElementById('profilePic').src=data.secure_url;
-        document.getElementById('profilePic').style.display='block';
-        document.getElementById('profilePicPlaceholder').style.display='none';
-        showToast('Profile photo updated ✅');
-        playSuccess();
-      }catch(err){showToast('Upload failed',true);}
-    };
-    img.src=e.target.result;
-  };
-  reader.readAsDataURL(file);
-  event.target.value='';
-}
-
-window.saveDisplayName=async function(){
-  if(!currentUser||currentUser.isGuest)return showToast('Login required',true);
-  const name=document.getElementById('displayNameInput').value.trim();
-  if(!name||name.length<2)return showToast('Enter a valid name',true);
-  try{
-    await setDoc(doc(db,'users',currentUser.uid),{displayName:name},{merge:true});
-    await setDoc(doc(db,'leaderboard',currentUser.uid),{displayName:name},{merge:true});
-    showToast('Name saved ✅');
-    playClick();
-  }catch(e){showToast('Save failed',true);}
-}
-
-// ============================================================
-//  LEADERBOARD — points, periods, real-time sync
-// ============================================================
-function getPeriodKeys(){
-  const d=new Date();
-  const daily=d.toISOString().slice(0,10); // e.g. 2026-06-29
-  const monthly=d.toISOString().slice(0,7); // e.g. 2026-06
-  const onejan=new Date(d.getFullYear(),0,1);
-  const week=Math.ceil((((d-onejan)/86400000)+onejan.getDay()+1)/7);
-  const weekly=d.getFullYear()+'-W'+String(week).padStart(2,'0');
-  return {daily,weekly,monthly};
-}
-
-async function addLeaderboardPoint(){
-  if(!currentUser||currentUser.isGuest)return;
-  const {daily,weekly,monthly}=getPeriodKeys();
-  const ref=doc(db,'leaderboard',currentUser.uid);
-  try{
-    const snap=await getDoc(ref);
-    const data=snap.exists()?snap.data():{};
-    const newDaily=data.dailyKey===daily?(data.dailyPoints||0)+1:1;
-    const newWeekly=data.weeklyKey===weekly?(data.weeklyPoints||0)+1:1;
-    const newMonthly=data.monthlyKey===monthly?(data.monthlyPoints||0)+1:1;
-    const newAllTime=(data.allTimePoints||0)+1;
-    await setDoc(ref,{
-      uid:currentUser.uid,
-      displayName:data.displayName||currentUser.email?.split('@')[0]||'User',
-      photoURL:data.photoURL||null,
-      dailyKey:daily,dailyPoints:newDaily,
-      weeklyKey:weekly,weeklyPoints:newWeekly,
-      monthlyKey:monthly,monthlyPoints:newMonthly,
-      allTimePoints:newAllTime,
-      updatedAt:Date.now()
-    },{merge:true});
-  }catch(e){console.log('Leaderboard error',e);}
-}
-
-let lbTab='daily', lbUnsub=null;
-
-window.toggleLeaderboard=function(){
-  const panel=document.getElementById('leaderboardPanel');
-  const overlay=document.getElementById('leaderboardOverlay');
-  const isOpen=panel.classList.contains('open');
-  panel.classList.toggle('open',!isOpen);
-  overlay.classList.toggle('open',!isOpen);
-  playClick();
-  if(!isOpen)loadLeaderboard();
-  else if(lbUnsub){lbUnsub();lbUnsub=null;}
-}
-
-window.switchLbTab=function(tab){
-  lbTab=tab;
-  ['daily','weekly','monthly','allTime'].forEach(t=>{
-    const el=document.getElementById('lbTab'+t.charAt(0).toUpperCase()+t.slice(1));
-    if(el)el.classList.toggle('active',t===tab);
-  });
-  loadLeaderboard();
-}
-
-function loadLeaderboard(){
-  if(lbUnsub){lbUnsub();lbUnsub=null;}
-  const fieldMap={daily:'dailyPoints',weekly:'weeklyPoints',monthly:'monthlyPoints',allTime:'allTimePoints'};
-  const field=fieldMap[lbTab];
-  try{
-    const q=query(collection(db,'leaderboard'),orderBy(field,'desc'),limit(50));
-    lbUnsub=onSnapshot(q,snap=>{
-      const {daily,weekly,monthly}=getPeriodKeys();
-      const rows=[];
-      snap.forEach(d=>{
-        const u=d.data();
-        let pts=0;
-        if(lbTab==='daily')pts=u.dailyKey===daily?(u.dailyPoints||0):0;
-        else if(lbTab==='weekly')pts=u.weeklyKey===weekly?(u.weeklyPoints||0):0;
-        else if(lbTab==='monthly')pts=u.monthlyKey===monthly?(u.monthlyPoints||0):0;
-        else pts=u.allTimePoints||0;
-        rows.push({...u,pts});
-      });
-      rows.sort((a,b)=>b.pts-a.pts);
-      renderLeaderboard(rows);
-    },err=>{
-      console.log('Leaderboard listen error',err);
-      document.getElementById('leaderboardList').innerHTML='<div style="text-align:center;opacity:.4;padding:30px">Could not load leaderboard</div>';
-    });
-  }catch(e){console.log(e);}
-}
-
-function renderLeaderboard(rows){
-  const list=document.getElementById('leaderboardList');
-  if(!rows.length){list.innerHTML='<div style="text-align:center;opacity:.4;padding:30px">No scores yet</div>';return;}
-  const medals=['🥇','🥈','🥉'];
-  list.innerHTML=rows.map((u,i)=>`
-    <div class="lb-row ${currentUser&&u.uid===currentUser.uid?'lb-you':''}">
-      <span class="lb-rank">${medals[i]||(i+1)}</span>
-      <img class="lb-avatar" src="${u.photoURL||''}" onerror="this.style.opacity=0">
-      <span class="lb-name">${escHtml(u.displayName||'User')}</span>
-      <span class="lb-points">${u.pts}</span>
-    </div>`).join('');
-}
-
-// Swipe gesture: swipe right from the left edge opens the leaderboard
-let lbSwipeStartX=0,lbSwipeStartY=0;
-document.addEventListener('touchstart',e=>{lbSwipeStartX=e.touches[0].clientX;lbSwipeStartY=e.touches[0].clientY;});
-document.addEventListener('touchend',e=>{
-  const diffX=e.changedTouches[0].clientX-lbSwipeStartX;
-  const diffY=e.changedTouches[0].clientY-lbSwipeStartY;
-  if(Math.abs(diffY)>Math.abs(diffX))return; // ignore vertical scrolls
-  const panel=document.getElementById('leaderboardPanel');
-  if(lbSwipeStartX<40&&diffX>60&&!panel.classList.contains('open')){window.toggleLeaderboard();}
-  else if(panel.classList.contains('open')&&diffX<-60){window.toggleLeaderboard();}
-});
-
-// ============================================================
-//  BADGES / TAGS — based on combined daily+weekly+monthly #1 wins
-// ============================================================
-const BADGE_DEFS=[
-  {key:'win1',icon:'🥇',name:'First Win',type:'wins',need:1},
-  {key:'win5',icon:'🌱',name:'Getting Started',type:'wins',need:5},
-  {key:'win7',icon:'🔥',name:'On a Roll',type:'wins',need:7},
-  {key:'win10',icon:'⭐',name:'Rising Star',type:'wins',need:10},
-  {key:'win20',icon:'🎖️',name:'Veteran',type:'wins',need:20},
-  {key:'win50',icon:'🏆',name:'Champion',type:'wins',need:50},
-  {key:'win100',icon:'👑',name:'Legend',type:'wins',need:100},
-  {key:'day250',icon:'🛡️',name:'Iron Will',type:'days',need:250},
-  {key:'day500',icon:'💎',name:'Unbreakable',type:'days',need:500},
-  {key:'day1000',icon:'♾️',name:'Eternal',type:'days',need:1000},
-];
-
-function renderBadges(data){
-  const grid=document.getElementById('badgesGrid');
-  if(!grid)return;
-  const totalWins=data.totalWins||0;
-  const totalDays=data.totalActiveDays||0;
-  const hatTrick=data.hatTrickCount||0;
-  let html='';
-  if(hatTrick>0){
-    html+=`<div class="badge-item unlocked" style="grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:8px">
-      <span class="hattrick-tag">🎩</span>
-      <span class="badge-name" style="font-size:11px">HAT TRICK ×${hatTrick}</span>
-    </div>`;
-  }
-  BADGE_DEFS.forEach(b=>{
-    const progress=b.type==='wins'?totalWins:totalDays;
-    const unlocked=progress>=b.need;
-    html+=`<div class="badge-item ${unlocked?'unlocked':''}">
-      <div class="badge-icon">${b.icon}</div>
-      <div class="badge-name">${b.name}</div>
-      <div class="badge-name" style="opacity:.5;margin-top:2px">${Math.min(progress,b.need)}/${b.need}</div>
-    </div>`;
-  });
-  grid.innerHTML=html;
-}
-
-// ============================================================
-//  WIN DETECTION + FIREWORKS — runs once per app load
-// ============================================================
-async function checkDailyWinAndCelebrate(){
-  if(!currentUser||currentUser.isGuest)return;
-  try{
-    const ref=doc(db,'leaderboard',currentUser.uid);
-    const snap=await getDoc(ref);
-    if(!snap.exists())return;
-    const data=snap.data();
-    const {daily,weekly,monthly}=getPeriodKeys();
-    const lastCelebrated=data.lastCelebratedDay||'';
-    if(lastCelebrated===daily)return; // already shown today
-
-    // figure out if this user was #1 yesterday in daily/weekly/monthly
-    const fieldChecks=[
-      {field:'dailyPoints',keyField:'dailyKey',periodVal:daily,label:'DAILY'},
-      {field:'weeklyPoints',keyField:'weeklyKey',periodVal:weekly,label:'WEEKLY'},
-      {field:'monthlyPoints',keyField:'monthlyKey',periodVal:monthly,label:'MONTHLY'}
-    ];
-    let wonAny=false, wonLabels=[];
-    for(const fc of fieldChecks){
-      const topQ=query(collection(db,'leaderboard'),orderBy(fc.field,'desc'),limit(1));
-      const topSnap=await getDocs(topQ);
-      if(!topSnap.empty){
-        const top=topSnap.docs[0].data();
-        if(top.uid===currentUser.uid && top[fc.keyField]===fc.periodVal && (top[fc.field]||0)>0){
-          wonAny=true;
-          wonLabels.push(fc.label);
-        }
-      }
-    }
-
-    if(wonAny){
-      const newTotalWins=(data.totalWins||0)+1;
-      const wasHatTrickEligible=(data.winStreak||0)+1;
-      let newHatTrickCount=data.hatTrickCount||0;
-      let newWinStreak=wasHatTrickEligible;
-      if(newWinStreak>0 && newWinStreak%3===0) newHatTrickCount++;
-      await setDoc(ref,{
-        totalWins:newTotalWins,
-        winStreak:newWinStreak,
-        hatTrickCount:newHatTrickCount,
-        lastCelebratedDay:daily
-      },{merge:true});
-      showFireworks(wonLabels);
-    } else {
-      // reset streak if they didn't win today, but don't spam writes
-      if((data.winStreak||0)!==0){
-        await setDoc(ref,{winStreak:0,lastCelebratedDay:daily},{merge:true});
-      } else {
-        await setDoc(ref,{lastCelebratedDay:daily},{merge:true});
-      }
-    }
-  }catch(e){console.log('Win check error',e);}
-}
-
-let fwCtx=null, fwAnimId=null;
-function showFireworks(labels){
-  const overlay=document.getElementById('fireworksOverlay');
-  const canvas=document.getElementById('fireworksCanvas');
-  document.getElementById('fwSub').textContent=labels.length?labels.join(' · ')+' CHAMPION':'TOP OF THE BOARD';
-  overlay.classList.add('show');
-  canvas.classList.add('show');
-  canvas.width=window.innerWidth;canvas.height=window.innerHeight;
-  fwCtx=canvas.getContext('2d');
-  playSuccess();vibrate([60,40,60,40,100]);
-  let particles=[];
-  function spawnBurst(){
-    const x=Math.random()*canvas.width;
-    const y=Math.random()*canvas.height*0.5+40;
-    const colors=['#ffd700','#00c6ff','#ff6b6b','#69db7c','#9775fa','#f783ac'];
-    const color=colors[Math.floor(Math.random()*colors.length)];
-    for(let i=0;i<40;i++){
-      const angle=(i/40)*Math.PI*2;
-      const speed=2+Math.random()*4;
-      particles.push({x,y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,life:1,color});
-    }
-  }
-  let burstCount=0;
-  const burstInterval=setInterval(()=>{spawnBurst();burstCount++;if(burstCount>=8)clearInterval(burstInterval);},400);
-  spawnBurst();
-  function animate(){
-    fwCtx.clearRect(0,0,canvas.width,canvas.height);
-    particles.forEach(p=>{
-      p.x+=p.vx;p.y+=p.vy;p.vy+=0.05;p.life-=0.012;
-      fwCtx.globalAlpha=Math.max(p.life,0);
-      fwCtx.fillStyle=p.color;
-      fwCtx.beginPath();fwCtx.arc(p.x,p.y,3,0,Math.PI*2);fwCtx.fill();
-    });
-    particles=particles.filter(p=>p.life>0);
-    fwCtx.globalAlpha=1;
-    fwAnimId=requestAnimationFrame(animate);
-  }
-  animate();
-}
-window.closeFireworks=function(){
-  document.getElementById('fireworksOverlay').classList.remove('show');
-  document.getElementById('fireworksCanvas').classList.remove('show');
-  if(fwAnimId)cancelAnimationFrame(fwAnimId);
-  if(fwCtx)fwCtx.clearRect(0,0,window.innerWidth,window.innerHeight);
-  playClick();
 }
 
 // ============================================================
@@ -2392,4 +1948,302 @@ function skaiShowTyping() {
   const box = document.getElementById('skaiMsgs');
   const el = document.createElement('div');
   el.id = 'skaiTyping';
-  el.className = 'skai-typing'
+  el.className = 'skai-typing';
+  el.innerHTML = '<span></span><span></span><span></span>';
+  box.appendChild(el);
+  box.scrollTop = box.scrollHeight;
+}
+function skaiHideTyping() {
+  const el = document.getElementById('skaiTyping');
+  if (el) el.remove();
+}
+
+window.toggleSkai = function() {
+  skaiOpen = !skaiOpen;
+  const panel = document.getElementById('skaiPanel');
+  const trigger = document.getElementById('skaiTrigger');
+  panel.classList.toggle('open', skaiOpen);
+  trigger.classList.remove('has-unread');
+  if (skaiOpen) {
+    // First open: show greeting
+    if (!skaiHistory.length) {
+      skaiAddMsg('bot', "Hey! 👋 I'm **Skai**, your built-in assistant. Ask me anything — general questions, calc tips, vault help, you name it!");
+    }
+    setTimeout(() => document.getElementById('skaiInp').focus(), 260);
+  }
+};
+
+function closeSkai() {
+  skaiOpen = false;
+  document.getElementById('skaiPanel').classList.remove('open');
+}
+
+// Close on outside click
+document.addEventListener('click', e => {
+  if (!skaiOpen) return;
+  const panel = document.getElementById('skaiPanel');
+  const trigger = document.getElementById('skaiTrigger');
+  if (!panel.contains(e.target) && !trigger.contains(e.target)) closeSkai();
+});
+
+window.skaiSend = function(text) {
+  const inp = document.getElementById('skaiInp');
+  const msg = (text || inp.value).trim();
+  if (!msg) return;
+  inp.value = '';
+  window.skaiResize(inp);
+  const chips = document.getElementById('skaiChips');
+  if (chips) chips.style.display = 'none';
+
+  skaiAddMsg('usr', msg);
+
+  const q = msg.toLowerCase();
+  let reply = "Sorry, I can only help with vault questions! 😊";
+
+  if (
+  q.includes('number') ||
+  q.includes('open') ||
+  q.includes('enter') ||
+  q.includes('777') ||
+  q.includes('vault')
+) {
+
+  reply =
+  "Type **777** on calculator to open vault 🔐";
+
+}
+else if (
+  q.includes('pdf') &&
+  q.includes('password')
+) {
+
+  reply =
+  "PDF password = Username + Account Password 📄🔑";
+
+}
+else if (
+  q.includes('change') ||
+  q.includes('how') ||
+  q.includes('update')
+) {
+
+  reply =
+  "To change PIN:\n1. Tap ⚙️ Settings\n2. Open Vault PIN\n3. Enter new PIN\n4. Confirm PIN\n5. Tap CHANGE PIN ✅";
+
+}
+else if (
+  q.includes('pin') ||
+  q.includes('default')
+) {
+
+  reply =
+  "Default PIN is **1234** 🔑";
+
+}
+
+setTimeout(() => {
+
+ skaiAddMsg(
+  'bot',
+  reply +
+  ' <span id="skaiTimer">⌛3</span>'
+ );
+
+ let t=3;
+
+ const timer=
+ setInterval(()=>{
+
+  t--;
+
+  const el=
+  document.getElementById(
+   'skaiTimer'
+  );
+
+  if(el){
+
+   el.innerHTML=
+   '⌛'+t;
+
+  }
+
+  if(t<=0){
+
+   clearInterval(
+    timer
+   );
+
+   const chips=
+   document.getElementById(
+    'skaiChips'
+   );
+
+   if(chips){
+
+    chips.style.display=
+    'flex';
+
+   }
+
+   if(el){
+
+    el.remove();
+
+   }
+
+  }
+
+ },1000);
+
+},400);
+};
+
+window.skaiChip = function(el) {
+  window.skaiSend(el.textContent);
+};
+
+window.skaiKey = function(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); window.skaiSend(); }
+};
+
+window.skaiResize = function(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 70) + 'px';
+};
+
+// Show unread dot on load (after calc page appears)
+setTimeout(() => {
+  const trigger = document.getElementById('skaiTrigger');
+  if (trigger) trigger.classList.add('has-unread');
+}, 3200);
+// ===== PANIC SHAKE FEATURE =====
+
+let lastShake = 0;
+
+window.addEventListener("devicemotion", (event) => {
+
+ if(
+ !document
+ .getElementById("vaultPage")
+ .classList.contains("active")
+ ) return;
+
+ const x =
+ event.accelerationIncludingGravity?.x || 0;
+
+ const y =
+ event.accelerationIncludingGravity?.y || 0;
+
+ const z =
+ event.accelerationIncludingGravity?.z || 0;
+
+ const force =
+ Math.abs(x)+
+ Math.abs(y)+
+ Math.abs(z);
+
+ const now =
+ Date.now();
+
+ if(
+ force > 45 &&
+ now-lastShake > 1500
+ ){
+
+  lastShake=now;
+
+  closeViewer();
+
+  showPage(
+   "calcPage"
+  );
+
+  calcBuffer='';
+
+  calcExpr='';
+
+  updateDisp('0');
+
+  document
+  .getElementById(
+   'calcExpr'
+  )
+  .textContent='';
+
+  vibrate(80);
+
+  playClick();
+
+  showToast(
+   "Calculator Opened"
+  );
+
+ }
+
+});
+</script>
+   
+<script>
+window.startVoice = function(){
+  const btn = document.getElementById('micBtn');
+  if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)){
+    btn.textContent = '❌';
+    setTimeout(()=>btn.textContent='🎤', 2000);
+    return;
+  }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const rec = new SR();
+  rec.lang = 'en-US';
+  rec.continuous = false;
+  rec.interimResults = false;
+
+  btn.textContent = '🔴';
+  btn.classList.add('mic-listening');
+  rec.start();
+
+  rec.onresult = function(event){
+    const transcript = event.results[0][0].transcript.toLowerCase().trim();
+    const words = transcript
+      .replace(/plus/g,'+').replace(/minus/g,'-')
+      .replace(/times/g,'*').replace(/multiplied by/g,'*')
+      .replace(/divided by/g,'/').replace(/equals/g,'=')
+      .replace(/equal/g,'=').replace(/percent/g,'%')
+      .replace(/point/g,'.').replace(/zero/g,'0')
+      .replace(/one/g,'1').replace(/two/g,'2')
+      .replace(/three/g,'3').replace(/four/g,'4')
+      .replace(/five/g,'5').replace(/six/g,'6')
+      .replace(/seven/g,'7').replace(/eight/g,'8')
+      .replace(/nine/g,'9').replace(/clear/g,'C')
+      .replace(/\s+/g,'');
+    for(const ch of words){
+      if('0123456789.'.includes(ch)) window.cPress(ch);
+      else if(ch==='+') window.cPress('+');
+      else if(ch==='-') window.cPress('-');
+      else if(ch==='*') window.cPress('*');
+      else if(ch==='/') window.cPress('/');
+      else if(ch==='%') window.cPress('%');
+      else if(ch==='=') window.cPress('=');
+      else if(ch==='C'||ch==='c') window.cPress('C');
+    }
+  };
+
+  rec.onerror = function(){
+    btn.textContent = '🎤';
+    btn.classList.remove('mic-listening');
+  };
+  rec.onend = function(){
+    btn.textContent = '🎤';
+    btn.classList.remove('mic-listening');
+  };
+};
+</script>
+<p style="font-size:12px;opacity:0.6;text-align:center;margin-top:10px">
+This vault provides basic privacy only and is not intended for highly sensitive data.
+</p>
+   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/jspdf-encrypt@1.0.0/dist/jspdf.plugin.encrypt.min.js"></script>
+
+</body>
+</html>
