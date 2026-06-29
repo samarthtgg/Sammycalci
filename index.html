@@ -400,6 +400,33 @@ textarea:focus{border-color:var(--primary)}
   <div class="splash-tag">Ultra Vault · Secure · Private</div>
   <div class="splash-prog"><div class="splash-prog-fill"></div></div>
 </div>
+
+<!-- SAFETY NET: guarantees the app escapes the splash screen even if Firebase
+     fails to load (blocked domain, ad-blocker, offline, slow network, etc).
+     This is a plain script, NOT type="module", so it always runs independently. -->
+<script>
+window.__fbReady = false;
+setTimeout(function(){
+  var splash = document.getElementById('splash');
+  if(splash && splash.style.display !== 'none'){
+    splash.style.opacity = '0';
+    splash.style.transition = 'opacity 0.5s';
+    setTimeout(function(){ splash.style.display = 'none'; }, 500);
+  }
+  // Give the real Firebase-powered router a few extra seconds to take over.
+  // If it hasn't (meaning Firebase never loaded), force-show the login page
+  // so the user is never stuck on a blank/frozen screen.
+  setTimeout(function(){
+    if(!window.__fbReady){
+      console.warn('SammyCalci: Firebase did not initialize in time — showing login page without auto-login.');
+      document.querySelectorAll('.page,.page-full').forEach(function(p){ p.classList.remove('active'); });
+      var authPage = document.getElementById('authPage');
+      if(authPage) authPage.classList.add('active');
+    }
+  }, 4000);
+},2500);
+</script>
+
 <div class="page" id="authPage">
   <div class="card">
     <div class="tab-bar">
@@ -774,6 +801,8 @@ width:100%;">
 <video id="camera" autoplay playsinline style="display:none"></video>
 <canvas id="snapCanvas" style="display:none"></canvas>
 
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>eruda.init();</script>
 <!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -793,6 +822,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 setPersistence(auth, browserLocalPersistence).catch(()=>{});
+window.__fbReady = true; // tells the safety-net script Firebase loaded fine
 
 // ============================================================
 //  STATE
@@ -2362,46 +2392,4 @@ function skaiShowTyping() {
   const box = document.getElementById('skaiMsgs');
   const el = document.createElement('div');
   el.id = 'skaiTyping';
-  el.className = 'skai-typing';
-  el.innerHTML = '<span></span><span></span><span></span>';
-  box.appendChild(el);
-  box.scrollTop = box.scrollHeight;
-}
-function skaiHideTyping() {
-  const el = document.getElementById('skaiTyping');
-  if (el) el.remove();
-}
-
-window.toggleSkai = function() {
-  skaiOpen = !skaiOpen;
-  const panel = document.getElementById('skaiPanel');
-  const trigger = document.getElementById('skaiTrigger');
-  panel.classList.toggle('open', skaiOpen);
-  trigger.classList.remove('has-unread');
-  if (skaiOpen) {
-    // First open: show greeting
-    if (!skaiHistory.length) {
-      skaiAddMsg('bot', "Hey! 👋 I'm **Skai**, your built-in assistant. Ask me anything — general questions, calc tips, vault help, you name it!");
-    }
-    setTimeout(() => document.getElementById('skaiInp').focus(), 260);
-  }
-};
-
-function closeSkai() {
-  skaiOpen = false;
-  document.getElementById('skaiPanel').classList.remove('open');
-}
-
-// Close on outside click
-document.addEventListener('click', e => {
-  if (!skaiOpen) return;
-  const panel = document.getElementById('skaiPanel');
-  const trigger = document.getElementById('skaiTrigger');
-  if (!panel.contains(e.target) && !trigger.contains(e.target)) closeSkai();
-});
-
-window.skaiSend = function(text) {
-  const inp = document.getElementById('skaiInp');
-  const msg = (text || inp.value).trim();
-  if (!msg) return;
-  i
+  el.className = 'skai-typing'
