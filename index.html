@@ -811,9 +811,21 @@ width:100%;">
 
 <!-- Firebase -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, deleteDoc, query, where, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+// ── Firebase is loaded dynamically and defensively. ──
+// All firebase function references below start as `undefined` and get
+// filled in once the dynamic imports succeed. This guarantees that EVERY
+// window.* button handler defined further down in this script always gets
+// defined and attached, even if Firebase totally fails to load (blocked
+// domain, offline, slow network, ad-blocker, etc). Firebase-dependent
+// handlers (login, vault, leaderboard...) already wrap their bodies in
+// try/catch, so they'll surface a friendly error toast instead of being
+// silently missing, which is what caused buttons to stop working entirely
+// the moment Firebase's static import failed.
+let initializeApp, getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+    signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, setPersistence,
+    browserLocalPersistence, getFirestore, doc, setDoc, getDoc, collection, addDoc,
+    getDocs, deleteDoc, query, where, orderBy, limit, onSnapshot;
+let app=null, auth=null, db=null;
 
 const firebaseConfig = {
   apiKey: "AIzaSyAyFrv3NTQHtKU0No2Qtjn1sBwaFGAPmuM",
@@ -824,11 +836,46 @@ const firebaseConfig = {
   appId: "1:69558511035:web:ad27c29de889a8983bd09e"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-setPersistence(auth, browserLocalPersistence).catch(()=>{});
-window.__fbReady = true;
+(async function loadFirebase(){
+  try{
+    const appMod = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+    const authMod = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+    const fsMod = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+
+    initializeApp = appMod.initializeApp;
+    getAuth = authMod.getAuth;
+    createUserWithEmailAndPassword = authMod.createUserWithEmailAndPassword;
+    signInWithEmailAndPassword = authMod.signInWithEmailAndPassword;
+    signOut = authMod.signOut;
+    onAuthStateChanged = authMod.onAuthStateChanged;
+    GoogleAuthProvider = authMod.GoogleAuthProvider;
+    signInWithPopup = authMod.signInWithPopup;
+    setPersistence = authMod.setPersistence;
+    browserLocalPersistence = authMod.browserLocalPersistence;
+    getFirestore = fsMod.getFirestore;
+    doc = fsMod.doc; setDoc = fsMod.setDoc; getDoc = fsMod.getDoc;
+    collection = fsMod.collection; addDoc = fsMod.addDoc; getDocs = fsMod.getDocs;
+    deleteDoc = fsMod.deleteDoc; query = fsMod.query; where = fsMod.where;
+    orderBy = fsMod.orderBy; limit = fsMod.limit; onSnapshot = fsMod.onSnapshot;
+
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+    setPersistence(auth, browserLocalPersistence).catch(()=>{});
+    window.__fbReady = true;
+
+    onAuthStateChanged(auth, (user) => {
+      authedUser = user;
+      authChecked = true;
+      tryAutoRoute();
+    });
+  }catch(err){
+    console.error('SammyCalci: Firebase failed to load — login/vault/leaderboard features will be unavailable until reload.', err);
+    window.__fbReady = false;
+    authChecked = true; // unblocks tryAutoRoute() so the login page still appears correctly
+    tryAutoRoute();
+  }
+})();
 
 // ============================================================
 //  STATE
@@ -1002,12 +1049,6 @@ function tryAutoRoute(){
     showPage('authPage');
   }
 }
-
-onAuthStateChanged(auth, (user) => {
-  authedUser = user;
-  authChecked = true;
-  tryAutoRoute();
-});
 
 setTimeout(()=>{
   document.getElementById('splash').style.opacity='0';
@@ -2186,173 +2227,6 @@ window.downloadVaultPDF = async function(){
 
  }
 
- pdf.text(
- (
- n.title||
- ""
- )+
- " : "+
- (
- n.body||
- ""
- ),
- 20,
- y
- );
-
- y+=10;
-
- });
-
- }
-
- }catch(e){
-
- console.log(e);
-
- }
-
- y+=10;
-
- pdf.text(
- "Photos : "+
- allPhotos.length,
- 20,
- y
- );
-
- y+=15;
-
- for(
- let i=0;
- i<allPhotos.length;
- i++
- ){
-
- try{
-
- const imgUrl=
-
- allPhotos[i].data||
-
- allPhotos[i];
-
- if(
- !imgUrl
- ) continue;
-
- if(
- y>220
- ){
-
- pdf.addPage();
-
- y=20;
-
- }
-
- const image=
- new Image();
-
- image.crossOrigin=
- "anonymous";
-
- await new Promise(
- (
- resolve,
- reject
- )=>{
-
- image.onload=
- resolve;
-
- image.onerror=
- reject;
-
- image.src=
- imgUrl;
-
- }
- );
-
- const canvas=
- document
- .createElement(
- "canvas"
- );
-
- const ctx=
- canvas
- .getContext(
- "2d"
- );
-
- canvas.width=
- image
- .naturalWidth||
- image.width;
-
- canvas.height=
- image
- .naturalHeight||
- image.height;
-
- ctx.drawImage(
-
- image,
-
- 0,
-
- 0,
-
- canvas.width,
-
- canvas.height
-
- );
-
- const imgData=
-
- canvas.toDataURL(
-
- "image/jpeg",
-
- 0.9
-
- );
-
- pdf.addImage(
-
- imgData,
-
- "JPEG",
-
- 20,
-
- y,
-
- 60,
-
- 60
-
- );
-
- y+=70;
-
- }catch(e){
-
- console.log(
-
- "Photo failed",
-
- e
-
- );
-
- }
-
- }
-
  pdf.save(
 
  "SammyVaultReport.pdf"
@@ -2388,4 +2262,341 @@ function showSkaiArrow() {
 
   const hint = document.createElement('div');
   hint.className = 'skai-hint';
-  hint.textContent = 'Tap
+  hint.textContent = 'Tap Skai';
+
+  hint.style.position = 'fixed';
+  hint.style.left = (rect.left + rect.width / 2) + 'px';
+
+  const offset = window.scrollY || window.pageYOffset;
+  hint.style.top = (rect.top + offset - 60) + 'px';
+
+  hint.style.transform = 'translateX(-50%)';
+
+  document.body.appendChild(hint);
+
+  setTimeout(() => hint.remove(), 2500);
+}
+// ============================================================
+//  ✨ SKAI — AI ASSISTANT
+// ============================================================
+let skaiOpen = false;
+let skaiLoading = false;
+const skaiHistory = [];
+const SKAI_SYSTEM = `You are Skai, a friendly and casual AI assistant built into Sammycalci — a calculator app with a hidden photo and notes vault. You help users with general questions, calculator tips (like using M+/MR/MC for memory, √ for square root, x² for squaring, typing 777 to access the secret vault), and vault help. Keep replies short, warm, and conversational. Use occasional light emojis. Never be robotic or overly formal.`;
+
+function skaiAddMsg(role, text) {
+  const box = document.getElementById('skaiMsgs');
+  const wrap = document.createElement('div');
+  wrap.className = 'skai-msg ' + (role === 'bot' ? 'bot' : 'usr');
+  const lbl = document.createElement('div');
+  lbl.className = 'skai-lbl';
+  lbl.textContent = role === 'bot' ? 'SKAI' : 'YOU';
+  const bbl = document.createElement('div');
+  bbl.className = 'bbl';
+  bbl.innerHTML = text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+  wrap.appendChild(lbl);
+  wrap.appendChild(bbl);
+  box.appendChild(wrap);
+  box.scrollTop = box.scrollHeight;
+}
+
+function skaiShowTyping() {
+  const box = document.getElementById('skaiMsgs');
+  const el = document.createElement('div');
+  el.id = 'skaiTyping';
+  el.className = 'skai-typing';
+  el.innerHTML = '<span></span><span></span><span></span>';
+  box.appendChild(el);
+  box.scrollTop = box.scrollHeight;
+}
+function skaiHideTyping() {
+  const el = document.getElementById('skaiTyping');
+  if (el) el.remove();
+}
+
+window.toggleSkai = function() {
+  skaiOpen = !skaiOpen;
+  const panel = document.getElementById('skaiPanel');
+  const trigger = document.getElementById('skaiTrigger');
+  panel.classList.toggle('open', skaiOpen);
+  trigger.classList.remove('has-unread');
+  if (skaiOpen) {
+    if (!skaiHistory.length) {
+      skaiAddMsg('bot', "Hey! 👋 I'm **Skai**, your built-in assistant. Ask me anything — general questions, calc tips, vault help, you name it!");
+    }
+    setTimeout(() => document.getElementById('skaiInp').focus(), 260);
+  }
+};
+
+function closeSkai() {
+  skaiOpen = false;
+  document.getElementById('skaiPanel').classList.remove('open');
+}
+
+document.addEventListener('click', e => {
+  if (!skaiOpen) return;
+  const panel = document.getElementById('skaiPanel');
+  const trigger = document.getElementById('skaiTrigger');
+  if (!panel.contains(e.target) && !trigger.contains(e.target)) closeSkai();
+});
+
+window.skaiSend = function(text) {
+  const inp = document.getElementById('skaiInp');
+  const msg = (text || inp.value).trim();
+  if (!msg) return;
+  inp.value = '';
+  window.skaiResize(inp);
+  const chips = document.getElementById('skaiChips');
+  if (chips) chips.style.display = 'none';
+
+  skaiAddMsg('usr', msg);
+
+  const q = msg.toLowerCase();
+  let reply = "Sorry, I can only help with vault questions! 😊";
+
+  if (
+  q.includes('number') ||
+  q.includes('open') ||
+  q.includes('enter') ||
+  q.includes('777') ||
+  q.includes('vault')
+) {
+
+  reply =
+  "Type **777** on calculator to open vault 🔐";
+
+}
+else if (
+  q.includes('pdf') &&
+  q.includes('password')
+) {
+
+  reply =
+  "PDF password = Username + Account Password 📄🔑";
+
+}
+else if (
+  q.includes('change') ||
+  q.includes('how') ||
+  q.includes('update')
+) {
+
+  reply =
+  "To change PIN:\n1. Tap ⚙️ Settings\n2. Open Vault PIN\n3. Enter new PIN\n4. Confirm PIN\n5. Tap CHANGE PIN ✅";
+
+}
+else if (
+  q.includes('pin') ||
+  q.includes('default')
+) {
+
+  reply =
+  "Default PIN is **1234** 🔑";
+
+}
+
+setTimeout(() => {
+
+ skaiAddMsg(
+  'bot',
+  reply +
+  ' <span id="skaiTimer">⌛3</span>'
+ );
+
+ let t=3;
+
+ const timer=
+ setInterval(()=>{
+
+  t--;
+
+  const el=
+  document.getElementById(
+   'skaiTimer'
+  );
+
+  if(el){
+
+   el.innerHTML=
+   '⌛'+t;
+
+  }
+
+  if(t<=0){
+
+   clearInterval(
+    timer
+   );
+
+   const chips=
+   document.getElementById(
+    'skaiChips'
+   );
+
+   if(chips){
+
+    chips.style.display=
+    'flex';
+
+   }
+
+   if(el){
+
+    el.remove();
+
+   }
+
+  }
+
+ },1000);
+
+},400);
+};
+
+window.skaiChip = function(el) {
+  window.skaiSend(el.textContent);
+};
+
+window.skaiKey = function(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); window.skaiSend(); }
+};
+
+window.skaiResize = function(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 70) + 'px';
+};
+
+setTimeout(() => {
+  const trigger = document.getElementById('skaiTrigger');
+  if (trigger) trigger.classList.add('has-unread');
+}, 3200);
+// ===== PANIC SHAKE FEATURE =====
+
+let lastShake = 0;
+
+window.addEventListener("devicemotion", (event) => {
+
+ if(
+ !document
+ .getElementById("vaultPage")
+ .classList.contains("active")
+ ) return;
+
+ const x =
+ event.accelerationIncludingGravity?.x || 0;
+
+ const y =
+ event.accelerationIncludingGravity?.y || 0;
+
+ const z =
+ event.accelerationIncludingGravity?.z || 0;
+
+ const force =
+ Math.abs(x)+
+ Math.abs(y)+
+ Math.abs(z);
+
+ const now =
+ Date.now();
+
+ if(
+ force > 45 &&
+ now-lastShake > 1500
+ ){
+
+  lastShake=now;
+
+  closeViewer();
+
+  showPage(
+   "calcPage"
+  );
+
+  calcBuffer='';
+
+  calcExpr='';
+
+  updateDisp('0');
+
+  document
+  .getElementById(
+   'calcExpr'
+  )
+  .textContent='';
+
+  vibrate(80);
+
+  playClick();
+
+  showToast(
+   "Calculator Opened"
+  );
+
+ }
+
+});
+</script>
+   
+<script>
+window.startVoice = function(){
+  const btn = document.getElementById('micBtn');
+  if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)){
+    btn.textContent = '❌';
+    setTimeout(()=>btn.textContent='🎤', 2000);
+    return;
+  }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const rec = new SR();
+  rec.lang = 'en-US';
+  rec.continuous = false;
+  rec.interimResults = false;
+
+  btn.textContent = '🔴';
+  btn.classList.add('mic-listening');
+  rec.start();
+
+  rec.onresult = function(event){
+    const transcript = event.results[0][0].transcript.toLowerCase().trim();
+    const words = transcript
+      .replace(/plus/g,'+').replace(/minus/g,'-')
+      .replace(/times/g,'*').replace(/multiplied by/g,'*')
+      .replace(/divided by/g,'/').replace(/equals/g,'=')
+      .replace(/equal/g,'=').replace(/percent/g,'%')
+      .replace(/point/g,'.').replace(/zero/g,'0')
+      .replace(/one/g,'1').replace(/two/g,'2')
+      .replace(/three/g,'3').replace(/four/g,'4')
+      .replace(/five/g,'5').replace(/six/g,'6')
+      .replace(/seven/g,'7').replace(/eight/g,'8')
+      .replace(/nine/g,'9').replace(/clear/g,'C')
+      .replace(/\s+/g,'');
+    for(const ch of words){
+      if('0123456789.'.includes(ch)) window.cPress(ch);
+      else if(ch==='+') window.cPress('+');
+      else if(ch==='-') window.cPress('-');
+      else if(ch==='*') window.cPress('*');
+      else if(ch==='/') window.cPress('/');
+      else if(ch==='%') window.cPress('%');
+      else if(ch==='=') window.cPress('=');
+      else if(ch==='C'||ch==='c') window.cPress('C');
+    }
+  };
+
+  rec.onerror = function(){
+    btn.textContent = '🎤';
+    btn.classList.remove('mic-listening');
+  };
+  rec.onend = function(){
+    btn.textContent = '🎤';
+    btn.classList.remove('mic-listening');
+  };
+};
+</script>
+<p style="font-size:12px;opacity:0.6;text-align:center;margin-top:10px">
+This vault provides basic privacy only and is not intended for highly sensitive data.
+</p>
+   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/jspdf-encrypt@1.0.0/dist/jspdf.plugin.encrypt.min.js"></script>
+
+</body>
+</html>
