@@ -1214,6 +1214,7 @@ password
     playSuccess();vibrate(30);
     showPage('calcPage');
     showToast('Welcome back, '+username+' ✅');
+     updateAchievements(0, 0);
   }catch(e){
     showToast(e.message.includes('invalid-credential')?'Wrong username or password ❌':e.message,true);
   }
@@ -1240,6 +1241,7 @@ currentUser.email
     playSuccess(); vibrate(30);
     showPage('calcPage');
     showToast('Welcome, ' + (currentUser.displayName || currentUser.email) + ' ✅');
+     updateAchievements(0, 0);
      setTimeout(()=>showSkaiArrow(),800);
   } catch(e) {
     if(e.code !== 'auth/popup-closed-by-user') {
@@ -1254,6 +1256,7 @@ window.guestLogin = function(){
   playSuccess();
   showPage('calcPage');
   showToast('Welcome, Guest!');
+   updateAchievements(0, 0);
    setTimeout(()=>showSkaiArrow(),800);
 }
 
