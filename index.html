@@ -477,6 +477,7 @@ pdf password.
         </div>
 
         <button class="icon-btn" onclick="window.toggleTheme()">🎨</button>
+         <button class="icon-btn" onclick="window.showProfile()">👤</button>
         <button class="icon-btn" onclick="window.showSettings()">⚙️</button>
         <button class="icon-btn" onclick="window.doLogout()">🚪</button>
       </div>
@@ -570,6 +571,9 @@ pdf password.
       <button class="icon-btn" onclick="window.backToCalc()">←</button>
       <h2 style="margin:0">⚙️ SETTINGS</h2>
     </div>
+     <div class="page-full" id="profilePage">
+  <!-- Profile page content will go here -->
+     </div>
     <div class="card">
       <div class="settings-section">
         <div class="settings-title">Preferences</div>
@@ -1080,6 +1084,10 @@ window.clearHistory=function(){calcHistory=[];if(currentUser)localStorage.remove
 //  SETTINGS PAGE
 // ============================================================
 window.showSettings=function(){playClick();if(currentUser)document.getElementById('settingsUsername').textContent=currentUser.isGuest?'Guest':currentUser.email?.split('@')[0];loadSettings();showPage('settingsPage');}
+   window.showProfile = function () {
+    playClick();
+    showPage("profilePage");
+};
    async function hashPin(pin){
   const buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(pin));
   return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
