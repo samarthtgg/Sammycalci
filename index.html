@@ -703,10 +703,86 @@ width:100%;">
     </div>
 
     <div class="card">
-      <h2 style="text-align:center">Coming Soon</h2>
-      <p style="text-align:center;opacity:.6">
-        Profile page is under development.
-      </p>
+
+    <div style="display:flex;flex-direction:column;align-items:center;">
+
+      <div id="profileAvatar"
+           style="
+           width:120px;
+           height:120px;
+           border-radius:50%;
+           background:linear-gradient(135deg,#00c6ff,#7c3aed);
+           display:flex;
+           align-items:center;
+           justify-content:center;
+           font-size:55px;
+           cursor:pointer;
+           border:3px solid var(--glass-border);">
+        👤
+      </div>
+
+      <button class="btn btn-ghost btn-sm"
+              style="margin-top:10px;width:auto;">
+        📷 Change Photo
+      </button>
+
+    </div>
+
+    <br>
+
+    <input id="profileName"
+           type="text"
+           placeholder="Display Name">
+
+    <textarea id="profileBio"
+              rows="3"
+              placeholder="Tell something about yourself..."></textarea>
+
+    <button class="btn btn-primary"
+            style="margin-top:15px;">
+      💾 SAVE PROFILE
+    </button>
+
+    <br><br>
+
+    <div class="settings-title">Statistics</div>
+
+    <div class="vault-stats">
+      <div class="stat-box">
+        <div class="stat-num">0</div>
+        <div class="stat-label">Wins</div>
+      </div>
+
+      <div class="stat-box">
+        <div class="stat-num">0</div>
+        <div class="stat-label">Streak</div>
+      </div>
+
+      <div class="stat-box">
+        <div class="stat-num">0</div>
+        <div class="stat-label">Calculations</div>
+      </div>
+
+      <div class="stat-box">
+        <div class="stat-num">1</div>
+        <div class="stat-label">Level</div>
+      </div>
+    </div>
+
+    <div class="settings-title" style="margin-top:20px;">
+      Achievement Progress
+    </div>
+
+    <div class="strength-bar" style="height:10px;">
+      <div class="strength-fill"
+           style="width:0%;background:#00c6ff;">
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:8px;opacity:.7;">
+      0 / 100 XP
+    </div>
+
     </div>
   </div>
 </div>
