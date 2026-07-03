@@ -477,7 +477,6 @@ pdf password.
         </div>
 
         <button class="icon-btn" onclick="window.toggleTheme()">🎨</button>
-         <button class="icon-btn" onclick="window.showProfile()">👤</button>
         <button class="icon-btn" onclick="window.showSettings()">⚙️</button>
         <button class="icon-btn" onclick="window.doLogout()">🚪</button>
       </div>
@@ -571,10 +570,33 @@ pdf password.
       <button class="icon-btn" onclick="window.backToCalc()">←</button>
       <h2 style="margin:0">⚙️ SETTINGS</h2>
     </div>
-     <div class="page-full" id="profilePage">
-  <!-- Profile page content will go here -->
-     </div>
     <div class="card">
+       <div class="settings-section">
+    <div class="settings-title">Profile</div>
+
+    <div onclick="window.showProfile()"
+         style="display:flex;align-items:center;gap:15px;background:var(--glass);border:1px solid var(--glass-border);border-radius:16px;padding:16px;cursor:pointer;transition:.2s;">
+
+        <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#00c6ff,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:28px;">
+            👤
+        </div>
+
+        <div style="flex:1">
+            <div style="font-family:'Orbitron';font-size:14px;color:var(--primary);">
+                My Profile
+            </div>
+
+            <div style="font-size:13px;opacity:.6;">
+                View and edit your profile
+            </div>
+        </div>
+
+        <div style="font-size:24px;color:var(--primary);">
+            ›
+        </div>
+
+    </div>
+       </div>
       <div class="settings-section">
         <div class="settings-title">Preferences</div>
         <div class="switch-row"><span class="switch-label">Sound Effects</span><label class="switch"><input type="checkbox" id="soundToggle" checked onchange="saveSetting('sound',this.checked)"><div class="switch-slider"></div></label></div>
@@ -673,7 +695,21 @@ width:100%;">
     </div>
   </div>
 </div>
+<div class="page-full" id="profilePage">
+  <div style="max-width:500px;width:100%;margin:auto;height:100%;overflow-y:auto">
+    <div class="vault-header">
+      <button class="icon-btn" onclick="window.showSettings()">←</button>
+      <h2 style="margin:0">👤 PROFILE</h2>
+    </div>
 
+    <div class="card">
+      <h2 style="text-align:center">Coming Soon</h2>
+      <p style="text-align:center;opacity:.6">
+        Profile page is under development.
+      </p>
+    </div>
+  </div>
+</div>
 <div id="viewer">
   <button class="viewer-close" onclick="window.closeViewer()">✕</button>
   <button class="viewer-nav left" onclick="window.navPhoto(-1)">‹</button>
