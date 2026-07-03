@@ -614,7 +614,7 @@ pdf password.
 </div>
 <div class="page-full" id="settingsPage">
   <div style="max-width:500px;width:100%;margin:auto;height:100%;overflow-y:auto">
-    <div class="vault-header">
+    <div class="vault-header">updateAchievements() function:
       <button class="icon-btn" onclick="window.backToCalc()">←</button>
       <h2 style="margin:0">⚙️ SETTINGS</h2>
     </div>
@@ -1025,6 +1025,13 @@ let calcHistory=[], secretBuf='', currentVaultTab='photos';
 let allPhotos=[], sortAsc=true, cameraStream=null;
 const SETTINGS_KEY='svault_settings';
 let settings={sound:true,autoLogout:true,vibrate:true};
+   let userStats = {
+  wins: 0,
+  calculations: 0,
+  loginDays: 1,
+  xp: 0,
+  level: 1
+};
 
 // ============================================================
 //  UTILS
@@ -2478,6 +2485,25 @@ window.addEventListener("devicemotion", (event) => {
   if (counter) {
     counter.textContent = `(${unlocked}/8 UNLOCKED)`;
   }
+   }
+   function updateProfileStats() {
+
+  document.querySelectorAll(".stat-num")[0].textContent = userStats.wins;
+  document.querySelectorAll(".stat-num")[1].textContent = userStats.loginDays;
+  document.querySelectorAll(".stat-num")[2].textContent = userStats.calculations;
+  document.querySelectorAll(".stat-num")[3].textContent = userStats.level;
+
+  const xpBar = document.querySelector("#profilePage .strength-fill");
+  if (xpBar) {
+    xpBar.style.width = (userStats.xp % 100) + "%";
+  }
+
+  const xpText = document.querySelector("#profilePage .strength-bar + div");
+  if (xpText) {
+    xpText.textContent = `${userStats.xp} / ${userStats.level * 100} XP`;
+  }
+
+  updateAchievements(userStats.wins, userStats.loginDays);
    }
 window.startVoice = function(){
   const btn = document.getElementById('micBtn');
