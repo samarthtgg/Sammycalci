@@ -1212,6 +1212,17 @@ window.login = async function(){
     const email=username+'@sammyvault.app';
     const cred=await signInWithEmailAndPassword(auth,email,password);
     currentUser=cred.user;
+     userStats = JSON.parse(
+  localStorage.getItem("stats_" + currentUser.uid)
+) || userStats;
+
+updateProfileStats();
+     if (currentUser) {
+  localStorage.setItem(
+    "stats_" + currentUser.uid,
+    JSON.stringify(userStats)
+  );
+   }
      localStorage.setItem(
 "user_password",
 password
@@ -1221,7 +1232,7 @@ password
     playSuccess();vibrate(30);
     showPage('calcPage');
     showToast('Welcome back, '+username+' ✅');
-     updateAchievements(0, 0);
+     updateAchievements();
   }catch(e){
     showToast(e.message.includes('invalid-credential')?'Wrong username or password ❌':e.message,true);
   }
@@ -1234,6 +1245,11 @@ window.googleLogin = async function(){
     const provider = new GoogleAuthProvider();
     const cred = await signInWithPopup(auth, provider);
     currentUser = cred.user;
+     userStats = JSON.parse(
+  localStorage.getItem("stats_" + currentUser.uid)
+) || userStats;
+
+updateProfileStats();
      localStorage.setItem(
 "user_password",
 currentUser.email
@@ -1263,7 +1279,7 @@ window.guestLogin = function(){
   playSuccess();
   showPage('calcPage');
   showToast('Welcome, Guest!');
-   updateAchievements(0, 0);
+   updateAchievements();
    setTimeout(()=>showSkaiArrow(),800);
 }
 
