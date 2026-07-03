@@ -333,7 +333,47 @@ textarea:focus{border-color:var(--primary)}
 @keyframes hintFade {
   from { opacity:0; transform: translateX(-50%) translateY(10px); }
   to   { opacity:1; transform: translateX(-50%) translateY(0); }
-                                                                    }
+     }
+   .achievement-card{
+background:var(--glass);
+border:1px solid var(--glass-border);
+border-radius:18px;
+padding:18px 10px;
+text-align:center;
+transition:.3s;
+}
+
+.achievement-card .ach-title{
+margin-top:8px;
+font-family:'Orbitron';
+font-size:12px;
+color:var(--primary);
+}
+
+.achievement-card .ach-sub{
+margin-top:4px;
+font-size:11px;
+opacity:.6;
+}
+
+.achievement-card.locked{
+opacity:.35;
+filter:grayscale(100%);
+}
+
+.achievement-card.unlocked{
+opacity:1;
+filter:none;
+border:2px solid #00c6ff;
+box-shadow:0 0 18px rgba(0,198,255,.45);
+animation:unlockGlow .8s ease;
+}
+
+@keyframes unlockGlow{
+0%{transform:scale(.9);}
+50%{transform:scale(1.05);}
+100%{transform:scale(1);}
+}
 </style>
 </head>
 <body>
@@ -782,7 +822,65 @@ width:100%;">
     <div style="text-align:center;margin-top:8px;opacity:.7;">
       0 / 100 XP
     </div>
+<div class="settings-title" style="margin-top:25px;">
+🏅 ACHIEVEMENTS <span id="achievementCount" style="opacity:.6">(0/8 UNLOCKED)</span>
+</div>
 
+<div id="achievementGrid" style="
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:12px;
+margin-top:15px;">
+
+<div class="achievement-card locked" id="ach7">
+<div style="font-size:36px;">🔥</div>
+<div class="ach-title">ON A ROLL</div>
+<div class="ach-sub">7 Wins</div>
+</div>
+
+<div class="achievement-card locked" id="ach10">
+<div style="font-size:36px;">⭐</div>
+<div class="ach-title">RISING STAR</div>
+<div class="ach-sub">10 Wins</div>
+</div>
+
+<div class="achievement-card locked" id="ach20">
+<div style="font-size:36px;">🛡</div>
+<div class="ach-title">VETERAN</div>
+<div class="ach-sub">20 Wins</div>
+</div>
+
+<div class="achievement-card locked" id="ach50">
+<div style="font-size:36px;">🏆</div>
+<div class="ach-title">CHAMPION</div>
+<div class="ach-sub">50 Wins</div>
+</div>
+
+<div class="achievement-card locked" id="ach100">
+<div style="font-size:36px;">👑</div>
+<div class="ach-title">LEGEND</div>
+<div class="ach-sub">100 Wins</div>
+</div>
+
+<div class="achievement-card locked" id="ach250">
+<div style="font-size:36px;">💪</div>
+<div class="ach-title">IRON WILL</div>
+<div class="ach-sub">250 Days</div>
+</div>
+
+<div class="achievement-card locked" id="ach500">
+<div style="font-size:36px;">💎</div>
+<div class="ach-title">UNBREAKABLE</div>
+<div class="ach-sub">500 Days</div>
+</div>
+
+<div class="achievement-card locked" id="ach1000">
+<div style="font-size:36px;">♾️</div>
+<div class="ach-title">ETERNAL</div>
+<div class="ach-sub">1000 Days</div>
+</div>
+
+</div>
     </div>
   </div>
 </div>
