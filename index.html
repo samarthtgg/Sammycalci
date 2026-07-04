@@ -1433,7 +1433,7 @@ loadEmojiPicker(data.loginStreak || 0);
     document.getElementById("profileAvatar").textContent = data.emoji;
     document.getElementById("settingsProfileAvatar").textContent = data.emoji;
          }
-
+document.getElementById("selectedEmoji").textContent = data.emoji || "😆";
             if(data.photo){
 
                 document.getElementById("profileAvatar").innerHTML =
@@ -1572,6 +1572,8 @@ await addDoc(collection(db,'photos'),{uid:currentUser.uid,data:data.secure_url,p
 
 document.getElementById("profileAvatar").textContent = emoji;
 document.getElementById("settingsProfileAvatar").textContent = emoji;
+document.getElementById("selectedEmoji").textContent = emoji;
+toggleEmojiPicker();
 if(currentUser && !currentUser.isGuest){
 
 await setDoc(
