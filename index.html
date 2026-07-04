@@ -762,19 +762,66 @@ padding-bottom:250px;
     <div style="display:flex;flex-direction:column;align-items:center;">
 
       <div id="profileAvatar"
-           style="
-           width:120px;
-           height:120px;
-           border-radius:50%;
-           background:linear-gradient(135deg,#00c6ff,#7c3aed);
-           display:flex;
-           align-items:center;
-           justify-content:center;
-           font-size:55px;
-           cursor:pointer;
-           border:3px solid var(--glass-border);">
-        👤
-      </div>
+style="
+width:120px;
+height:120px;
+border-radius:50%;
+background:linear-gradient(135deg,#00c6ff,#7c3aed);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:55px;
+cursor:pointer;
+border:3px solid var(--glass-border);">
+😆
+</div>
+
+<div id="emojiPicker"
+style="
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:10px;
+margin-top:20px;
+font-size:30px;
+text-align:center;">
+
+<span onclick="setProfileEmoji('😆')">😆</span>
+<span onclick="setProfileEmoji('⚡')">⚡</span>
+<span onclick="setProfileEmoji('🥇')">🥇</span>
+<span onclick="setProfileEmoji('🎉')">🎉</span>
+<span onclick="setProfileEmoji('🎂')">🎂</span>
+
+<span onclick="setProfileEmoji('🧐')">🧐</span>
+<span onclick="setProfileEmoji('✌️')">✌️</span>
+<span onclick="setProfileEmoji('🫂')">🫂</span>
+<span onclick="setProfileEmoji('✅')">✅</span>
+<span onclick="setProfileEmoji('😁')">😁</span>
+
+<span onclick="setProfileEmoji('🥦')">🥦</span>
+<span onclick="setProfileEmoji('😅')">😅</span>
+<span onclick="setProfileEmoji('🤔')">🤔</span>
+<span onclick="setProfileEmoji('🙅')">🙅</span>
+<span onclick="setProfileEmoji('🏏')">🏏</span>
+
+<span onclick="setProfileEmoji('🙌')">🙌</span>
+<span onclick="setProfileEmoji('⌛')">⌛</span>
+<span onclick="setProfileEmoji('🥱')">🥱</span>
+<span onclick="setProfileEmoji('🥽')">🥽</span>
+<span onclick="setProfileEmoji('🧒')">🧒</span>
+
+<span onclick="setProfileEmoji('💸')">💸</span>
+<span onclick="setProfileEmoji('🙏')">🙏</span>
+<span onclick="setProfileEmoji('💟')">💟</span>
+<span onclick="setProfileEmoji('❤️‍🩹')">❤️‍🩹</span>
+<span onclick="setProfileEmoji('💯')">💯</span>
+
+<span onclick="setProfileEmoji('😂')">😂</span>
+<span onclick="setProfileEmoji('❤️')">❤️</span>
+<span onclick="setProfileEmoji('🔪')">🔪</span>
+<span onclick="setProfileEmoji('🌈')">🌈</span>
+<span onclick="setProfileEmoji('7️⃣')">7️⃣</span>
+
+</div>
 
       <button
 class="btn btn-ghost btn-sm"
@@ -1328,6 +1375,9 @@ window.showProfile = async function () {
         if(snap.exists()){
 
             const data = snap.data();
+           if(data.emoji){
+    document.getElementById("profileAvatar").textContent = data.emoji;
+           }
 
             if(data.photo){
 
@@ -1463,6 +1513,23 @@ await addDoc(collection(db,'photos'),{uid:currentUser.uid,data:data.secure_url,p
   });
   event.target.value='';
 }
+   window.setProfileEmoji = async function(emoji){
+
+document.getElementById("profileAvatar").textContent = emoji;
+
+if(currentUser && !currentUser.isGuest){
+
+await setDoc(
+doc(db,"users",currentUser.uid),
+{emoji:emoji},
+{merge:true}
+);
+
+showToast("Profile updated ✅");
+
+}
+
+   }
 window.deletePhoto=async function(i){
   if(!currentUser||currentUser.isGuest)return;
 
