@@ -785,53 +785,29 @@ font-size:20px;
 color:var(--primary);">
 Your Name
 </div>
-<div id="emojiPicker"
+<div id="selectedEmoji"
+onclick="toggleEmojiPicker()"
 style="
-display:grid;
-grid-template-columns:repeat(5,1fr);
-gap:10px;
-margin-top:20px;
-font-size:30px;
-text-align:center;">
-
-<span onclick="setProfileEmoji('😆')">😆</span>
-<span onclick="setProfileEmoji('⚡')">⚡</span>
-<span onclick="setProfileEmoji('🥇')">🥇</span>
-<span onclick="setProfileEmoji('🎉')">🎉</span>
-<span onclick="setProfileEmoji('🎂')">🎂</span>
-
-<span onclick="setProfileEmoji('🧐')">🧐</span>
-<span onclick="setProfileEmoji('✌️')">✌️</span>
-<span onclick="setProfileEmoji('🫂')">🫂</span>
-<span onclick="setProfileEmoji('✅')">✅</span>
-<span onclick="setProfileEmoji('😁')">😁</span>
-
-<span onclick="setProfileEmoji('🥦')">🥦</span>
-<span onclick="setProfileEmoji('😅')">😅</span>
-<span onclick="setProfileEmoji('🤔')">🤔</span>
-<span onclick="setProfileEmoji('🙅')">🙅</span>
-<span onclick="setProfileEmoji('🏏')">🏏</span>
-
-<span onclick="setProfileEmoji('🙌')">🙌</span>
-<span onclick="setProfileEmoji('⌛')">⌛</span>
-<span onclick="setProfileEmoji('🥱')">🥱</span>
-<span onclick="setProfileEmoji('🥽')">🥽</span>
-<span onclick="setProfileEmoji('🧒')">🧒</span>
-
-<span onclick="setProfileEmoji('💸')">💸</span>
-<span onclick="setProfileEmoji('🙏')">🙏</span>
-<span onclick="setProfileEmoji('💟')">💟</span>
-<span onclick="setProfileEmoji('❤️‍🩹')">❤️‍🩹</span>
-<span onclick="setProfileEmoji('💯')">💯</span>
-
-<span onclick="setProfileEmoji('😂')">😂</span>
-<span onclick="setProfileEmoji('❤️')">❤️</span>
-<span onclick="setProfileEmoji('🔪')">🔪</span>
-<span onclick="setProfileEmoji('🌈')">🌈</span>
-<span onclick="setProfileEmoji('7️⃣')">7️⃣</span>
-
+width:70px;
+height:70px;
+margin:15px auto;
+border-radius:50%;
+background:var(--glass);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:40px;
+cursor:pointer;">
+😆
 </div>
 
+<div id="emojiPicker"
+style="
+display:none;
+grid-template-columns:repeat(5,1fr);
+gap:10px;
+margin-top:20px;">
+</div>
       <button
 class="btn btn-ghost btn-sm"
 style="margin-top:10px;width:auto;"
@@ -1375,6 +1351,63 @@ window.clearHistory=function(){calcHistory=[];if(currentUser)localStorage.remove
 //  SETTINGS PAGE
 // ============================================================
 window.showSettings=function(){playClick();if(currentUser)document.getElementById('settingsUsername').textContent=currentUser.isGuest?'Guest':currentUser.email?.split('@')[0];loadSettings();showPage('settingsPage');}
+   const emojiGroups = {
+0:["😆","⚡","🥇","🎉","🎂"],
+7:["🙎","🙋","💁","🙆","🙅","🤷","🤦","🙍"],
+10:["🥵","☠️","🤖","👹","👺","👿","😈","💩","🤡"],
+20:["🌍","🌎","🌏","🌫️","🌠","🌌","🌕","☄️","🌘"],
+50:["👯","👯‍♂️","👯‍♀️","🧑‍🤝‍🧑","👭","👬","👫","🕴️","💃","🕺"]
+};
+
+function loadEmojiPicker(streak){
+
+const picker=document.getElementById("emojiPicker");
+
+picker.innerHTML="";
+
+let emojis=[...emojiGroups[0]];
+
+if(streak>=7) emojis.push(...emojiGroups[7]);
+if(streak>=10) emojis.push(...emojiGroups[10]);
+if(streak>=20) emojis.push(...emojiGroups[20]);
+if(streak>=50) emojis.push(...emojiGroups[50]);
+
+emojis.forEach(e=>{
+
+const span=document.createElement("span");
+
+span.textContent=e;
+
+span.style.cssText=`
+font-size:30px;
+cursor:pointer;
+text-align:center;
+padding:6px;
+border-radius:10px;
+transition:.2s;
+`;
+
+span.onclick=()=>{
+setProfileEmoji(e);
+toggleEmojiPicker();
+};
+
+picker.appendChild(span);
+
+});
+
+}
+
+function toggleEmojiPicker(){
+
+const picker=document.getElementById("emojiPicker");
+
+picker.style.display=
+picker.style.display==="grid"
+? "none"
+: "grid";
+
+}
 window.showProfile = async function () {
 
     playClick();
@@ -1391,7 +1424,7 @@ window.showProfile = async function () {
     data.loginStreak || 0;
 
 unlockAchievements(data.loginStreak || 0);
-
+loadEmojiPicker(data.loginStreak || 0);
            if(data.name){
     document.getElementById("profileDisplayName").textContent = data.name;
            }
