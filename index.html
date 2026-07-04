@@ -786,7 +786,7 @@ color:var(--primary);">
 Your Name
 </div>
 <div id="selectedEmoji"
-onclick="toggleEmojiPicker()"
+onclick="window.toggleEmojiPicker()"
 style="
 width:70px;
 height:70px;
@@ -800,6 +800,13 @@ font-size:40px;
 cursor:pointer;">
 😆
 </div>
+
+<button
+class="btn btn-ghost btn-sm"
+style="margin-top:10px;width:auto;"
+onclick="window.toggleEmojiPicker()">
+😊 Choose Emoji
+</button>
 
 <div id="emojiPicker"
 style="
