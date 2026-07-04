@@ -1297,6 +1297,15 @@ window.doLogout = async function(){
 //  CALCULATOR
 // ============================================================
 window.cPress = function(v){
+   if (!userStats) {
+    userStats = {
+        wins: 0,
+        calculations: 0,
+        loginDays: 1,
+        xp: 0,
+        level: 1
+    };
+   }
   resumeAudio();playKey();vibrate(15);lastActivity=Date.now();
   if(v==='C'){calcBuffer='';calcExpr='';calcNewNum=true;updateDisp('0');return;}
   if(v==='M+'){memory+=parseFloat(calcBuffer||0);showToast('M = '+memory);return;}
