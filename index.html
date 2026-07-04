@@ -1336,6 +1336,21 @@ if(v==='%'){
       calcExpr='';calcBuffer=String(clean);calcNewNum=true;
       updateDisp(String(clean));document.getElementById('calcExpr').textContent=expr+' =';
       playSuccess();
+       userStats.calculations++;
+userStats.xp += 10;
+
+if (userStats.xp >= userStats.level * 100) {
+    userStats.level++;
+}
+
+if (currentUser && !currentUser.isGuest) {
+    localStorage.setItem(
+        "stats_" + currentUser.uid,
+        JSON.stringify(userStats)
+    );
+}
+
+updateProfileStats();
     }
 // userStats.calculations++;
 // userStats.xp += 5;
