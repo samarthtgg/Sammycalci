@@ -776,11 +776,18 @@ padding-bottom:250px;
         👤
       </div>
 
-      <button class="btn btn-ghost btn-sm"
-              style="margin-top:10px;width:auto;">
-        📷 Change Photo
+      <button
+class="btn btn-ghost btn-sm"
+style="margin-top:10px;width:auto;"
+onclick="document.getElementById('profilePhotoInput').click()">
+📷 Change Photo
       </button>
-
+<input
+    type="file"
+    id="profilePhotoInput"
+    accept="image/*"
+    style="display:none"
+    onchange="uploadProfilePhoto(event)">
     </div>
 
     <br>
@@ -2470,6 +2477,53 @@ window.startVoice = function(){
     btn.classList.remove('mic-listening');
   };
 };
+   window.uploadProfilePhoto = async function(event){
+
+if(!currentUser || currentUser.isGuest){
+return showToast("Login required",true);
+}
+
+const file = event.target.files[0];
+if(!file) return;
+
+showToast("Uploading profile photo...");
+
+try{
+
+const formData = new FormData();
+formData.append("file",file);
+formData.append("upload_preset","sammycalci_vault");
+formData.append("folder","profile/"+currentUser.uid);
+
+const res = await fetch(
+"https://api.cloudinary.com/v1_1/dmcm5mqbj/image/upload",
+{
+method:"POST",
+body:formData
+});
+
+const data = await res.json();
+
+await setDoc(
+doc(db,"users",currentUser.uid),
+{
+photo:data.secure_url
+},
+{merge:true}
+);
+
+document.getElementById("profileAvatar").innerHTML =
+`<img src="${data.secure_url}"
+style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+
+showToast("Profile photo updated ✅");
+
+}catch(e){
+showToast("Upload failed",true);
+}
+
+event.target.value="";
+   }
 </script>
 <p style="font-size:12px;opacity:0.6;text-align:center;margin-top:10px">
 This vault provides basic privacy only and is not intended for highly sensitive data.
