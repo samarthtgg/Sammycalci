@@ -861,7 +861,7 @@ onclick="document.getElementById('profilePhotoInput').click()">
       </div>
 
       <div class="stat-box">
-        <div class="stat-num">0</div>
+        <div class="stat-num" id="calcCount">0</div>
         <div class="stat-label">Calculations</div>
       </div>
 
@@ -1325,6 +1325,9 @@ if(v==='%'){
       calcExpr='';calcBuffer=String(clean);calcNewNum=true;
       updateDisp(String(clean));document.getElementById('calcExpr').textContent=expr+' =';
       playSuccess();
+       if(currentUser && !currentUser.isGuest){
+    await incrementCalculationCount();
+   }
     }catch(e){showToast('Error',true);playError();calcBuffer='';calcExpr='';updateDisp('Err');calcNewNum=true;}
     return;
   }
@@ -1428,7 +1431,8 @@ window.showProfile = async function () {
             const data = snap.data();
            document.getElementById("streakValue").textContent =
     data.loginStreak || 0;
-
+document.getElementById("calcCount").textContent =
+    data.calculations || 0;
 unlockAchievements(data.loginStreak || 0);
 loadEmojiPicker(data.loginStreak || 0);
            if(data.name){
@@ -1680,6 +1684,27 @@ await setDoc(ref,{
 document.getElementById("streakValue").textContent = streak;
 unlockAchievements(streak);
    }
+   window.incrementCalculationCount = async function () {
+
+    if(!currentUser || currentUser.isGuest) return;
+
+    const ref = doc(db, "users", currentUser.uid);
+    const snap = await getDoc(ref);
+
+    let count = 0;
+
+    if(snap.exists()){
+        count = snap.data().calculations || 0;
+    }
+
+    count++;
+
+    await setDoc(ref,{
+        calculations: count
+    },{merge:true});
+
+    document.getElementById("calcCount").textContent = count;
+}
 window.deletePhoto=async function(i){
   if(!currentUser||currentUser.isGuest)return;
 
