@@ -1336,15 +1336,24 @@ if(v==='%'){
       calcExpr='';calcBuffer=String(clean);calcNewNum=true;
       updateDisp(String(clean));document.getElementById('calcExpr').textContent=expr+' =';
       playSuccess();
-       userStats.calculations++;
-userStats.xp += 5;
+    }
+// userStats.calculations++;
+// userStats.xp += 5;
 
-if (userStats.xp >= userStats.level * 100) {
-  userStats.level++;
-}
+// if (userStats.xp >= userStats.level * 100) {
+//     userStats.level++;
+// }
 
-updateProfileStats();
-    }catch(e){showToast('Error',true);playError();calcBuffer='';calcExpr='';updateDisp('Err');calcNewNum=true;}
+// updateProfileStats();
+    catch (e) {
+    alert(e.message);
+    showToast(e.message, true);
+    playError();
+    calcBuffer = "";
+    calcExpr = "";
+    updateDisp("Err");
+    calcNewNum = true;
+    }
     return;
   }
   if(['+','-','*','/'].includes(v)){if(calcBuffer){calcExpr+=calcBuffer;calcBuffer='';}calcExpr+=v==='*'?'×':v==='/'?'÷':v;calcNewNum=true;document.getElementById('calcExpr').textContent=calcExpr;return;}
