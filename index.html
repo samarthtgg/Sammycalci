@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+i<!DOCTYPE html>
 <html lang="en">
 <head>
    <title>SammyCalci - Smart Calculator Vault App</title>
@@ -1695,10 +1695,29 @@ window.deleteCurrentPhoto=async function(){
   if(allPhotos.length===0){closeViewer();}
   else{viewerIndex=Math.min(viewerIndex,allPhotos.length-1);updateViewer();}
 }
-window.downloadPhoto=function(){
-  const src=allPhotos[viewerIndex].data||allPhotos[viewerIndex];
-  if(!src)return;const a=document.createElement('a');a.href=src;a.download='Vault_'+Date.now()+'.jpg';a.click();showToast('Downloaded');
-}
+window.downloadPhoto = async function () {
+    try {
+        const src = allPhotos[viewerIndex].data || allPhotos[viewerIndex];
+
+        const response = await fetch(src);
+        const blob = await response.blob();
+
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "Vault_" + Date.now() + ".jpg";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        URL.revokeObjectURL(url);
+
+        showToast("Downloaded ✅");
+    } catch (e) {
+        showToast("Download failed ❌", true);
+    }
+};
 // ===== TOUCH SWIPE (PRO STABLE) =====
 let startX = 0;
 let startY = 0;
