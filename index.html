@@ -1387,9 +1387,9 @@ border-radius:10px;
 transition:.2s;
 `;
 
-span.onclick=()=>{
-setProfileEmoji(e);
-toggleEmojiPicker();
+span.onclick = () => {
+    window.setProfileEmoji(e);
+    window.toggleEmojiPicker();
 };
 
 picker.appendChild(span);
@@ -1398,15 +1398,14 @@ picker.appendChild(span);
 
 }
 
-function toggleEmojiPicker(){
+window.toggleEmojiPicker = function () {
 
-const picker=document.getElementById("emojiPicker");
+    const picker = document.getElementById("emojiPicker");
 
-picker.style.display=
-picker.style.display==="grid"
-? "none"
-: "grid";
-
+    picker.style.display =
+        picker.style.display === "grid"
+            ? "none"
+            : "grid";
 }
 window.showProfile = async function () {
 
@@ -1573,7 +1572,7 @@ await addDoc(collection(db,'photos'),{uid:currentUser.uid,data:data.secure_url,p
 document.getElementById("profileAvatar").textContent = emoji;
 document.getElementById("settingsProfileAvatar").textContent = emoji;
 document.getElementById("selectedEmoji").textContent = emoji;
-toggleEmojiPicker();
+window.toggleEmojiPicker();
 if(currentUser && !currentUser.isGuest){
 
 await setDoc(
