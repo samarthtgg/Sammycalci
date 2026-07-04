@@ -776,7 +776,15 @@ cursor:pointer;
 border:3px solid var(--glass-border);">
 😆
 </div>
-
+<div id="profileDisplayName"
+style="
+margin-top:12px;
+text-align:center;
+font-family:'Orbitron';
+font-size:20px;
+color:var(--primary);">
+Your Name
+</div>
 <div id="emojiPicker"
 style="
 display:grid;
@@ -849,9 +857,10 @@ onclick="document.getElementById('profilePhotoInput').click()">
               placeholder="Tell something about yourself..."></textarea>
 
     <button class="btn btn-primary"
-            style="margin-top:15px;">
-      💾 SAVE PROFILE
-    </button>
+        style="margin-top:15px;"
+        onclick="saveProfile()">
+  💾 SAVE PROFILE
+</button>
 
     <br><br>
 
@@ -1376,7 +1385,9 @@ window.showProfile = async function () {
         if(snap.exists()){
            
             const data = snap.data();
-           
+           if(data.name){
+    document.getElementById("profileDisplayName").textContent = data.name;
+           }
 
          if(data.emoji){
     document.getElementById("profileAvatar").textContent = data.emoji;
@@ -1534,6 +1545,28 @@ showToast("Profile updated ✅");
 }
 
    }
+window.saveProfile = async function(){
+
+    if(!currentUser || currentUser.isGuest){
+        return showToast("Login required", true);
+    }
+
+    const name = document.getElementById("profileName").value.trim();
+    const bio = document.getElementById("profileBio").value.trim();
+
+    await setDoc(
+        doc(db,"users",currentUser.uid),
+        {
+            name: name,
+            bio: bio
+        },
+        { merge: true }
+    );
+
+    document.getElementById("profileDisplayName").textContent = name;
+
+    showToast("Profile saved ✅");
+}
 window.deletePhoto=async function(i){
   if(!currentUser||currentUser.isGuest)return;
 
