@@ -1244,6 +1244,7 @@ window.login = async function(){
     const email=username+'@sammyvault.app';
     const cred=await signInWithEmailAndPassword(auth,email,password);
     currentUser=cred.user;
+     await updateLoginStreak();
      localStorage.setItem(
 "user_password",
 password
@@ -1265,6 +1266,7 @@ window.googleLogin = async function(){
     const provider = new GoogleAuthProvider();
     const cred = await signInWithPopup(auth, provider);
     currentUser = cred.user;
+     await updateLoginStreak();
      localStorage.setItem(
 "user_password",
 currentUser.email
@@ -1385,6 +1387,8 @@ window.showProfile = async function () {
         if(snap.exists()){
            
             const data = snap.data();
+           document.querySelectorAll(".stat-num")[1].textContent =
+data.loginStreak || 0;
            if(data.name){
     document.getElementById("profileDisplayName").textContent = data.name;
            }
@@ -1567,6 +1571,71 @@ window.saveProfile = async function(){
 
     showToast("Profile saved ✅");
 }
+   function unlockAchievements(streak){
+
+const levels=[7,10,20,50,100,250,500,1000];
+
+let unlocked=0;
+
+levels.forEach(level=>{
+
+const card=document.getElementById("ach"+level);
+
+if(!card) return;
+
+if(streak>=level){
+card.classList.remove("locked");
+card.classList.add("unlocked");
+unlocked++;
+}else{
+card.classList.remove("unlocked");
+card.classList.add("locked");
+}
+
+});
+
+document.getElementById("achievementCount").textContent=
+`(${unlocked}/8 UNLOCKED)`;
+   }
+   window.updateLoginStreak = async function(){
+
+if(!currentUser || currentUser.isGuest) return;
+
+const ref = doc(db,"users",currentUser.uid);
+const snap = await getDoc(ref);
+
+const today = new Date();
+const todayStr = today.toISOString().split("T")[0];
+
+let streak = 1;
+let last = "";
+
+if(snap.exists()){
+    const data = snap.data();
+    streak = data.loginStreak || 1;
+    last = data.lastLoginDate || "";
+
+    if(last !== todayStr){
+
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate()-1);
+        const yesterdayStr = yesterday.toISOString().split("T")[0];
+
+        if(last === yesterdayStr){
+            streak++;
+        }else{
+            streak = 1;
+        }
+    }
+}
+
+await setDoc(ref,{
+    loginStreak:streak,
+    lastLoginDate:todayStr
+},{merge:true});
+
+unlockAchievements(streak);
+   }
 window.deletePhoto=async function(i){
   if(!currentUser||currentUser.isGuest)return;
 
