@@ -1374,11 +1374,14 @@ window.showProfile = async function () {
         const snap = await getDoc(doc(db,"users",currentUser.uid));
 
         if(snap.exists()){
-
+           
             const data = snap.data();
-           if(data.emoji){
+           
+
+         if(data.emoji){
     document.getElementById("profileAvatar").textContent = data.emoji;
-           }
+    document.getElementById("settingsProfileAvatar").textContent = data.emoji;
+         }
 
             if(data.photo){
 
@@ -1517,7 +1520,7 @@ await addDoc(collection(db,'photos'),{uid:currentUser.uid,data:data.secure_url,p
    window.setProfileEmoji = async function(emoji){
 
 document.getElementById("profileAvatar").textContent = emoji;
-
+document.getElementById("settingsProfileAvatar").textContent = emoji;
 if(currentUser && !currentUser.isGuest){
 
 await setDoc(
@@ -2601,9 +2604,12 @@ photo:data.secure_url
 {merge:true}
 );
 
-document.getElementById("profileAvatar").innerHTML =
-`<img src="${data.secure_url}"
+const img = `
+<img src="${data.secure_url}"
 style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+
+document.getElementById("profileAvatar").innerHTML = img;
+document.getElementById("settingsProfileAvatar").innerHTML = img;
 
 showToast("Profile photo updated ✅");
 
