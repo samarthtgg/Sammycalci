@@ -1336,22 +1336,7 @@ if(v==='%'){
       calcExpr='';calcBuffer=String(clean);calcNewNum=true;
       updateDisp(String(clean));document.getElementById('calcExpr').textContent=expr+' =';
       playSuccess();
-       userStats.calculations++;
-userStats.xp += 10;
-
-if (userStats.xp >= userStats.level * 100) {
-    userStats.level++;
-    userStats.xp = 0; // Start next level from 0 XP
-}
-
-if (currentUser && currentUser.uid) {
-    localStorage.setItem(
-        "stats_" + currentUser.uid,
-        JSON.stringify(userStats)
-    );
-}
-
-updateProfileStats();
+       
     }
 // updateProfileStats();
     catch (e) {
