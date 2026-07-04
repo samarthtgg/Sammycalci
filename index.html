@@ -873,8 +873,8 @@ onclick="document.getElementById('profilePhotoInput').click()">
       </div>
 
       <div class="stat-box">
-        <div class="stat-num">0</div>
-        <div class="stat-label">Streak</div>
+        <div class="stat-num" id="streakValue">0</div>
+<div class="stat-label">Streak</div>
       </div>
 
       <div class="stat-box">
@@ -1387,10 +1387,11 @@ window.showProfile = async function () {
         if(snap.exists()){
            
             const data = snap.data();
-document.querySelectorAll(".stat-num")[1].textContent =
-data.loginStreak || 0;
+           document.getElementById("streakValue").textContent =
+    data.loginStreak || 0;
 
 unlockAchievements(data.loginStreak || 0);
+
            if(data.name){
     document.getElementById("profileDisplayName").textContent = data.name;
            }
@@ -1635,7 +1636,7 @@ await setDoc(ref,{
     loginStreak:streak,
     lastLoginDate:todayStr
 },{merge:true});
-
+document.getElementById("streakValue").textContent = streak;
 unlockAchievements(streak);
    }
 window.deletePhoto=async function(i){
