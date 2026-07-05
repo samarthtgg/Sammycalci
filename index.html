@@ -1625,7 +1625,36 @@ async function loadLeaderboard(){
 
         const snap = await getDocs(q);
 alert("Users: " + snap.size);
-        // Your existing leaderboard code goes here...
+let html = "";
+let rank = 1;
+
+snap.forEach(docSnap => {
+
+    const u = docSnap.data();
+
+    html += `
+    <div class="leaderboard-card">
+        <div class="rank">#${rank}</div>
+
+        <div class="leaderAvatar">
+            ${u.emoji || "🙂"}
+        </div>
+
+        <div class="leaderInfo">
+            <div>${u.username || "User"}</div>
+            <div>
+                Level ${u.level || 1}
+                •
+                ${u.xp || 0} XP
+            </div>
+        </div>
+    </div>
+    `;
+
+    rank++;
+});
+
+box.innerHTML = html;
 
     }catch(e){
         console.error(e);
