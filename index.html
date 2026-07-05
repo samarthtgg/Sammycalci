@@ -1136,7 +1136,7 @@ let authChecked = false;
 let authedUser = null;
 let autoRouteDone = false; // ensures the startup auto-login check only ever runs ONCE
 
-function tryAutoRoute(){
+async function tryAutoRoute(){
   // Only proceed once BOTH the splash animation has finished AND
   // Firebase has told us whether a session exists. Otherwise we risk
   // routing too early (frozen splash text) or too late (flash of login page).
@@ -1146,9 +1146,12 @@ function tryAutoRoute(){
   if(authedUser && rememberStillValid()){
     currentUser = authedUser;
     calcHistory = JSON.parse(localStorage.getItem('svault_history_'+currentUser.uid)||'[]');
+
+    await updateLoginStreak();
+
     showPage('calcPage');
     showToast('Auto-logged in ✅');
-  } else {
+  }else {
     if(authedUser && !rememberStillValid()){
       // session exists in Firebase but the remembered window expired
       signOut(auth).catch(()=>{});
