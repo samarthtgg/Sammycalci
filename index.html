@@ -1685,7 +1685,7 @@ document.getElementById("streakValue").textContent = streak;
 unlockAchievements(streak);
    }
    window.incrementCalculationCount = async function () {
-
+console.log("incrementCalculationCount called");
     if(!currentUser || currentUser.isGuest) return;
 
     const ref = doc(db, "users", currentUser.uid);
@@ -1697,11 +1697,13 @@ unlockAchievements(streak);
         count = snap.data().calculations || 0;
     }
 
-    count++;
+count++;
 
-    await setDoc(ref,{
-        calculations: count
-    },{merge:true});
+console.log("Count:", count);
+
+await setDoc(ref,{
+    calculations: count
+},{merge:true});
 
     document.getElementById("calcCount").textContent = count;
 }
