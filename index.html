@@ -1079,6 +1079,7 @@ getFirestore,
 doc,
 setDoc,
 updateDoc,
+   increment,
 getDoc,
 collection,
 addDoc,
@@ -1688,15 +1689,15 @@ async function loadLeaderboard(){
     try{
 
         const q = query(
-            collection(db,"users"),
-            orderBy(
-    leaderboardMode === "weekly"
-        ? "weeklyXP"
-        : "xp",
-    "desc"
-),
-            limit(100)
-        );
+    collection(db,"users"),
+    orderBy(
+        leaderboardMode === "weekly"
+            ? "xp"
+            : "xp",
+        "desc"
+    ),
+    limit(100)
+);
 
         const snap = await getDocs(q);
 alert("Users: " + snap.size);
@@ -1705,7 +1706,9 @@ let rank = 1;
 
 snap.forEach(docSnap => {
 
-    const u = docSnap.data();
+    if(u.weeklyXP === undefined){
+    u.weeklyXP = u.xp || 0;
+}
 
 if(leaderboardMode === "weekly" && u.weeklyXP === undefined){
     u.weeklyXP = u.xp || 0;
@@ -1765,10 +1768,10 @@ box.innerHTML = html;
    async function weeklyReset(){
 
     const q = query(
-        collection(db,"users"),
-        orderBy("weeklyXP","desc"),
-        limit(3)
-    );
+    collection(db,"users"),
+    orderBy("weeklyXP","desc"),
+    limit(3)
+);
 
     const snap = await getDocs(q);
 
