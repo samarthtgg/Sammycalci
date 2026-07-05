@@ -1753,7 +1753,26 @@ await setDoc(ref,{
         level: level
     },{merge:true});
 
-    document.getElementById("xpText").textContent = xp + " XP";
+    let nextLevelXP = 100;
+
+if(level == 1){
+    nextLevelXP = 100;
+}else if(level == 2){
+    nextLevelXP = 1000;
+}else if(level == 3){
+    nextLevelXP = 10000;
+}else if(level == 4){
+    nextLevelXP = 50000;
+}else if(level == 5){
+    nextLevelXP = 100000;
+}else{
+    nextLevelXP = "MAX";
+}
+
+document.getElementById("xpText").textContent =
+nextLevelXP === "MAX"
+? xp + " XP (MAX LEVEL)"
+: xp + " / " + nextLevelXP + " XP";
     document.getElementById("levelValue").textContent = level;
    }
 window.deletePhoto=async function(i){
