@@ -866,7 +866,7 @@ onclick="document.getElementById('profilePhotoInput').click()">
       </div>
 
       <div class="stat-box">
-        <div class="stat-num">1</div>
+        <div class="stat-num" id="levelValue">1</div>
         <div class="stat-label">Level</div>
       </div>
     </div>
@@ -882,7 +882,7 @@ onclick="document.getElementById('profilePhotoInput').click()">
     </div>
 
     <div style="text-align:center;margin-top:8px;opacity:.7;">
-      0 / 100 XP
+      <div id="xpText">0 XP</div>
     </div>
 <div class="settings-title" style="margin-top:25px;">
 🏅 ACHIEVEMENTS <span id="achievementCount" style="opacity:.6">(0/8 UNLOCKED)</span>
@@ -1328,9 +1328,11 @@ if(v==='%'){
       calcExpr='';calcBuffer=String(clean);calcNewNum=true;
       updateDisp(String(clean));document.getElementById('calcExpr').textContent=expr+' =';
       playSuccess();
-       if(currentUser && !currentUser.isGuest){
+
+if(currentUser && !currentUser.isGuest){
     await incrementCalculationCount();
-   }
+    await addXP();
+}
     }catch(e){showToast('Error',true);playError();calcBuffer='';calcExpr='';updateDisp('Err');calcNewNum=true;}
     return;
   }
@@ -1436,6 +1438,11 @@ window.showProfile = async function () {
     data.loginStreak || 0;
 document.getElementById("calcCount").textContent =
     data.calculations || 0;
+           document.getElementById("levelValue").textContent =
+data.level || 1;
+
+document.getElementById("xpText").textContent =
+(data.xp || 0) + " XP";
 unlockAchievements(data.loginStreak || 0);
 loadEmojiPicker(data.loginStreak || 0);
            if(data.name){
@@ -1710,6 +1717,45 @@ await setDoc(ref,{
 
     document.getElementById("calcCount").textContent = count;
 }
+   window.addXP = async function(){
+
+    if(!currentUser || currentUser.isGuest) return;
+
+    const ref = doc(db,"users",currentUser.uid);
+    const snap = await getDoc(ref);
+
+    let xp = 0;
+    let level = 1;
+
+    if(snap.exists()){
+        xp = snap.data().xp || 0;
+        level = snap.data().level || 1;
+    }
+
+    xp += 10;
+
+    if(xp >= 100000){
+        level = 6;
+    }else if(xp >= 50000){
+        level = 5;
+    }else if(xp >= 10000){
+        level = 4;
+    }else if(xp >= 1000){
+        level = 3;
+    }else if(xp >= 100){
+        level = 2;
+    }else{
+        level = 1;
+    }
+
+    await setDoc(ref,{
+        xp: xp,
+        level: level
+    },{merge:true});
+
+    document.getElementById("xpText").textContent = xp + " XP";
+    document.getElementById("levelValue").textContent = level;
+   }
 window.deletePhoto=async function(i){
   if(!currentUser||currentUser.isGuest)return;
 
