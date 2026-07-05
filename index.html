@@ -1004,12 +1004,14 @@ margin-top:15px;">
 
 <div class="tab-bar">
 
-<button class="tab active">
-🔥 Weekly
+<button class="leaderTab active"
+        onclick="showWeeklyLeaderboard()">
+    🔥 Weekly
 </button>
 
-<button class="tab">
-🌍 All Time
+<button class="leaderTab"
+        onclick="showAllTimeLeaderboard()">
+    🌍 All Time
 </button>
 
 </div>
@@ -1603,13 +1605,29 @@ document.getElementById("selectedEmoji").textContent = data.emoji || "😆";
     loadLeaderboard();
 
 }
-
+let leaderboardMode = "weekly";
 window.showMedals = function(){
 
     playClick();
     showPage("medalsPage");
 
 }
+   window.showWeeklyLeaderboard = function(){
+
+    leaderboardMode = "weekly";
+
+    loadLeaderboard();
+
+}
+
+window.showAllTimeLeaderboard = function(){
+
+    leaderboardMode = "alltime";
+
+    loadLeaderboard();
+
+}
+   
 async function loadLeaderboard(){
 
     const box = document.getElementById("leaderboardList");
@@ -1619,7 +1637,12 @@ async function loadLeaderboard(){
 
         const q = query(
             collection(db,"users"),
-            orderBy("xp","desc"),
+            orderBy(
+    leaderboardMode === "weekly"
+        ? "weeklyXP"
+        : "xp",
+    "desc"
+),
             limit(100)
         );
 
@@ -1926,6 +1949,8 @@ await setDoc(ref,{
     }
 
     xp += 10;
+let weeklyXP = snap.exists() ? (snap.data().weeklyXP || 0) : 0;
+weeklyXP += 10;
 
     if(xp >= 100000){
         level = 6;
@@ -1943,6 +1968,7 @@ await setDoc(ref,{
 
 await setDoc(ref,{
     xp: xp,
+    weeklyXP: weeklyXP,
     level: level,
     lastActive: Date.now(),
     username:
