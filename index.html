@@ -1352,7 +1352,7 @@ window.login = async function(){
     const cred=await signInWithEmailAndPassword(auth,email,password);
     currentUser=cred.user;
      await updateLoginStreak();
-     await checkWeeklyReset();
+     //await checkWeeklyReset();
      localStorage.setItem(
 "user_password",
 password
@@ -1375,7 +1375,7 @@ window.googleLogin = async function(){
     const cred = await signInWithPopup(auth, provider);
     currentUser = cred.user;
      await updateLoginStreak();
-     await checkWeeklyReset();
+     //await checkWeeklyReset();
      localStorage.setItem(
 "user_password",
 currentUser.email
