@@ -2023,6 +2023,9 @@ await setDoc(ref,{
     xp: xp,
     weeklyXP: weeklyXP,
     level: level,
+   goldMedals: snap.exists() ? (snap.data().goldMedals || 0) : 0,
+silverMedals: snap.exists() ? (snap.data().silverMedals || 0) : 0,
+bronzeMedals: snap.exists() ? (snap.data().bronzeMedals || 0) : 0,
    currentWeek: getWeekId(),
     lastActive: Date.now(),
     username:
