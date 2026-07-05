@@ -1079,6 +1079,7 @@ import {
 getFirestore,
 doc,
 setDoc,
+updateDoc,
 getDoc,
 collection,
 addDoc,
@@ -1783,7 +1784,18 @@ for(let i=0;i<winners.length;i++){
     }
 
 }
+const allUsers = await getDocs(collection(db,"users"));
 
+for(const userDoc of allUsers.docs){
+
+    await updateDoc(
+        doc(db,"users",userDoc.id),
+        {
+            weeklyXP: 0
+        }
+    );
+
+}
    }
 window.changePin=async function(){
   const p1=document.getElementById('newPin').value,p2=document.getElementById('confirmPin').value;
