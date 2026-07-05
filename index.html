@@ -1739,6 +1739,28 @@ box.innerHTML = html;
     }
 
 }
+   async function weeklyReset(){
+
+    const q = query(
+        collection(db,"users"),
+        orderBy("weeklyXP","desc"),
+        limit(3)
+    );
+
+    const snap = await getDocs(q);
+
+    const winners = [];
+
+    snap.forEach(docSnap=>{
+        winners.push({
+            id: docSnap.id,
+            ...docSnap.data()
+        });
+    });
+
+    // We'll award medals here next.
+
+   }
 window.changePin=async function(){
   const p1=document.getElementById('newPin').value,p2=document.getElementById('confirmPin').value;
   if(p1.length!==4||p2.length!==4)return showToast('PIN must be 4 digits',true);
