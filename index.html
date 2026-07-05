@@ -1004,22 +1004,25 @@ margin-top:15px;">
 
 <div class="tab-bar">
 
-<button class="leaderTab active"
+    <button class="leaderTab active"
         onclick="showWeeklyLeaderboard()">
-    🔥 Weekly
-</button>
+        🔥 Weekly
+    </button>
 
-<button class="leaderTab"
+    <button class="leaderTab"
         onclick="showAllTimeLeaderboard()">
-    🌍 All Time
-</button>
+        🌍 All Time
+    </button>
 
 </div>
+
+<h2 id="leaderboardTitle" style="text-align:center;margin:15px 0;">
+🔥 Weekly Leaderboard
+</h2>
 
 <div id="leaderboardList"
 style="flex:1;overflow:auto;padding:10px;">
 </div>
-
 </div>
 
    </div>
@@ -1629,13 +1632,19 @@ window.showMedals = function(){
 
     leaderboardMode = "weekly";
 
+    document.getElementById("leaderboardTitle").textContent =
+    "🔥 Weekly Leaderboard";
+
     loadLeaderboard();
 
-}
+   }
 
 window.showAllTimeLeaderboard = function(){
 
     leaderboardMode = "alltime";
+
+    document.getElementById("leaderboardTitle").textContent =
+    "🌍 All Time Leaderboard";
 
     loadLeaderboard();
 
@@ -1713,7 +1722,7 @@ if(leaderboardMode === "weekly" && u.weeklyXP === undefined){
             <div>
                 Level ${u.level || 1}
                 •
-                ${u.xp || 0} XP
+                ${leaderboardMode === "weekly" ? (u.weeklyXP || 0) : (u.xp || 0)} XP
             </div>
         </div>
     </div>
