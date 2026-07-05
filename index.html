@@ -1039,7 +1039,20 @@ style="flex:1;overflow:auto;padding:10px;">
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, deleteDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {
+getFirestore,
+doc,
+setDoc,
+getDoc,
+collection,
+addDoc,
+getDocs,
+deleteDoc,
+query,
+where,
+orderBy,
+limit
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAyFrv3NTQHtKU0No2Qtjn1sBwaFGAPmuM",
@@ -1406,6 +1419,13 @@ if(v==='%'){
 if(currentUser && !currentUser.isGuest){
     await incrementCalculationCount();
     await addXP();
+   await setDoc(
+    doc(db,"users",currentUser.uid),
+    {
+        lastActive: Date.now()
+    },
+    {merge:true}
+);
 }
     }catch(e){showToast('Error',true);playError();calcBuffer='';calcExpr='';updateDisp('Err');calcNewNum=true;}
     return;
@@ -1850,10 +1870,15 @@ await setDoc(ref,{
         level = 1;
     }
 
-    await setDoc(ref,{
-        xp: xp,
-        level: level
-    },{merge:true});
+await setDoc(ref,{
+    xp: xp,
+    level: level,
+    lastActive: Date.now(),
+    username:
+        currentUser.displayName ||
+        currentUser.email?.split("@")[0] ||
+        "User"
+},{merge:true});
 
     let nextLevelXP = 100;
 
