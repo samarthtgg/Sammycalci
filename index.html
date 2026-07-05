@@ -883,6 +883,23 @@ onclick="document.getElementById('profilePhotoInput').click()">
     <div style="text-align:center;margin-top:8px;opacity:.7;">
       <div id="xpText">0 XP</div>
     </div>
+       <div style="display:flex;gap:10px;margin-top:20px;">
+
+<button
+class="btn btn-primary"
+style="flex:1"
+onclick="showLeaderboard()">
+🏆 Leaderboard
+</button>
+
+<button
+class="btn btn-gold"
+style="flex:1"
+onclick="showMedals()">
+🏅 Medals
+</button>
+
+       </div>
 <div class="settings-title" style="margin-top:25px;">
 🏅 ACHIEVEMENTS <span id="achievementCount" style="opacity:.6">(0/8 UNLOCKED)</span>
 </div>
@@ -940,10 +957,68 @@ margin-top:15px;">
 <div class="ach-title">ETERNAL</div>
 <div class="ach-sub">1000 Days</div>
 </div>
-
 </div>
     </div>
   </div>
+</div>
+   <div class="page-full" id="leaderboardPage">
+
+<div style="max-width:550px;width:100%;margin:auto;display:flex;flex-direction:column;height:100%;">
+
+<div class="vault-header">
+<button class="icon-btn" onclick="showProfile()">←</button>
+<h2 style="margin:0;">🏆 Leaderboard</h2>
+</div>
+
+<div class="tab-bar">
+
+<button class="tab active">
+🔥 Weekly
+</button>
+
+<button class="tab">
+🌍 All Time
+</button>
+
+</div>
+
+<div id="leaderboardList"
+style="flex:1;overflow:auto;padding:10px;">
+</div>
+
+</div>
+
+   </div>
+   <div class="page-full" id="medalsPage">
+
+<div style="max-width:500px;width:100%;margin:auto;">
+
+<div class="vault-header">
+<button class="icon-btn" onclick="showProfile()">←</button>
+<h2>🏅 Medals</h2>
+</div>
+
+<div class="card">
+
+<div class="stat-box">
+<div class="stat-num">🥇 0</div>
+<div class="stat-label">Gold</div>
+</div>
+
+<div class="stat-box">
+<div class="stat-num">🥈 0</div>
+<div class="stat-label">Silver</div>
+</div>
+
+<div class="stat-box">
+<div class="stat-num">🥉 0</div>
+<div class="stat-label">Bronze</div>
+</div>
+
+</div>
+
+</div>
+
 </div>
 <div id="viewer">
   <button class="viewer-close" onclick="window.closeViewer()">✕</button>
@@ -1468,6 +1543,34 @@ document.getElementById("selectedEmoji").textContent = data.emoji || "😆";
    async function hashPin(pin){
   const buf=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(pin));
   return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+   }
+   window.showLeaderboard = function(){
+
+    playClick();
+    showPage("leaderboardPage");
+    loadLeaderboard();
+
+}
+
+window.showMedals = function(){
+
+    playClick();
+    showPage("medalsPage");
+
+}
+   async function loadLeaderboard(){
+
+const box =
+document.getElementById("leaderboardList");
+
+box.innerHTML = `
+<div class="stat-box">
+🥇 Coming Soon...
+<br><br>
+Realtime leaderboard will appear here.
+</div>
+`;
+
    }
 window.changePin=async function(){
   const p1=document.getElementById('newPin').value,p2=document.getElementById('confirmPin').value;
