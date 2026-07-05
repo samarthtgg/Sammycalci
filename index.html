@@ -1294,7 +1294,7 @@ window.doLogout = async function(){
 // ============================================================
 //  CALCULATOR
 // ============================================================
-window.cPress = function(v){
+window.cPress = async function(v){
   resumeAudio();playKey();vibrate(15);lastActivity=Date.now();
   if(v==='C'){calcBuffer='';calcExpr='';calcNewNum=true;updateDisp('0');return;}
   if(v==='M+'){memory+=parseFloat(calcBuffer||0);showToast('M = '+memory);return;}
