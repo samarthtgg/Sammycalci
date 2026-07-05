@@ -1705,7 +1705,7 @@ let html = "";
 let rank = 1;
 
 snap.forEach(docSnap => {
-
+const u = docSnap.data();
     if(u.weeklyXP === undefined){
     u.weeklyXP = u.xp || 0;
 }
