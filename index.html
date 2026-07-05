@@ -382,6 +382,38 @@ animation:unlockGlow .8s ease;
 50%{transform:scale(1.05);}
 100%{transform:scale(1);}
 }
+   .leaderboard-card{
+display:flex;
+align-items:center;
+gap:12px;
+padding:12px;
+margin:10px 0;
+background:#10283a;
+border-radius:16px;
+}
+
+.leaderAvatar{
+width:48px;
+height:48px;
+border-radius:50%;
+background:linear-gradient(135deg,#00c6ff,#7c3aed);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:26px;
+}
+
+.rank{
+width:50px;
+font-size:22px;
+font-weight:bold;
+text-align:center;
+}
+
+.me{
+border:2px solid #00bfff;
+box-shadow:0 0 12px #00bfff;
+}
 </style>
 </head>
 <body>
@@ -1578,20 +1610,81 @@ window.showMedals = function(){
     showPage("medalsPage");
 
 }
-   async function loadLeaderboard(){
+async function loadLeaderboard(){
 
-const box =
-document.getElementById("leaderboardList");
+const box = document.getElementById("leaderboardList");
+box.innerHTML = "Loading...";
 
-box.innerHTML = `
-<div class="stat-box">
-🥇 Coming Soon...
-<br><br>
-Realtime leaderboard will appear here.
+const q = query(
+    collection(db,"users"),
+    orderBy("xp","desc"),
+    limit(100)
+);
+
+const snap = await getDocs(q);
+
+let html = "";
+let rank = 1;
+
+snap.forEach(docSnap=>{
+
+    const u = docSnap.data();
+
+    const isMe =
+        currentUser &&
+        currentUser.uid === docSnap.id;
+
+    const online =
+        Date.now()-(u.lastActive||0)
+        <5*60*1000;
+
+    let medal="";
+
+    if(rank===1) medal="🥇";
+    else if(rank===2) medal="🥈";
+    else if(rank===3) medal="🥉";
+
+    html += `
+<div class="leaderboard-card ${isMe?"me":""}">
+
+<div class="rank">
+${medal || "#" + rank}
+</div>
+
+<div class="leaderAvatar">
+${u.emoji || "😆"}
+</div>
+
+<div class="leaderInfo">
+
+<div>
+
+${u.username || "User"}
+
+${online?"🔥":""}
+
+${isMe?" 👑 You":""}
+
+</div>
+
+<div>
+Level ${u.level || 1}
+&nbsp;&nbsp;
+${u.xp || 0} XP
+</div>
+
+</div>
+
 </div>
 `;
 
-   }
+    rank++;
+
+});
+
+box.innerHTML = html;
+
+}
 window.changePin=async function(){
   const p1=document.getElementById('newPin').value,p2=document.getElementById('confirmPin').value;
   if(p1.length!==4||p2.length!==4)return showToast('PIN must be 4 digits',true);
