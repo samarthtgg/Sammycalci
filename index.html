@@ -1037,17 +1037,17 @@ style="flex:1;overflow:auto;padding:10px;">
 <div class="card">
 
 <div class="stat-box">
-<div class="stat-num">🥇 0</div>
+<div class="stat-num" id="goldMedals">0</div>
 <div class="stat-label">Gold</div>
 </div>
 
 <div class="stat-box">
-<div class="stat-num">🥈 0</div>
+<div class="stat-num" id="silverMedals">0</div>
 <div class="stat-label">Silver</div>
 </div>
 
 <div class="stat-box">
-<div class="stat-num">🥉 0</div>
+<div class="stat-num" id="bronzeMedals">0</div>
 <div class="stat-label">Bronze</div>
 </div>
 
@@ -1625,7 +1625,10 @@ let leaderboardMode = "weekly";
 window.showMedals = function(){
 
     playClick();
+
     showPage("medalsPage");
+
+    loadMedals();
 
 }
    window.showWeeklyLeaderboard = function(){
@@ -1740,6 +1743,26 @@ box.innerHTML = html;
     }
 
 }
+   async function loadMedals(){
+
+    if(!currentUser) return;
+
+    const snap = await getDoc(doc(db,"users",currentUser.uid));
+
+    if(!snap.exists()) return;
+
+    const u = snap.data();
+
+    document.getElementById("goldMedals").textContent =
+        u.goldMedals || 0;
+
+    document.getElementById("silverMedals").textContent =
+        u.silverMedals || 0;
+
+    document.getElementById("bronzeMedals").textContent =
+        u.bronzeMedals || 0;
+
+   }
    async function weeklyReset(){
 
     const q = query(
