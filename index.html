@@ -1269,7 +1269,7 @@ async function tryAutoRoute(){
     calcHistory = JSON.parse(localStorage.getItem('svault_history_'+currentUser.uid)||'[]');
 
     await updateLoginStreak();
-
+    await checkWeeklyReset();
     showPage('calcPage');
     showToast('Auto-logged in ✅');
   }else {
@@ -1352,6 +1352,7 @@ window.login = async function(){
     const cred=await signInWithEmailAndPassword(auth,email,password);
     currentUser=cred.user;
      await updateLoginStreak();
+     await checkWeeklyReset();
      localStorage.setItem(
 "user_password",
 password
@@ -1374,6 +1375,7 @@ window.googleLogin = async function(){
     const cred = await signInWithPopup(auth, provider);
     currentUser = cred.user;
      await updateLoginStreak();
+     await checkWeeklyReset();
      localStorage.setItem(
 "user_password",
 currentUser.email
@@ -1606,6 +1608,17 @@ document.getElementById("selectedEmoji").textContent = data.emoji || "😆";
 
 }
 let leaderboardMode = "weekly";
+   function getWeekId(){
+
+    const now = new Date();
+
+    const firstJan = new Date(now.getFullYear(),0,1);
+
+    const days = Math.floor((now-firstJan)/86400000);
+
+    return now.getFullYear()+"-"+Math.ceil((days+firstJan.getDay()+1)/7);
+
+   }
 window.showMedals = function(){
 
     playClick();
@@ -1627,7 +1640,35 @@ window.showAllTimeLeaderboard = function(){
     loadLeaderboard();
 
 }
-   
+   async function checkWeeklyReset(){
+
+    const week = getWeekId();
+
+    const ref = doc(db,"system","leaderboard");
+
+    const snap = await getDoc(ref);
+
+    if(!snap.exists()){
+
+        await setDoc(ref,{
+            currentWeek: week
+        });
+
+        return;
+
+    }
+
+    if(snap.data().currentWeek !== week){
+
+        await weeklyReset();
+
+        await updateDoc(ref,{
+            currentWeek: week
+        });
+
+    }
+
+   }
 async function loadLeaderboard(){
 
     const box = document.getElementById("leaderboardList");
@@ -1970,6 +2011,7 @@ await setDoc(ref,{
     xp: xp,
     weeklyXP: weeklyXP,
     level: level,
+   currentWeek: getWeekId(),
     lastActive: Date.now(),
     username:
         currentUser.displayName ||
