@@ -1624,7 +1624,7 @@ async function loadLeaderboard(){
         );
 
         const snap = await getDocs(q);
-
+alert("Users: " + snap.size);
         // Your existing leaderboard code goes here...
 
     }catch(e){
