@@ -1696,6 +1696,10 @@ snap.forEach(docSnap => {
 
     const u = docSnap.data();
 
+if(leaderboardMode === "weekly" && u.weeklyXP === undefined){
+    u.weeklyXP = u.xp || 0;
+   }
+
     html += `
     <div class="leaderboard-card">
         <div class="rank">#${rank}</div>
