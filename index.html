@@ -1017,7 +1017,16 @@ margin-top:15px;">
 <h2 id="leaderboardTitle" style="text-align:center;margin:15px 0;">
 🔥 Weekly Leaderboard
 </h2>
-
+<div id="resetCountdown"
+style="
+text-align:center;
+margin-top:8px;
+font-size:14px;
+color:#7fdcff;
+font-weight:bold;
+">
+⏳ Next reset: Loading...
+</div>
 <div id="leaderboardList"
 style="flex:1;overflow:auto;padding:10px;">
 </div>
@@ -1622,6 +1631,35 @@ let leaderboardMode = "weekly";
     return now.getFullYear()+"-"+Math.ceil((days+firstJan.getDay()+1)/7);
 
    }
+   function updateResetCountdown(){
+
+    const now = new Date();
+
+    const next = new Date(now);
+
+    // Sunday 00:00
+    next.setDate(now.getDate() + ((7 - now.getDay()) % 7));
+
+    next.setHours(0,0,0,0);
+
+    // If already Sunday after 00:00, use next Sunday
+    if(next <= now){
+        next.setDate(next.getDate() + 7);
+    }
+
+    const diff = next - now;
+
+    const days = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const mins = Math.floor((diff % 3600000) / 60000);
+
+    const el = document.getElementById("resetCountdown");
+
+    if(el){
+        el.textContent =
+        `⏳ Next reset: ${days}d ${hours}h ${mins}m`;
+    }
+   }
 window.showMedals = function(){
 
     playClick();
@@ -1639,7 +1677,11 @@ window.showMedals = function(){
     "🔥 Weekly Leaderboard";
 
     loadLeaderboard();
+updateResetCountdown();
 
+clearInterval(window.resetTimer);
+
+window.resetTimer = setInterval(updateResetCountdown,60000);
    }
 
 window.showAllTimeLeaderboard = function(){
