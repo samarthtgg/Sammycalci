@@ -1683,6 +1683,8 @@ window.showMedals = function(){
     "🔥 Weekly Leaderboard";
 
     loadLeaderboard();
+      const podium = document.getElementById("leaderboardPodium");
+if (podium) podium.style.display = "block";
 updateResetCountdown();
 
 clearInterval(window.resetTimer);
@@ -1698,6 +1700,8 @@ window.showAllTimeLeaderboard = function(){
     "🌍 All Time Leaderboard";
 
     loadLeaderboard();
+   const podium = document.getElementById("leaderboardPodium");
+if (podium) podium.style.display = "none";
 updateResetCountdown();
 
 clearInterval(window.resetTimer);
@@ -1820,7 +1824,11 @@ if(rank <= 3){
 index++;
    
 });
+const podium = document.getElementById("leaderboardPodium");
 
+if (podium) {
+    podium.innerHTML = podiumHTML;
+}
 box.innerHTML = podiumHTML + html;
     }catch(e){
         alert(JSON.stringify(e));
