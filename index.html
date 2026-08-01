@@ -1754,8 +1754,9 @@ async function loadLeaderboard(){
         const snap = await getDocs(q);
 alert("Users: " + snap.size);
 let html = "";
+       let podiumHTML = "";
 let rank = 1;
-
+let index = 0;
 snap.forEach(docSnap => {
 const u = docSnap.data();
     if(u.weeklyXP === undefined){
@@ -1765,7 +1766,37 @@ const u = docSnap.data();
 if(leaderboardMode === "weekly" && u.weeklyXP === undefined){
     u.weeklyXP = u.xp || 0;
    }
+const rank = index + 1;
 
+if(rank <= 3){
+
+    const medal =
+        rank === 1 ? "🥇" :
+        rank === 2 ? "🥈" : "🥉";
+
+    podiumHTML += `
+    <div class="leaderboard-card">
+        <div class="rank">${medal}</div>
+
+        <div class="leaderAvatar">
+            ${u.emoji || "😀"}
+        </div>
+
+        <div style="flex:1">
+            <div style="font-weight:bold">
+                ${u.username || "User"}
+            </div>
+
+            <div>
+                ${leaderboardMode==="weekly"
+                    ? (u.weeklyXP||0)
+                    : (u.xp||0)} XP
+            </div>
+        </div>
+    </div>
+    `;
+
+}
     html += `
     <div class="leaderboard-card">
         <div class="rank">#${rank}</div>
@@ -1786,10 +1817,11 @@ if(leaderboardMode === "weekly" && u.weeklyXP === undefined){
     `;
 
     rank++;
+index++;
+   
 });
 
-box.innerHTML = html;
-
+box.innerHTML = podiumHTML + html;
     }catch(e){
         alert(JSON.stringify(e));
 console.error(e);
