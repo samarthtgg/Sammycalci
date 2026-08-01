@@ -1692,7 +1692,11 @@ window.showAllTimeLeaderboard = function(){
     "🌍 All Time Leaderboard";
 
     loadLeaderboard();
+updateResetCountdown();
 
+clearInterval(window.resetTimer);
+
+window.resetTimer = setInterval(updateResetCountdown,60000);
 }
    async function checkWeeklyReset(){
 
