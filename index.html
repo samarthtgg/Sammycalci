@@ -1287,7 +1287,7 @@ async function tryAutoRoute(){
     calcHistory = JSON.parse(localStorage.getItem('svault_history_'+currentUser.uid)||'[]');
 
     await updateLoginStreak();
-   //await checkWeeklyReset();
+   await checkWeeklyReset();
     showPage('calcPage');
     showToast('Auto-logged in ✅');
   }else {
@@ -1764,7 +1764,7 @@ let index = 0;
 snap.forEach(docSnap => {
 const u = docSnap.data();
     if(u.weeklyXP === undefined){
-    u.weeklyXP = u.xp || 0;
+       u.weeklyXP = 0;
 }
 
 if(leaderboardMode === "weekly" && u.weeklyXP === undefined){
