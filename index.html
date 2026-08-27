@@ -1771,7 +1771,18 @@ if(leaderboardMode === "weekly" && u.weeklyXP === undefined){
     u.weeklyXP = u.xp || 0;
    }
 const rank = index + 1;
+let rankChangeHTML = "—";
 
+if(leaderboardMode === "weekly" && u.previousWeeklyRank !== undefined){
+    const diff = u.previousWeeklyRank - rank;
+    if(diff > 0){
+        rankChangeHTML = `<span style="color:#2ecc71">↑ ${diff}</span>`;
+    }else if(diff < 0){
+        rankChangeHTML = `<span style="color:#e74c3c">↓ ${Math.abs(diff)}</span>`;
+    }else{
+        rankChangeHTML = `<span style="color:#888">—</span>`;
+    }
+}
 if(rank <= 3){
 
     const medal =
@@ -1815,6 +1826,7 @@ if(rank <= 3){
                 Level ${u.level || 1}
                 •
                 ${leaderboardMode === "weekly" ? (u.weeklyXP || 0) : (u.xp || 0)} XP
+                ${leaderboardMode === "weekly" ? `• ${rankChangeHTML}` : ""}
             </div>
         </div>
     </div>
@@ -1903,14 +1915,21 @@ for(let i=0;i<winners.length;i++){
     }
 
 }
-const allUsers = await getDocs(collection(db,"users"));
+const rankedUsers = await getDocs(
+    query(collection(db,"users"), orderBy("weeklyXP","desc"))
+);
 
-for(const userDoc of allUsers.docs){
+let rankIndex = 0;
+
+for(const userDoc of rankedUsers.docs){
+
+    rankIndex++;
 
     await updateDoc(
         doc(db,"users",userDoc.id),
         {
-            weeklyXP: 0
+            weeklyXP: 0,
+            previousWeeklyRank: rankIndex
         }
     );
 
