@@ -727,8 +727,10 @@ style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135de
       </div>
       <div class="settings-section">
         <div class="settings-title">Vault PIN</div>
-        <input type="password" id="newPin" placeholder="New 4-digit PIN" maxlength="4" oninput="this.value=this.value.replace(/\D/g,'')">
-        <input type="password" id="confirmPin" placeholder="Confirm PIN" maxlength="4" oninput="this.value=this.value.replace(/\D/g,'')">
+        <input type="password" id="currentPin" placeholder="Current 4-digit PIN" maxlength="4" oninput="this.value=this.value.replace(/\D/g,'')">
+<input type="password" id="newPin" placeholder="New 4-digit PIN" maxlength="4" oninput="this.value=this.value.replace(/\D/g,'')">
+<input type="password" id="confirmPin" placeholder="Confirm PIN" maxlength="4" oninput="this.value=this.value.replace(/\D/g,'')">
+         
         <button class="btn btn-primary" onclick="window.changePin()">🔄 CHANGE PIN</button>
       </div>
       <div class="settings-section">
@@ -2049,15 +2051,49 @@ for(const userDoc of rankedUsers.docs){
 
 }
    }
-window.changePin=async function(){
-  const p1=document.getElementById('newPin').value,p2=document.getElementById('confirmPin').value;
-  if(p1.length!==4||p2.length!==4)return showToast('PIN must be 4 digits',true);
-  if(p1!==p2)return showToast('PINs do not match',true);
-  if(!/^\d{4}$/.test(p1))return showToast('Only numbers',true);
-  if(currentUser){const h=await hashPin(p1);localStorage.setItem('svault_pin_'+currentUser.uid,h);}
-  playSuccess();showToast('PIN changed!');
-  document.getElementById('newPin').value='';document.getElementById('confirmPin').value='';
+window.changePin = async function(){
+
+  const currentPin = document.getElementById('currentPin').value;
+  const newPin = document.getElementById('newPin').value;
+  const confirmPin = document.getElementById('confirmPin').value;
+
+  if(!currentUser){
+    return showToast('Login required', true);
+  }
+
+  if(!/^\d{4}$/.test(currentPin)){
+    return showToast('Enter your current 4-digit PIN', true);
+  }
+
+  const uid = currentUser.uid || 'guest';
+  const savedPin = localStorage.getItem('svault_pin_' + uid)
+    || '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4';
+
+  const currentPinHash = await hashPin(currentPin);
+
+  if(currentPinHash !== savedPin){
+    return showToast('Previous PIN is incorrect', true);
+  }
+
+  if(!/^\d{4}$/.test(newPin)){
+    return showToast('New PIN must be 4 digits', true);
+  }
+
+  if(newPin !== confirmPin){
+    return showToast('New PINs do not match', true);
+  }
+
+  const newPinHash = await hashPin(newPin);
+  localStorage.setItem('svault_pin_' + uid, newPinHash);
+
+  playSuccess();
+  showToast('PIN changed successfully!');
+
+  document.getElementById('currentPin').value = '';
+  document.getElementById('newPin').value = '';
+  document.getElementById('confirmPin').value = '';
 }
+   
 
 // ============================================================
 //  PIN
