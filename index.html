@@ -433,7 +433,24 @@ font-size:22px;
 font-weight:bold;
 text-align:center;
 }
+@keyframes movingMinus {
+  0%, 100% {
+    transform: translateX(0);
+    opacity: 0.5;
+  }
 
+  50% {
+    transform: translateX(6px);
+    opacity: 1;
+  }
+}
+
+.rank-same {
+  display: inline-block;
+  color: #888;
+  animation: movingMinus 0.8s ease-in-out infinite;
+}
+   
 .me{
 border:2px solid #00bfff;
 box-shadow:0 0 12px #00bfff;
@@ -1862,7 +1879,8 @@ if(leaderboardMode === "weekly" && u.weeklyXP === undefined){
     u.weeklyXP = u.xp || 0;
    }
 const rank = index + 1;
-let rankChangeHTML = "—";
+let rankChangeHTML = `<span class="rank-same">—</span>`;
+   
 
 if(leaderboardMode === "weekly" && u.previousWeeklyRank !== undefined){
     const diff = u.previousWeeklyRank - rank;
@@ -1871,7 +1889,8 @@ if(leaderboardMode === "weekly" && u.previousWeeklyRank !== undefined){
     }else if(diff < 0){
         rankChangeHTML = `<span style="color:#e74c3c">↓ ${Math.abs(diff)}</span>`;
     }else{
-        rankChangeHTML = `<span style="color:#888">—</span>`;
+        rankChangeHTML = `<span class="rank-same">—</span>`;
+       
     }
 }
 if(rank <= 3){
