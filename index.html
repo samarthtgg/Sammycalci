@@ -1589,14 +1589,15 @@ window.clearHistory=function(){calcHistory=[];if(currentUser)localStorage.remove
 // ============================================================
 window.showSettings=function(){playClick();if(currentUser)document.getElementById('settingsUsername').textContent=currentUser.isGuest?'Guest':currentUser.email?.split('@')[0];loadSettings();showPage('settingsPage');}
    const emojiGroups = {
-0:["😆","⚡","🥇","🎉","🎂"],
-7:["🙎","🙋","💁","🙆","🙅","🤷","🤦","🙍"],
-10:["🥵","☠️","🤖","👹","👺","👿","😈","💩","🤡"],
-20:["🌍","🌎","🌏","🌫️","🌠","🌌","🌕","☄️","🌘"],
-50:["👯","👯‍♂️","👯‍♀️","🧑‍🤝‍🧑","👭","👬","👫","🕴️","💃","🕺"]
+  0: ["😆", "⚡", "🥇", "🎉", "🎂"],
+  200: ["🙎", "🙋", "💁", "🙆", "🙅", "🤷", "🤦", "🙍"],
+  500: ["🥵", "☠️", "🤖", "👹", "👺", "👿", "😈", "💩", "🤡"],
+  2000: ["🌍", "🌎", "🌏", "🌫️", "🌠", "🌌", "🌕", "☄️", "🌘"],
+  10000: ["👯", "👯‍♂️", "👯‍♀️", "🧑‍🤝‍🧑", "👭", "👬", "👫", "🕴️", "💃", "🕺"]
 };
-
-function loadEmojiPicker(streak){
+   
+function loadEmojiPicker(xp){
+   
 
 const picker=document.getElementById("emojiPicker");
 
@@ -1604,10 +1605,11 @@ picker.innerHTML="";
 
 let emojis=[...emojiGroups[0]];
 
-if(streak>=7) emojis.push(...emojiGroups[7]);
-if(streak>=10) emojis.push(...emojiGroups[10]);
-if(streak>=20) emojis.push(...emojiGroups[20]);
-if(streak>=50) emojis.push(...emojiGroups[50]);
+if(xp >= 200) emojis.push(...emojiGroups[200]);
+if(xp >= 500) emojis.push(...emojiGroups[500]);
+if(xp >= 2000) emojis.push(...emojiGroups[2000]);
+if(xp >= 10000) emojis.push(...emojiGroups[10000]);
+   
 
 emojis.forEach(e=>{
 
@@ -1666,7 +1668,8 @@ data.level || 1;
 document.getElementById("xpText").textContent =
 (data.xp || 0) + " XP";
 unlockAchievements(data.loginStreak || 0);
-loadEmojiPicker(data.loginStreak || 0);
+loadEmojiPicker(data.xp || 0);
+           
            if(data.name){
     document.getElementById("profileDisplayName").textContent = data.name;
            }
