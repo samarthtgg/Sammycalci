@@ -1170,6 +1170,7 @@ setDoc,
 updateDoc,
    increment,
 getDoc,
+   runTransaction,
 collection,
 addDoc,
 getDocs,
@@ -1545,8 +1546,8 @@ if(v==='%'){
       playSuccess();
 
 if(currentUser && !currentUser.isGuest){
-    await incrementCalculationCount();
     await addXP();
+   
    await setDoc(
     doc(db,"users",currentUser.uid),
     {
@@ -2299,72 +2300,80 @@ await setDoc(ref,{
 
     if(!currentUser || currentUser.isGuest) return;
 
-    const ref = doc(db,"users",currentUser.uid);
-    const snap = await getDoc(ref);
+    const ref = doc(db, "users", currentUser.uid);
+    let updatedData;
 
-    let xp = 0;
-    let level = 1;
+    try {
+        await runTransaction(db, async (transaction) => {
+            const snap = await transaction.get(ref);
+            const data = snap.exists() ? snap.data() : {};
 
-    if(snap.exists()){
-        xp = snap.data().xp || 0;
-        level = snap.data().level || 1;
+            const xp = (data.xp || 0) + 10;
+            const weeklyXP = (data.weeklyXP || 0) + 10;
+            const calculations = (data.calculations || 0) + 1;
+
+            let level = 1;
+
+            if(xp >= 100000){
+                level = 6;
+            }else if(xp >= 50000){
+                level = 5;
+            }else if(xp >= 10000){
+                level = 4;
+            }else if(xp >= 1000){
+                level = 3;
+            }else if(xp >= 100){
+                level = 2;
+            }
+
+            updatedData = {
+                xp,
+                weeklyXP,
+                calculations,
+                level,
+                goldMedals: data.goldMedals || 0,
+                silverMedals: data.silverMedals || 0,
+                bronzeMedals: data.bronzeMedals || 0,
+                currentWeek: getWeekId(),
+                lastActive: Date.now(),
+                username:
+                    currentUser.displayName ||
+                    currentUser.email?.split("@")[0] ||
+                    "User"
+            };
+
+            transaction.set(ref, updatedData, { merge: true });
+        });
+
+        let nextLevelXP = 100;
+
+        if(updatedData.level === 1){
+            nextLevelXP = 100;
+        }else if(updatedData.level === 2){
+            nextLevelXP = 1000;
+        }else if(updatedData.level === 3){
+            nextLevelXP = 10000;
+        }else if(updatedData.level === 4){
+            nextLevelXP = 50000;
+        }else if(updatedData.level === 5){
+            nextLevelXP = 100000;
+        }else{
+            nextLevelXP = "MAX";
+        }
+
+        document.getElementById("calcCount").textContent = updatedData.calculations;
+        document.getElementById("xpText").textContent =
+            nextLevelXP === "MAX"
+                ? updatedData.xp + " XP (MAX LEVEL)"
+                : updatedData.xp + " / " + nextLevelXP + " XP";
+
+        document.getElementById("levelValue").textContent = updatedData.level;
+
+    } catch(e) {
+        console.error("XP update failed:", e);
     }
-
-    xp += 10;
-let weeklyXP = snap.exists() ? (snap.data().weeklyXP || 0) : 0;
-weeklyXP += 10;
-
-    if(xp >= 100000){
-        level = 6;
-    }else if(xp >= 50000){
-        level = 5;
-    }else if(xp >= 10000){
-        level = 4;
-    }else if(xp >= 1000){
-        level = 3;
-    }else if(xp >= 100){
-        level = 2;
-    }else{
-        level = 1;
-    }
-
-await setDoc(ref,{
-    xp: xp,
-    weeklyXP: weeklyXP,
-    level: level,
-   goldMedals: snap.exists() ? (snap.data().goldMedals || 0) : 0,
-silverMedals: snap.exists() ? (snap.data().silverMedals || 0) : 0,
-bronzeMedals: snap.exists() ? (snap.data().bronzeMedals || 0) : 0,
-   currentWeek: getWeekId(),
-    lastActive: Date.now(),
-    username:
-        currentUser.displayName ||
-        currentUser.email?.split("@")[0] ||
-        "User"
-},{merge:true});
-
-    let nextLevelXP = 100;
-
-if(level == 1){
-    nextLevelXP = 100;
-}else if(level == 2){
-    nextLevelXP = 1000;
-}else if(level == 3){
-    nextLevelXP = 10000;
-}else if(level == 4){
-    nextLevelXP = 50000;
-}else if(level == 5){
-    nextLevelXP = 100000;
-}else{
-    nextLevelXP = "MAX";
 }
 
-document.getElementById("xpText").textContent =
-nextLevelXP === "MAX"
-? xp + " XP (MAX LEVEL)"
-: xp + " / " + nextLevelXP + " XP";
-    document.getElementById("levelValue").textContent = level;
-   }
 window.deletePhoto=async function(i){
   if(!currentUser||currentUser.isGuest)return;
 
