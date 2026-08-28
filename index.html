@@ -722,7 +722,21 @@ style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135de
         </div>
         <button class="btn btn-danger" onclick="window.doLogout()">🚪 LOGOUT</button>
          <div style="text-align:right;margin-top:10px">
-
+<a
+href="javascript:void(0)"
+onclick="window.showPage('feedbackPage')"
+style="
+display:inline-flex;
+align-items:center;
+gap:6px;
+color:#00e5ff;
+font-family:'Rajdhani',sans-serif;
+font-size:13px;
+text-decoration:none;
+opacity:0.8;
+margin-right:14px;">
+💬 Feedback
+</a>
 <a
 href="https://www.instagram.com/itz_samarth17"
 target="_blank"
@@ -1096,6 +1110,23 @@ style="flex:1;overflow:auto;padding:10px;">
 </div>
 
 </div>
+   <div class="page-full" id="feedbackPage">
+
+<div style="max-width:500px;width:100%;margin:auto;">
+
+<div class="vault-header">
+<button class="icon-btn" onclick="showProfile()">←</button>
+<h2>💬 Feedback</h2>
+</div>
+
+<div class="card">
+<textarea id="feedbackText" placeholder="Tell us what you think, report a bug, or suggest a feature..." rows="6" style="width:100%;background:var(--glass);border:1px solid var(--glass-border);border-radius:12px;padding:12px;color:#fff;font-family:inherit;resize:vertical;"></textarea>
+<button class="btn btn-primary" style="margin-top:12px;width:100%" onclick="window.submitFeedback()">📨 SUBMIT FEEDBACK</button>
+</div>
+
+</div>
+
+   </div>
 <div id="viewer">
   <button class="viewer-close" onclick="window.closeViewer()">✕</button>
   <button class="viewer-nav left" onclick="window.navPhoto(-1)">‹</button>
@@ -1691,6 +1722,36 @@ let leaderboardMode = "weekly";
         el.textContent =
         `⏳ Next reset: ${days}d ${hours}h ${mins}m`;
     }
+   }
+   window.submitFeedback = async function(){
+
+    const text = document.getElementById('feedbackText').value.trim();
+
+    if(!text) return showToast('Please write something first', true);
+
+    showToast('Sending...');
+
+    try{
+
+        const fd = new FormData();
+        fd.append('message', text);
+        fd.append('username', (currentUser && currentUser.username) || 'guest');
+        fd.append('_subject', 'New SammyCalci Feedback');
+
+        await fetch("https://formspree.io/f/xyeyyywd", {
+            method: "POST",
+            headers: { "Accept": "application/json" },
+            body: fd
+        });
+
+        showToast('Feedback sent! Thank you 🙏');
+        document.getElementById('feedbackText').value = '';
+        setTimeout(()=>showPage('settingsPage'), 1000);
+
+    }catch(e){
+        showToast('Failed to send, try again', true);
+    }
+
    }
 window.showMedals = function(){
 
