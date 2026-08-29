@@ -531,6 +531,74 @@ box-shadow:0 0 12px #00bfff;
   font-size: 12px;
   opacity: .75;
 }
+   .emoji-picker-modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,.72);
+  z-index: 9999;
+}
+
+.emoji-picker-modal.open {
+  display: flex;
+}
+
+.emoji-picker-card {
+  position: relative;
+  width: min(88vw, 360px);
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: 24px 18px;
+  background: #0e1020;
+  border: 1px solid rgba(99,102,241,.45);
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.7);
+}
+
+.emoji-picker-card h2 {
+  margin-bottom: 18px;
+  text-align: center;
+  color: #a5b4fc;
+  font-size: 16px;
+}
+
+.emoji-picker-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255,255,255,.12);
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.emoji-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+.emoji-picker-grid span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 10px;
+  font-size: 30px;
+  cursor: pointer;
+  transition: background .2s, transform .2s;
+}
+
+.emoji-picker-grid span:hover {
+  background: rgba(99,102,241,.25);
+  transform: scale(1.12);
+      }
    
 </style>
 </head>
@@ -951,7 +1019,8 @@ color:var(--primary);">
 Your Name
 </div>
 <div id="selectedEmoji"
-onclick="window.toggleEmojiPicker()"
+onclick="window.openEmojiPopup()"
+   
 style="
 width:70px;
 height:70px;
@@ -969,17 +1038,19 @@ cursor:pointer;">
 <button
 class="btn btn-ghost btn-sm"
 style="margin-top:10px;width:auto;"
-onclick="window.toggleEmojiPicker()">
+onclick="window.openEmojiPopup()">
+   
 😊 Choose Emoji
 </button>
 
-<div id="emojiPicker"
-style="
-display:none;
-grid-template-columns:repeat(5,1fr);
-gap:10px;
-margin-top:20px;">
+<div id="emojiPickerModal" class="emoji-picker-modal">
+  <div class="emoji-picker-card">
+    <button class="emoji-picker-close" onclick="window.closeEmojiPopup()">×</button>
+    <h2>😊 CHOOSE EMOJI</h2>
+    <div id="emojiPicker" class="emoji-picker-grid"></div>
+  </div>
 </div>
+       
       <button
 class="btn btn-ghost btn-sm"
 style="margin-top:10px;width:auto;"
@@ -1746,15 +1817,20 @@ picker.appendChild(span);
 
 }
 
-window.toggleEmojiPicker = function () {
+window.openEmojiPopup = function(){
+    document.getElementById('emojiPickerModal').classList.add('open');
+};
 
-    const picker = document.getElementById("emojiPicker");
+window.closeEmojiPopup = function(){
+    document.getElementById('emojiPickerModal').classList.remove('open');
+};
 
-    picker.style.display =
-        picker.style.display === "grid"
-            ? "none"
-            : "grid";
-}
+window.toggleEmojiPicker = function(){
+    document
+      .getElementById('emojiPickerModal')
+      .classList.toggle('open');
+};
+   
 window.showProfile = async function () {
 
     playClick();
