@@ -455,6 +455,83 @@ text-align:center;
 border:2px solid #00bfff;
 box-shadow:0 0 12px #00bfff;
 }
+   .leader-user-modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,.7);
+  z-index: 9998;
+}
+
+.leader-user-modal.open {
+  display: flex;
+}
+
+.leader-user-card {
+  position: relative;
+  width: min(88vw, 350px);
+  padding: 26px 20px;
+  text-align: center;
+  color: var(--text);
+  background: #0e1020;
+  border: 1px solid rgba(99,102,241,.45);
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.7);
+}
+
+.leader-user-card h2 {
+  margin: 12px 0 4px;
+  color: #a5b4fc;
+}
+
+.leader-user-avatar {
+  width: 76px;
+  height: 76px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,#00c6ff,#7c3aed);
+}
+
+.leader-user-level {
+  opacity: .65;
+  margin-bottom: 18px;
+}
+
+.leader-user-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.leader-user-stat {
+  padding: 12px 6px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(99,102,241,.25);
+  border-radius: 12px;
+}
+
+.leader-user-stat strong,
+.leader-user-stat span {
+  display: block;
+}
+
+.leader-user-stat strong {
+  font-size: 22px;
+  color: #a5b4fc;
+}
+
+.leader-user-stat span {
+  margin-top: 4px;
+  font-size: 12px;
+  opacity: .75;
+}
+   
 </style>
 </head>
 <body>
@@ -1098,6 +1175,35 @@ style="flex:1;overflow:auto;padding:10px;">
 </div>
 
    </div>
+   <div id="leaderboardUserModal" class="leader-user-modal">
+  <div class="leader-user-card">
+    <button class="skai-x" onclick="closeLeaderboardUser()">×</button>
+
+    <div id="leaderUserAvatar" class="leader-user-avatar">🙂</div>
+    <h2 id="leaderUserName">User</h2>
+    <div id="leaderUserLevel" class="leader-user-level">Level 1</div>
+
+    <div class="leader-user-stats">
+      <div class="leader-user-stat">
+        <strong id="leaderUserWins">0</strong>
+        <span>🏆 Wins</span>
+      </div>
+      <div class="leader-user-stat">
+        <strong id="leaderUserGold">0</strong>
+        <span>🥇 Gold</span>
+      </div>
+      <div class="leader-user-stat">
+        <strong id="leaderUserSilver">0</strong>
+        <span>🥈 Silver</span>
+      </div>
+      <div class="leader-user-stat">
+        <strong id="leaderUserBronze">0</strong>
+        <span>🥉 Bronze</span>
+      </div>
+    </div>
+  </div>
+   </div>
+   
    <div class="page-full" id="medalsPage">
 
 <div style="max-width:500px;width:100%;margin:auto;">
@@ -1875,8 +1981,15 @@ let html = "";
        let podiumHTML = "";
 let rank = 1;
 let index = 0;
+       window.leaderboardUsers = window.leaderboardUsers || {};
+       
 snap.forEach(docSnap => {
 const u = docSnap.data();
+   window.leaderboardUsers[docSnap.id] = {
+    ...u,
+    id: docSnap.id
+};
+   
     if(u.weeklyXP === undefined){
        u.weeklyXP = 0;
 }
@@ -1906,7 +2019,8 @@ if(rank <= 3){
         rank === 2 ? "🥈" : "🥉";
 
     podiumHTML += `
-    <div class="leaderboard-card">
+    <div class="leaderboard-card" style="cursor:pointer" onclick="showLeaderboardUser('${docSnap.id}')">
+   
         <div class="rank">${medal}</div>
 
         <div class="leaderAvatar">
@@ -1929,7 +2043,8 @@ if(rank <= 3){
 
 }
     html += `
-    <div class="leaderboard-card">
+    <div class="leaderboard-card" style="cursor:pointer" onclick="showLeaderboardUser('${docSnap.id}')">
+
         <div class="rank">#${rank}</div>
 
         <div class="leaderAvatar">
@@ -1966,6 +2081,26 @@ console.error(e);
     }
 
 }
+   window.showLeaderboardUser = function(userId){
+
+    const u = window.leaderboardUsers?.[userId];
+    if(!u) return;
+
+    document.getElementById('leaderUserAvatar').textContent = u.emoji || '🙂';
+    document.getElementById('leaderUserName').textContent = u.username || 'User';
+    document.getElementById('leaderUserLevel').textContent = 'Level ' + (u.level || 1);
+    document.getElementById('leaderUserWins').textContent = u.wins || 0;
+    document.getElementById('leaderUserGold').textContent = u.goldMedals || 0;
+    document.getElementById('leaderUserSilver').textContent = u.silverMedals || 0;
+    document.getElementById('leaderUserBronze').textContent = u.bronzeMedals || 0;
+
+    document.getElementById('leaderboardUserModal').classList.add('open');
+};
+
+window.closeLeaderboardUser = function(){
+    document.getElementById('leaderboardUserModal').classList.remove('open');
+};
+   
    async function loadMedals(){
 
     if(!currentUser) return;
